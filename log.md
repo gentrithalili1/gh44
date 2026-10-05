@@ -5,3 +5,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-05 | CLAUDE.md | added | initial core rules | stated in setup session
 - 2026-10-05 | CLAUDE.md | replaced | plan first only for big tasks | "Plan first should only be when we are planning a big task"
 - 2026-10-05 | skills/code-structure | added | structure rules | "Frontend Structure Rules" artifact
+- 2026-10-05 | skills/learn | merged | repo-specific skills live in the repo, git-excluded, never in the brain | "I dont want these in the agent brain, these are repo specific"

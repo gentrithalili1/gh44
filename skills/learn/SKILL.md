@@ -15,7 +15,7 @@ The brain repo is `~/agent-brain`. Write files only there, except for route 1 be
 
 ## Route each lesson (first match wins)
 
-1. **Repository-specific** (true only because of one repo's setup: its tooling, folders, team, product or internal services, for example "use oxfmt, not prettier" in a repo that ships oxfmt): do not put it in the brain. Save it to the current project's auto-memory and say so. If it would hold in any repo he works in, it is not route 1.
+1. **Repository-specific** (true only because of one repo's setup: its tooling, folders, team, product or internal services, for example "use oxfmt, not prettier" in a repo that ships oxfmt): do not put it in the brain. Save it to the current project's auto-memory and say so. If it would hold in any repo he works in, it is not route 1. A repo-specific skill goes in that repo's skills folder, listed in `.git/info/exclude`; never in the brain.
 2. **Script-checkable** (a command, file pattern or tool call that must always or never happen): propose a hook in one line, naming the event, the matcher and the check. Write it to `hooks/` and register it in `install.sh` only after he agrees. When a hook enforces a rule, keep the rule line and append `(enforced by hooks/<name>)`.
 3. **Applies to some work only** (a language, framework, file type or task type): add it to the matching `skills/<topic>/SKILL.md`. If no skill matches, create `skills/<topic>/SKILL.md`. Its description must say when to load it. Add the skill to `## Topic skills` in `CLAUDE.md`, then run `~/agent-brain/install.sh` to link it.
 4. **Applies to every session**: add it to `CLAUDE.md` under the heading that fits.
