@@ -38,4 +38,44 @@ echo mine > "$HOME/.claude/CLAUDE.md"
 if "$BRAIN/install.sh" > /dev/null 2>&1; then fail "should refuse real CLAUDE.md"; fi
 [ "$(cat "$HOME/.claude/CLAUDE.md")" = mine ] || fail "real CLAUDE.md changed"
 
+# A conflict stops the run before anything is linked
+export HOME="$(mktemp -d)"
+mkdir -p "$HOME/.claude/skills/learn"
+"$BRAIN/install.sh" > /dev/null 2>&1 || true
+[ ! -e "$HOME/.claude/CLAUDE.md" ] || fail "linked CLAUDE.md before failing on conflict"
+
+# A link to another location is reported with its target
+export HOME="$(mktemp -d)"
+mkdir -p "$HOME/.claude"
+ln -s /old/brain/CLAUDE.md "$HOME/.claude/CLAUDE.md"
+message="$("$BRAIN/install.sh" 2>&1 || true)"
+echo "$message" | grep -q "/old/brain/CLAUDE.md" || fail "conflict message lacks link target"
+
+# Brain path with a space, then moved: hook runs, and the old hook is replaced
+export HOME="$(mktemp -d)"
+spaced="$(mktemp -d)/my brain"
+mkdir -p "$spaced" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$spaced"/
+"$spaced/install.sh" > /dev/null
+command="$(jq -r '.hooks.SessionStart[0].hooks[0].command' "$HOME/.claude/settings.json")"
+seq 61 > "$HOME/big.md"
+bash -c "$command $HOME/big.md" | grep -q "61 lines" || fail "hook command breaks on a path with a space"
+moved="$(mktemp -d)/moved"
+mv "$spaced" "$moved"
+rm "$HOME/.claude/CLAUDE.md" "$HOME/.claude/skills/learn" "$HOME/.claude/skills/code-structure"
+"$moved/install.sh" > /dev/null
+jq -e --arg c "$moved/hooks/budget-check.sh" '[.hooks.SessionStart[].hooks[].command] == [$c]' "$HOME/.claude/settings.json" > /dev/null \
+  || fail "moved brain left a stale hook: $(jq -c '.hooks' "$HOME/.claude/settings.json")"
+
+# Removed skills leave no dangling links
+export HOME="$(mktemp -d)"
+copy="$(mktemp -d)/brain"
+mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$copy"/
+"$copy/install.sh" > /dev/null
+rm -rf "$copy/skills/code-structure"
+"$copy/install.sh" > /dev/null
+[ ! -L "$HOME/.claude/skills/code-structure" ] || fail "dangling skill link left behind"
+ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
+"$copy/install.sh" > /dev/null
+[ -L "$HOME/.claude/skills/foreign" ] || fail "removed a link that is not ours"
+
 echo "PASS install"

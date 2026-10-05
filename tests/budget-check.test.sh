@@ -13,4 +13,7 @@ seq 61 > "$tmp/big.md"
 
 [ -z "$("$HOOK" "$tmp/missing.md")" ] || fail "missing file should be silent"
 
+printf '%s\n' $(seq 60) > "$tmp/no-newline.md"; printf '61' >> "$tmp/no-newline.md"
+"$HOOK" "$tmp/no-newline.md" | grep -q "61 lines" || fail "last line without newline should count"
+
 echo "PASS budget-check"

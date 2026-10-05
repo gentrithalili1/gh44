@@ -3,7 +3,7 @@
 file="${1:-$HOME/.claude/CLAUDE.md}"
 limit=60
 [ -f "$file" ] || exit 0
-lines="$(wc -l < "$file" | tr -d ' ')"
+lines="$(awk 'END { print NR }' "$file")"
 if [ "$lines" -gt "$limit" ]; then
   echo "agent-brain: core CLAUDE.md is $lines lines (budget $limit). Suggest /learn tidy to the user."
 fi

@@ -8,38 +8,61 @@ SETTINGS="$CLAUDE_DIR/settings.json"
 
 command -v jq > /dev/null || { echo "install: jq is required (brew install jq)" >&2; exit 1; }
 
-link() {
-  local source="$1" target="$2"
-  if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
-    return
+sources=("$BRAIN/CLAUDE.md")
+targets=("$CLAUDE_DIR/CLAUDE.md")
+for skill in "$BRAIN"/skills/*/; do
+  [ -d "$skill" ] || continue
+  skill="${skill%/}"
+  sources+=("$skill")
+  targets+=("$CLAUDE_DIR/skills/$(basename "$skill")")
+done
+
+# Check every target before linking anything, so a conflict never leaves a half install.
+conflicts=0
+for i in "${!targets[@]}"; do
+  source="${sources[$i]}" target="${targets[$i]}"
+  if [ -L "$target" ]; then
+    [ "$(readlink "$target")" = "$source" ] && continue
+    echo "install: $target links to $(readlink "$target"), expected $source" >&2
+    conflicts=1
+  elif [ -e "$target" ]; then
+    echo "install: $target is a real file or folder; move it away first" >&2
+    conflicts=1
   fi
-  if [ -e "$target" ] || [ -L "$target" ]; then
-    echo "install: $target exists and is not a link to $source; move it away first" >&2
-    exit 1
-  fi
-  ln -s "$source" "$target"
-  echo "linked $target"
-}
+done
+[ "$conflicts" -eq 0 ] || exit 1
+
+mkdir -p "$CLAUDE_DIR/skills"
+for i in "${!targets[@]}"; do
+  [ -L "${targets[$i]}" ] && continue
+  ln -s "${sources[$i]}" "${targets[$i]}"
+  echo "linked ${targets[$i]}"
+done
+
+for link in "$CLAUDE_DIR"/skills/*; do
+  [ -L "$link" ] && [ ! -e "$link" ] || continue
+  case "$(readlink "$link")" in
+    "$BRAIN"/skills/*) rm "$link" && echo "removed stale link $link" ;;
+  esac
+done
 
 add_hook() {
-  local event="$1" command="$2" updated
+  local event="$1" script="$2" command updated
+  command="$(printf '%q' "$BRAIN/hooks/$script")"
   if jq -e --arg command "$command" '[.. | objects | select(.command? == $command)] | length > 0' "$SETTINGS" > /dev/null; then
     return
   fi
   cp "$SETTINGS" "$SETTINGS.bak.$(date +%Y%m%d%H%M%S)"
-  updated="$(jq --arg event "$event" --arg command "$command" \
-    '.hooks[$event] = ((.hooks[$event] // []) + [{hooks: [{type: "command", command: $command}]}])' "$SETTINGS")"
+  # Drop this hook's entry from an earlier brain location before adding the current one.
+  updated="$(jq --arg event "$event" --arg command "$command" --arg suffix "/hooks/$script" '
+    .hooks[$event] = (
+      ((.hooks[$event] // [])
+        | map(.hooks |= map(select((.command // "") | endswith($suffix) | not)))
+        | map(select(.hooks | length > 0)))
+      + [{hooks: [{type: "command", command: $command}]}])' "$SETTINGS")"
   printf '%s\n' "$updated" > "$SETTINGS"
   echo "added $event hook: $command"
 }
 
-mkdir -p "$CLAUDE_DIR/skills"
-link "$BRAIN/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
-for skill in "$BRAIN"/skills/*/; do
-  [ -d "$skill" ] || continue
-  skill="${skill%/}"
-  link "$skill" "$CLAUDE_DIR/skills/$(basename "$skill")"
-done
-
 [ -f "$SETTINGS" ] || echo '{}' > "$SETTINGS"
-add_hook SessionStart "$BRAIN/hooks/budget-check.sh"
+add_hook SessionStart budget-check.sh
