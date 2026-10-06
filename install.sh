@@ -88,5 +88,6 @@ add_hook() {
 add_hook SessionStart budget-check.sh
 add_hook UserPromptSubmit capture-corrections.sh
 add_hook UserPromptSubmit mark-turn.sh
+add_hook PreToolUse load-structure.sh "Edit|Write|MultiEdit"
 add_hook PostToolUse check-code.sh "Edit|Write|MultiEdit"
 add_hook Stop check-changed.sh

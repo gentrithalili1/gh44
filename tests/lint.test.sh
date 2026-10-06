@@ -84,4 +84,47 @@ printf 'interface Props { title: string }\nexport function Card(props: Props) { 
 run_hook "$repo/OptOut.tsx"
 [ "$status" -eq 0 ] || fail "rulesOff must turn off my rules: $output"
 
+# Naming, effects, params, hook results, index files and folders
+new_repo
+expect_rule() {
+  run_hook "$1"
+  echo "$output" | grep -q "$2" || fail "$2 not reported for $(basename "$1"): $(cat "$1") -> $output"
+}
+expect_clean() {
+  run_hook "$1"
+  [ "$status" -eq 0 ] || fail "$(basename "$1") should pass: $(cat "$1") -> $output"
+}
+w() { mkdir -p "$(dirname "$repo/$1")"; printf '%s\n' "$2" > "$repo/$1"; echo "$repo/$1"; }
+
+expect_rule "$(w Handler.tsx 'export function Form({ save }: FormProps) { const submit = () => save(); return <button onClick={submit} /> }')" brain/handler-names
+expect_clean "$(w HandlerOk.tsx 'export function HandlerOk({ onClose, store }: HandlerOkProps) { const handleSubmit = () => onClose(); return <><button onClick={handleSubmit} /><a onClick={onClose} /><i onClick={() => onClose()} /><b onClick={store.add} /></> }')"
+
+expect_rule "$(w flags.ts 'export const open = true')" brain/boolean-names
+expect_rule "$(w compare.ts 'export const same = 1 === 2')" brain/boolean-names
+expect_rule "$(w types.ts 'export interface Options { disabled: boolean }')" brain/boolean-names
+expect_clean "$(w flagsOk.ts 'export const isOpen = true
+export interface OptionsOk { hasMore: boolean; shouldRetry?: boolean }')"
+
+expect_rule "$(w Effect.tsx 'import { useEffect } from "react"
+export function Effect() { useEffect(() => {}, []); return null }')" brain/no-use-effect
+expect_rule "$(w EffectReact.tsx 'import React from "react"
+export function EffectReact() { React.useLayoutEffect(() => {}); return null }')" brain/no-use-effect
+
+expect_rule "$(w params.ts 'export function join(first: string, second: string) { return first + second }')" brain/params-object
+expect_rule "$(w arrow.ts 'export const sum = (left: number, right: number) => left + right')" brain/params-object
+expect_clean "$(w paramsOk.ts 'export function join({ first, second }: JoinParams) { return [first, second].map((item, index) => item + index).reduce((total, item) => total + item, "") }')"
+
+expect_rule "$(w Store.tsx 'export function Store() { const { add } = useUserStore(); return add }')" brain/no-hook-destructure
+expect_clean "$(w StoreOk.tsx 'export function StoreOk() { const userStore = useUserStore(); const [count, setCount] = useState(0); userStore.add(count); return setCount }')"
+
+expect_rule "$(w Card/index.ts 'export const size = 1')" brain/index-reexport-only
+expect_clean "$(w CardOk/index.ts 'export { Card } from "./Card"
+export * from "./utils"
+export type { CardProps } from "./types"
+export { default } from "./Card"')"
+
+expect_rule "$(w src/shared/format.ts 'export const pad = 1')" brain/no-generic-folders
+expect_rule "$(w src/lib/format.ts 'export const pad = 1')" brain/no-generic-folders
+expect_clean "$(w src/utils/format.ts 'export const pad = 1')"
+
 echo "PASS lint"

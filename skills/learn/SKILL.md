@@ -5,7 +5,15 @@ description: Save how Gentrit works into ~/agent-brain. Use when he corrects you
 
 # Learn
 
-The brain repo is `~/agent-brain`. Write files only there, except for route 1 below. Never commit, stage or push. He reviews with `git status` and `git diff`, so name every new file in the report.
+The brain repo is `~/agent-brain`. Write files only there, except for route 1 below.
+
+## Approval
+
+1. Show the exact rule text, the file it goes to and why, in a few lines.
+2. Wait for his answer: approve, edit or reject. For `/learn ingest`, show the whole batch at once and let him approve item by item.
+3. After approval, write the files, run `for test in tests/*.test.sh; do bash "$test"; done` when lint or hooks changed, then commit and push in `~/agent-brain`.
+
+Skip the approval only when he stated the rule plainly and you are very sure of its wording and place; then write, commit, push and report it in one line. Never commit in `~/agent-brain` without one of these two.
 
 ## Modes
 
@@ -34,4 +42,4 @@ Append one line to `log.md`:
 
 ## Report
 
-Report one line per lesson, for example `Learned: skills/code-structure +1`. Nothing else.
+After writing, report one line per lesson with the commit, for example `Learned: rules/code.md +1 (a1b2c3d)`, and name every new file.

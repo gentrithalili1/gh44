@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-HOOK="$BRAIN/hooks/budget-check.sh"
+isolated="$(mktemp -d)/brain"
+mkdir -p "$isolated/hooks" && cp "$BRAIN/hooks/budget-check.sh" "$isolated/hooks/"
+HOOK="$isolated/hooks/budget-check.sh"
 fail() { echo "FAIL: $1" >&2; exit 1; }
 tmp="$(mktemp -d)"
 

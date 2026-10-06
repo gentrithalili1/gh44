@@ -15,3 +15,8 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-06 | frontend/.agent-brain.json | added | rulesOff brain/component-props-name in Join (repo uses `Props`, 1200 vs 889) | repo settings win
 - 2026-10-06 | lint/ | merged | ast-grep rules moved into ESLint (consistent-type-assertions, brain/no-lint-disable, brain/pure-utils); checks/ removed | "we should just keep the eslint, its easier to add new ones"
 - 2026-10-06 | rules/ | replaced | core rules moved from CLAUDE.md into rules/<topic>.md, CLAUDE.md keeps identity and skill list | "move them to rules folder then, keep claude.md simple"
+- 2026-10-06 | rules/communication.md | replaced | casual short answers; ask with options only when unsure on long tasks | user request
+- 2026-10-06 | rules/learning.md + skills/learn | replaced | approve then write, commit, push; very sure plain rules skip approval | user request
+- 2026-10-06 | rules/code.md + lint/rules | added | handle* handlers, is/has/should booleans, avoid useEffect, params object for 2+ params, keep hook results whole, extract standalone logic, short hook names, index re-export only, no generic folders | user request
+- 2026-10-06 | hooks/load-structure | added | inject code-structure guide on first TS edit per session | skill loading was not guaranteed
+- 2026-10-06 | skills/gh44-review | added | review like gentrithalili1, from 57 comments on 31 PRs | user request

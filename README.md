@@ -7,8 +7,8 @@ My personal Claude Code setup. It makes every Claude Code session, in any reposi
 | Layer                | Loads                                                   | Holds                                                                                                                                                  |
 | -------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `CLAUDE.md` + `rules/*.md` | Every session (linked to `~/.claude/CLAUDE.md` and `~/.claude/rules/`) | `CLAUDE.md`: who I am and the skill list. `rules/`: one short file per topic (precedence, communication, workflow, code, learning). Together 60 lines or fewer. |
-| `skills/<topic>/`    | Only the description, until a task needs the full skill | Topic rules such as `code-structure`, and the `learn` skill                                                                                            |
-| `hooks/`             | Never in context; the harness runs them                 | `check-code.sh` runs my ESLint rules on changed lines after each edit; `check-changed.sh` runs them at the end of each turn on every file changed in that turn (`mark-turn.sh` records the start); `capture-corrections.sh` fills `inbox.md`; `budget-check.sh` warns on core size and inbox count |
+| `skills/<topic>/`    | Only the description, until a task needs the full skill | Topic rules such as `code-structure`, the `learn` skill, and `gh44-review` (reviews code the way I review PRs)                                                                                            |
+| `hooks/`             | Never in context; the harness runs them                 | `load-structure.sh` adds the `code-structure` guide to Claude's context on its first TS edit of each session; `check-code.sh` runs my ESLint rules on changed lines after each edit; `check-changed.sh` runs them at the end of each turn on every file changed in that turn (`mark-turn.sh` records the start); `capture-corrections.sh` fills `inbox.md`; `budget-check.sh` warns on core size and inbox count |
 | `log.md`, `inbox.md` | Never                                                   | Learning history and raw input                                                                                                                         |
 
 The repository's own `CLAUDE.md` or `AGENTS.md` wins on code conventions. This brain wins on how to work with me.
@@ -40,7 +40,7 @@ Each lesson goes to the cheapest layer that works:
 3. Rules for some work only go into a topic skill.
 4. Rules for every session go into `rules/<topic>.md`.
 
-Every change is also recorded as one line in `log.md`. Review with `git status` and `git diff`, then commit.
+Claude shows each new rule and where it goes, and writes, commits and pushes it after I approve. When I state a rule plainly and Claude is very sure, it skips the approval and reports the commit. Every change is also recorded as one line in `log.md`.
 
 ## Lint rules (ESLint)
 
@@ -56,7 +56,7 @@ A repository can also opt out of any of my rules with a `.agent-brain.json` file
 { "rulesOff": ["brain/component-props-name"] }
 ```
 
-My own rules live in `lint/rules/index.js` under the `brain/` prefix: `brain/no-class-component`, `brain/component-props-name`, `brain/no-lint-disable` and `brain/pure-utils`. Write one there when no published ESLint rule covers the convention. Rules that apply to component files only go in `myComponentRules`.
+My own rules live in `lint/rules/index.js` under the `brain/` prefix: `no-class-component`, `component-props-name`, `handler-names`, `boolean-names`, `no-use-effect`, `params-object`, `no-hook-destructure`, `index-reexport-only`, `no-generic-folders`, `no-lint-disable` and `pure-utils`. Write one there when no published ESLint rule covers the convention. Rules that apply to component files only go in `myComponentRules`.
 
 To add a rule, add one line to `myRules`:
 

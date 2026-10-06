@@ -19,12 +19,19 @@ const myRules = {
   "@typescript-eslint/no-explicit-any": "error",
   "@typescript-eslint/consistent-type-assertions": ["error", { assertionStyle: "never" }],
   "brain/no-lint-disable": "error",
+  "brain/boolean-names": "error",
+  "brain/params-object": "error",
+  "brain/no-hook-destructure": "error",
+  "brain/no-use-effect": "error",
+  "brain/index-reexport-only": "error",
+  "brain/no-generic-folders": "error",
 };
 
 // Rules for React component files only.
 const myComponentRules = {
   "brain/no-class-component": "error",
   "brain/component-props-name": "error",
+  "brain/handler-names": "error",
 };
 
 // Other names for the same concern. If the repository configures any of them, my rule is

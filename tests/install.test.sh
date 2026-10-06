@@ -28,7 +28,7 @@ jq -e --arg m "$BRAIN/hooks/mark-turn.sh" --arg s "$BRAIN/hooks/check-changed.sh
 
 # Second run changes nothing
 [ -z "$("$BRAIN/install.sh")" ] || fail "second run was not a no-op"
-jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
+jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 1, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
 
 # No settings.json yet
 export HOME="$(mktemp -d)"
@@ -70,7 +70,7 @@ seq 61 > "$HOME/big.md"
 bash -c "$command $HOME/big.md $HOME/no-rules" | grep -q "61 lines" || fail "hook command breaks on a path with a space"
 moved="$(mktemp -d)/moved"
 mv "$spaced" "$moved"
-rm "$HOME/.claude/CLAUDE.md" "$HOME/.claude/rules" "$HOME/.claude/skills/learn" "$HOME/.claude/skills/code-structure"
+rm "$HOME/.claude/CLAUDE.md" "$HOME/.claude/rules" "$HOME/.claude/skills/"*
 "$moved/install.sh" > /dev/null
 jq -e --arg c "$moved/hooks/budget-check.sh" '[.hooks.SessionStart[].hooks[].command] == [$c]' "$HOME/.claude/settings.json" > /dev/null \
   || fail "moved brain left a stale hook: $(jq -c '.hooks' "$HOME/.claude/settings.json")"
