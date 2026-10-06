@@ -16,10 +16,18 @@ jq -e --arg c "$BRAIN/hooks/budget-check.sh" \
   '[.hooks.SessionStart[].hooks[].command] == ["plugin.sh", $c]' "$HOME/.claude/settings.json" > /dev/null \
   || fail "hooks wrong: $(cat "$HOME/.claude/settings.json")"
 ls "$HOME/.claude/" | grep -q 'settings.json.bak.' || fail "no backup"
+jq -e --arg c "$BRAIN/hooks/capture-corrections.sh" \
+  '[.hooks.UserPromptSubmit[].hooks[].command][0] == $c' "$HOME/.claude/settings.json" > /dev/null || fail "capture hook missing"
+jq -e --arg c "$BRAIN/hooks/check-code.sh" \
+  '.hooks.PostToolUse == [{matcher: "Edit|Write|MultiEdit", hooks: [{type: "command", command: $c}]}]' "$HOME/.claude/settings.json" > /dev/null \
+  || fail "check-code hook wrong: $(jq -c '.hooks.PostToolUse' "$HOME/.claude/settings.json")"
+jq -e --arg m "$BRAIN/hooks/mark-turn.sh" --arg s "$BRAIN/hooks/check-changed.sh" \
+  '[.hooks.UserPromptSubmit[].hooks[].command][1] == $m and [.hooks.Stop[].hooks[].command] == [$s]' "$HOME/.claude/settings.json" > /dev/null \
+  || fail "turn hooks missing: $(jq -c '.hooks' "$HOME/.claude/settings.json")"
 
 # Second run changes nothing
 [ -z "$("$BRAIN/install.sh")" ] || fail "second run was not a no-op"
-jq -e '.hooks.SessionStart | length == 2' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
+jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
 
 # No settings.json yet
 export HOME="$(mktemp -d)"
@@ -77,5 +85,27 @@ rm -rf "$copy/skills/code-structure"
 ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 "$copy/install.sh" > /dev/null
 [ -L "$HOME/.claude/skills/foreign" ] || fail "removed a link that is not ours"
+
+# Missing tools are installed with Homebrew
+export HOME="$(mktemp -d)"
+fakebin="$(mktemp -d)"
+ln -s "$(command -v jq)" "$fakebin/jq"
+cat > "$fakebin/brew" <<'BREW'
+#!/bin/sh
+echo "$@" > "$(dirname "$0")/brew.log"
+shift
+for tool in "$@"; do printf '#!/bin/sh\n' > "$(dirname "$0")/$tool"; chmod +x "$(dirname "$0")/$tool"; done
+BREW
+chmod +x "$fakebin/brew"
+PATH="$fakebin:/usr/bin:/bin" "$BRAIN/install.sh" > /dev/null 2>&1 || fail "install with brew failed"
+[ "$(cat "$fakebin/brew.log")" = "install ast-grep" ] || fail "brew not asked for ast-grep: $(cat "$fakebin/brew.log" 2>/dev/null)"
+
+# Without Homebrew, missing tools stop the install with a hint
+export HOME="$(mktemp -d)"
+nobrew="$(mktemp -d)"
+ln -s "$(command -v jq)" "$nobrew/jq"
+message="$(PATH="$nobrew:/usr/bin:/bin" "$BRAIN/install.sh" 2>&1)" && fail "should fail without brew"
+echo "$message" | grep -q "ast-grep" || fail "hint should name ast-grep: $message"
+[ ! -e "$HOME/.claude/CLAUDE.md" ] || fail "linked before tools were ready"
 
 echo "PASS install"

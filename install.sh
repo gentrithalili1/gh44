@@ -6,7 +6,18 @@ BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 SETTINGS="$CLAUDE_DIR/settings.json"
 
-command -v jq > /dev/null || { echo "install: jq is required (brew install jq)" >&2; exit 1; }
+missing=()
+for tool in jq ast-grep; do
+  command -v "$tool" > /dev/null || missing+=("$tool")
+done
+if [ "${#missing[@]}" -gt 0 ]; then
+  if ! command -v brew > /dev/null; then
+    echo "install: missing ${missing[*]}. Install Homebrew (https://brew.sh) and run this again, or install them yourself." >&2
+    exit 1
+  fi
+  echo "installing ${missing[*]} with Homebrew"
+  brew install "${missing[@]}"
+fi
 
 sources=("$BRAIN/CLAUDE.md")
 targets=("$CLAUDE_DIR/CLAUDE.md")
@@ -47,22 +58,26 @@ for link in "$CLAUDE_DIR"/skills/*; do
 done
 
 add_hook() {
-  local event="$1" script="$2" command updated
+  local event="$1" script="$2" matcher="${3:-}" command updated
   command="$(printf '%q' "$BRAIN/hooks/$script")"
   if jq -e --arg command "$command" '[.. | objects | select(.command? == $command)] | length > 0' "$SETTINGS" > /dev/null; then
     return
   fi
   cp "$SETTINGS" "$SETTINGS.bak.$(date +%Y%m%d%H%M%S)"
   # Drop this hook's entry from an earlier brain location before adding the current one.
-  updated="$(jq --arg event "$event" --arg command "$command" --arg suffix "/hooks/$script" '
+  updated="$(jq --arg event "$event" --arg command "$command" --arg suffix "/hooks/$script" --arg matcher "$matcher" '
     .hooks[$event] = (
       ((.hooks[$event] // [])
         | map(.hooks |= map(select((.command // "") | endswith($suffix) | not)))
         | map(select(.hooks | length > 0)))
-      + [{hooks: [{type: "command", command: $command}]}])' "$SETTINGS")"
+      + [(if $matcher == "" then {} else {matcher: $matcher} end) + {hooks: [{type: "command", command: $command}]}])' "$SETTINGS")"
   printf '%s\n' "$updated" > "$SETTINGS"
   echo "added $event hook: $command"
 }
 
 [ -f "$SETTINGS" ] || echo '{}' > "$SETTINGS"
 add_hook SessionStart budget-check.sh
+add_hook UserPromptSubmit capture-corrections.sh
+add_hook UserPromptSubmit mark-turn.sh
+add_hook PostToolUse check-code.sh "Edit|Write|MultiEdit"
+add_hook Stop check-changed.sh

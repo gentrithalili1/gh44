@@ -4,18 +4,18 @@ My personal Claude Code setup. It makes every Claude Code session, in any reposi
 
 ## How it loads
 
-| Layer                | Loads                                                   | Holds                                                                               |
-| -------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `CLAUDE.md`          | Every session (linked to `~/.claude/CLAUDE.md`)         | Core rules: communication, workflow, verification, code. Kept at 60 lines or fewer. |
-| `skills/<topic>/`    | Only the description, until a task needs the full skill | Topic rules such as `code-structure`, and the `learn` skill                         |
-| `hooks/`             | Never in context; the harness runs them                 | Rules a script can check. `budget-check.sh` warns when `CLAUDE.md` is over budget.  |
-| `log.md`, `inbox.md` | Never                                                   | Learning history and raw input                                                      |
+| Layer                | Loads                                                   | Holds                                                                                                                                                  |
+| -------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CLAUDE.md`          | Every session (linked to `~/.claude/CLAUDE.md`)         | Core rules: communication, workflow, verification, code. Kept at 60 lines or fewer.                                                                    |
+| `skills/<topic>/`    | Only the description, until a task needs the full skill | Topic rules such as `code-structure`, and the `learn` skill                                                                                            |
+| `hooks/`             | Never in context; the harness runs them                 | `check-code.sh` runs `checks/rules/` on changed lines after each edit; `check-changed.sh` runs them at the end of each turn on every file changed in that turn (`mark-turn.sh` records the start); `capture-corrections.sh` fills `inbox.md`; `budget-check.sh` warns on core size and inbox count |
+| `log.md`, `inbox.md` | Never                                                   | Learning history and raw input                                                                                                                         |
 
 The repository's own `CLAUDE.md` or `AGENTS.md` wins on code conventions. This brain wins on how to work with me.
 
 ## Install
 
-Requires `jq`.
+Needs Homebrew. `install.sh` installs `jq` and `ast-grep` with it when they are missing.
 
 ```bash
 git clone git@github.com:gentrithalili1/agent-brain.git ~/agent-brain
@@ -29,6 +29,7 @@ Edits to the files here are live in the next session. Run `install.sh` again onl
 ## Teaching it
 
 - **In a session:** correct Claude, or say "learn this". The `learn` skill writes the rule into the right file.
+- **Automatically:** prompts that look like corrections ("don't", "never", "I prefer", "no, ...") are captured into `inbox.md`.
 - **In bulk:** paste raw rules, notes or links below the marker in `inbox.md`, then run `/learn ingest`.
 - **Cleanup:** run `/learn tidy` to merge duplicates, remove stale rules and move rules out of the core when it grows too big.
 
@@ -41,10 +42,20 @@ Each lesson goes to the cheapest layer that works:
 
 Every change is also recorded as one line in `log.md`. Review with `git status` and `git diff`, then commit.
 
+## Code checks
+
+Each rule is one file in `checks/rules/`. They run on lines changed since `HEAD`, so old code in a file is never flagged: after each Edit/Write, and again at the end of each turn for files changed in that turn by any means (shell edits included). Files you changed before the turn are left alone. Current rules:
+
+- `no-as-cast`: no `as` casts except `as const`
+- `no-lint-disable`: no `eslint-disable` or `oxlint-disable` comments
+- `pure-utils-no-react`: files in `utils/` don't import React, `react-intl` or Sentry (tests excluded)
+
+To add one, write a rule file and add a case to `tests/check-code.test.sh`. Try it with `ast-grep scan -c checks/sgconfig.yml <path>`.
+
 ## Tests
 
 ```bash
-bash tests/install.test.sh && bash tests/budget-check.test.sh
+for test in tests/*.test.sh; do bash "$test"; done
 ```
 
 The tests use temporary home directories and never touch the real `~/.claude`.

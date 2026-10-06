@@ -1,0 +1,14 @@
+id: pure-utils-no-react
+language: tsx
+severity: error
+message: Files in utils/ stay pure. Move React, i18n or Sentry code into a hook or component.
+files:
+  - "**/utils/**"
+ignores:
+  - "**/*.test.*"
+  - "**/*.spec.*"
+rule:
+  kind: import_statement
+  has:
+    field: source
+    regex: ^['"](react|react-dom|react-intl|@sentry/[^'"]+)['"]$
