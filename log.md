@@ -20,3 +20,5 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-06 | rules/code.md + lint/rules | added | handle* handlers, is/has/should booleans, avoid useEffect, params object for 2+ params, keep hook results whole, extract standalone logic, short hook names, index re-export only, no generic folders | user request
 - 2026-10-06 | hooks/load-structure | added | inject code-structure guide on first TS edit per session | skill loading was not guaranteed
 - 2026-10-06 | skills/gh44-review | added | review like gentrithalili1, from 57 comments on 31 PRs | user request
+- 2026-10-07 | rules/communication.md | replaced | ask with options and a recommendation whenever there are multiple real options (was: only on long tasks) | /learn ingest, his edit of item 5
+- 2026-10-07 | hooks/capture-corrections | merged | skip system-generated prompts starting with `<` | /learn ingest: agent messages and hook notices filled the inbox

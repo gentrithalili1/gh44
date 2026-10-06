@@ -7,7 +7,7 @@ INBOX="$BRAIN/inbox.md"
 
 input="$(cat)"
 prompt="$(jq -r '.prompt // empty' <<< "$input" | tr '\n\r\t' '   ' | tr -s ' ')"
-case "$prompt" in /* | "") exit 0 ;; esac
+case "$prompt" in /* | "<"* | "") exit 0 ;; esac
 
 pattern="(^|[^a-z'])(don'?t|do not|never|always|stop|instead|prefer|wrong|should ?n'?o?t|not like this)([^a-z]|$)|^no[ ,.!]"
 grep -qiE "$pattern" <<< "$prompt" || exit 0

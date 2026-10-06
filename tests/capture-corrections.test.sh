@@ -24,6 +24,8 @@ before="$(wc -l < "$copy/inbox.md")"
 send "fix the failing test in Button.test.tsx" > /dev/null
 send "/learn never use npm" > /dev/null
 send "cannot reproduce, notice the log" > /dev/null
+send "<agent-message from=\"x\"> never do that </agent-message>" > /dev/null
+send "<task-notification> <summary>don't stop</summary>" > /dev/null
 [ "$(wc -l < "$copy/inbox.md")" -eq "$before" ] || fail "captured a non-correction: $(tail -3 "$copy/inbox.md")"
 
 send "$(printf 'never do this\nsecond line')" > /dev/null
