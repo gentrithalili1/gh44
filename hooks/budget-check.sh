@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
-# SessionStart hook: tells Claude when the always-loaded core grew past its budget,
-# or when the inbox holds enough captured items to sort.
+# SessionStart hook: tells Claude when the always-loaded core (CLAUDE.md plus rules)
+# grew past its budget, or when the inbox holds enough captured items to sort.
 file="${1:-$HOME/.claude/CLAUDE.md}"
+rules="${2:-$HOME/.claude/rules}"
 inbox="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/inbox.md"
 limit=60
 inbox_limit=10
 
-if [ -f "$file" ]; then
-  lines="$(awk 'END { print NR }' "$file")"
+core=()
+[ -f "$file" ] && core+=("$file")
+for rule in "$rules"/*.md; do
+  [ -f "$rule" ] && core+=("$rule")
+done
+if [ "${#core[@]}" -gt 0 ]; then
+  lines="$(awk 'END { print NR }' "${core[@]}")"
   if [ "$lines" -gt "$limit" ]; then
-    echo "agent-brain: core CLAUDE.md is $lines lines (budget $limit). Suggest /learn tidy to the user."
+    echo "agent-brain: core CLAUDE.md plus rules is $lines lines (budget $limit). Suggest /learn tidy to the user."
   fi
 fi
 

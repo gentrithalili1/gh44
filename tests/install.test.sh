@@ -11,6 +11,7 @@ echo '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"plugin.sh
 "$BRAIN/install.sh" > /dev/null
 [ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$BRAIN/CLAUDE.md" ] || fail "CLAUDE.md not linked"
 [ "$(readlink "$HOME/.claude/skills/learn")" = "$BRAIN/skills/learn" ] || fail "learn not linked"
+[ "$(readlink "$HOME/.claude/rules")" = "$BRAIN/rules" ] || fail "rules not linked"
 [ "$(readlink "$HOME/.claude/skills/code-structure")" = "$BRAIN/skills/code-structure" ] || fail "code-structure not linked"
 jq -e --arg c "$BRAIN/hooks/budget-check.sh" \
   '[.hooks.SessionStart[].hooks[].command] == ["plugin.sh", $c]' "$HOME/.claude/settings.json" > /dev/null \
@@ -62,14 +63,14 @@ echo "$message" | grep -q "/old/brain/CLAUDE.md" || fail "conflict message lacks
 # Brain path with a space, then moved: hook runs, and the old hook is replaced
 export HOME="$(mktemp -d)"
 spaced="$(mktemp -d)/my brain"
-mkdir -p "$spaced" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$spaced"/
+mkdir -p "$spaced" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$spaced"/
 "$spaced/install.sh" > /dev/null
 command="$(jq -r '.hooks.SessionStart[0].hooks[0].command' "$HOME/.claude/settings.json")"
 seq 61 > "$HOME/big.md"
-bash -c "$command $HOME/big.md" | grep -q "61 lines" || fail "hook command breaks on a path with a space"
+bash -c "$command $HOME/big.md $HOME/no-rules" | grep -q "61 lines" || fail "hook command breaks on a path with a space"
 moved="$(mktemp -d)/moved"
 mv "$spaced" "$moved"
-rm "$HOME/.claude/CLAUDE.md" "$HOME/.claude/skills/learn" "$HOME/.claude/skills/code-structure"
+rm "$HOME/.claude/CLAUDE.md" "$HOME/.claude/rules" "$HOME/.claude/skills/learn" "$HOME/.claude/skills/code-structure"
 "$moved/install.sh" > /dev/null
 jq -e --arg c "$moved/hooks/budget-check.sh" '[.hooks.SessionStart[].hooks[].command] == [$c]' "$HOME/.claude/settings.json" > /dev/null \
   || fail "moved brain left a stale hook: $(jq -c '.hooks' "$HOME/.claude/settings.json")"
@@ -77,7 +78,7 @@ jq -e --arg c "$moved/hooks/budget-check.sh" '[.hooks.SessionStart[].hooks[].com
 # Removed skills leave no dangling links
 export HOME="$(mktemp -d)"
 copy="$(mktemp -d)/brain"
-mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$copy"/
+mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$copy"/
 "$copy/install.sh" > /dev/null
 rm -rf "$copy/skills/code-structure"
 "$copy/install.sh" > /dev/null
@@ -103,7 +104,7 @@ PATH="$fakebin:/bin" "$BRAIN/install.sh" > /dev/null 2>&1 || fail "install with 
 export HOME="$(mktemp -d)"
 lintbrain="$(mktemp -d)/brain"
 mkdir -p "$lintbrain/lint"
-cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$lintbrain"/
+cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$lintbrain"/
 cp "$BRAIN/lint/package.json" "$BRAIN/lint/pnpm-lock.yaml" "$lintbrain/lint/"
 pnpmbin="$(mktemp -d)"
 ln -s "$(command -v jq)" "$pnpmbin/jq"

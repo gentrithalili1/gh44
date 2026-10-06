@@ -28,8 +28,8 @@ if [ -f "$BRAIN/lint/package.json" ] && [ ! -d "$BRAIN/lint/node_modules" ]; the
   fi
 fi
 
-sources=("$BRAIN/CLAUDE.md")
-targets=("$CLAUDE_DIR/CLAUDE.md")
+sources=("$BRAIN/CLAUDE.md" "$BRAIN/rules")
+targets=("$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/rules")
 for skill in "$BRAIN"/skills/*/; do
   [ -d "$skill" ] || continue
   skill="${skill%/}"
