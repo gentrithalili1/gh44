@@ -14,8 +14,8 @@ send() { jq -n --arg prompt "$1" --arg cwd "/work/frontend" '{prompt: $prompt, c
 [ -z "$(send "Don't add comments for new props")" ] || fail "hook must print nothing"
 grep -q "| frontend | Don't add comments for new props" "$copy/inbox.md" || fail "correction not captured: $(cat "$copy/inbox.md")"
 
-send "no, use a prop instead of context" > /dev/null
-grep -q "use a prop instead of context" "$copy/inbox.md" || fail "'no,' correction not captured"
+send "not like this, use a prop" > /dev/null
+grep -q "not like this, use a prop" "$copy/inbox.md" || fail "'not like this' correction not captured"
 
 send "I prefer early returns" > /dev/null
 grep -q "I prefer early returns" "$copy/inbox.md" || fail "preference not captured"
@@ -24,6 +24,8 @@ before="$(wc -l < "$copy/inbox.md")"
 send "fix the failing test in Button.test.tsx" > /dev/null
 send "/learn never use npm" > /dev/null
 send "cannot reproduce, notice the log" > /dev/null
+send "no, use a prop instead of context" > /dev/null
+send "do not explain too much, that was wrong" > /dev/null
 send "<agent-message from=\"x\"> never do that </agent-message>" > /dev/null
 send "<task-notification> <summary>don't stop</summary>" > /dev/null
 [ "$(wc -l < "$copy/inbox.md")" -eq "$before" ] || fail "captured a non-correction: $(tail -3 "$copy/inbox.md")"

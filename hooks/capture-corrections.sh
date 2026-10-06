@@ -9,7 +9,7 @@ input="$(cat)"
 prompt="$(jq -r '.prompt // empty' <<< "$input" | tr '\n\r\t' '   ' | tr -s ' ')"
 case "$prompt" in /* | "<"* | "") exit 0 ;; esac
 
-pattern="(^|[^a-z'])(don'?t|do not|never|always|stop|instead|prefer|wrong|should ?n'?o?t|not like this)([^a-z]|$)|^no[ ,.!]"
+pattern="(^|[^a-z'])(don'?t|never|always|stop|prefer|not like this)([^a-z]|$)"
 grep -qiE "$pattern" <<< "$prompt" || exit 0
 
 repo="$(basename "$(jq -r '.cwd // empty' <<< "$input")")"

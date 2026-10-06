@@ -100,6 +100,11 @@ changes=$((changes + linked))
 ok "CLAUDE.md, rules, $((${#targets[@]} - 2)) skills$(changed "$linked")"
 
 step 4 Hooks
+# inbox.md is gitignored, so a fresh clone needs one for capture-corrections to write to.
+if [ ! -f "$BRAIN/inbox.md" ]; then
+  printf '# Inbox\n\nPaste raw rules, notes and links below the marker. Run `/learn ingest` to sort them.\n\n<!-- items below -->\n' > "$BRAIN/inbox.md"
+  changes=$((changes + 1))
+fi
 [ -f "$SETTINGS" ] || echo '{}' > "$SETTINGS"
 added=0
 add_hook() {
