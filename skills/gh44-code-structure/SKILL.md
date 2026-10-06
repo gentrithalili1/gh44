@@ -1,5 +1,5 @@
 ---
-name: code-structure
+name: gh44-code-structure
 description: Gentrit's rules for organizing TypeScript and React code. Use when creating, moving, splitting or reviewing components, hooks, utils, types or folders in a TS/React codebase.
 ---
 

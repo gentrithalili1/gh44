@@ -10,9 +10,9 @@ mkdir -p "$HOME/.claude"
 echo '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"plugin.sh"}]}]}}' > "$HOME/.claude/settings.json"
 "$BRAIN/install.sh" > /dev/null
 [ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$BRAIN/CLAUDE.md" ] || fail "CLAUDE.md not linked"
-[ "$(readlink "$HOME/.claude/skills/learn")" = "$BRAIN/skills/learn" ] || fail "learn not linked"
+[ "$(readlink "$HOME/.claude/skills/gh44-learn")" = "$BRAIN/skills/gh44-learn" ] || fail "learn not linked"
 [ "$(readlink "$HOME/.claude/rules")" = "$BRAIN/rules" ] || fail "rules not linked"
-[ "$(readlink "$HOME/.claude/skills/code-structure")" = "$BRAIN/skills/code-structure" ] || fail "code-structure not linked"
+[ "$(readlink "$HOME/.claude/skills/gh44-code-structure")" = "$BRAIN/skills/gh44-code-structure" ] || fail "code-structure not linked"
 jq -e --arg c "$BRAIN/hooks/budget-check.sh" \
   '[.hooks.SessionStart[].hooks[].command] == ["plugin.sh", $c]' "$HOME/.claude/settings.json" > /dev/null \
   || fail "hooks wrong: $(cat "$HOME/.claude/settings.json")"
@@ -37,9 +37,9 @@ jq -e '.hooks.SessionStart | length == 1' "$HOME/.claude/settings.json" > /dev/n
 
 # Real files are never overwritten
 export HOME="$(mktemp -d)"
-mkdir -p "$HOME/.claude/skills/learn"
+mkdir -p "$HOME/.claude/skills/gh44-learn"
 if "$BRAIN/install.sh" > /dev/null 2>&1; then fail "should refuse real skill dir"; fi
-[ -d "$HOME/.claude/skills/learn" ] && [ ! -L "$HOME/.claude/skills/learn" ] || fail "real skill dir changed"
+[ -d "$HOME/.claude/skills/gh44-learn" ] && [ ! -L "$HOME/.claude/skills/gh44-learn" ] || fail "real skill dir changed"
 
 export HOME="$(mktemp -d)"
 mkdir -p "$HOME/.claude"
@@ -49,7 +49,7 @@ if "$BRAIN/install.sh" > /dev/null 2>&1; then fail "should refuse real CLAUDE.md
 
 # A conflict stops the run before anything is linked
 export HOME="$(mktemp -d)"
-mkdir -p "$HOME/.claude/skills/learn"
+mkdir -p "$HOME/.claude/skills/gh44-learn"
 "$BRAIN/install.sh" > /dev/null 2>&1 || true
 [ ! -e "$HOME/.claude/CLAUDE.md" ] || fail "linked CLAUDE.md before failing on conflict"
 
@@ -65,10 +65,10 @@ echo "$message" | grep -q "$HOME/other/CLAUDE.md" || fail "conflict message lack
 export HOME="$(mktemp -d)"
 mkdir -p "$HOME/.claude/skills"
 ln -s /gone/brain/CLAUDE.md "$HOME/.claude/CLAUDE.md"
-ln -s /gone/brain/skills/learn "$HOME/.claude/skills/learn"
+ln -s /gone/brain/skills/gh44-learn "$HOME/.claude/skills/gh44-learn"
 "$BRAIN/install.sh" > /dev/null 2>&1 || fail "dangling links from an old location should be replaced"
 [ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$BRAIN/CLAUDE.md" ] || fail "CLAUDE.md not relinked"
-[ "$(readlink "$HOME/.claude/skills/learn")" = "$BRAIN/skills/learn" ] || fail "learn not relinked"
+[ "$(readlink "$HOME/.claude/skills/gh44-learn")" = "$BRAIN/skills/gh44-learn" ] || fail "learn not relinked"
 
 # Brain path with a space, then moved: hook runs, and the old hook is replaced
 export HOME="$(mktemp -d)"
@@ -90,9 +90,9 @@ export HOME="$(mktemp -d)"
 copy="$(mktemp -d)/brain"
 mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$copy"/
 "$copy/install.sh" > /dev/null
-rm -rf "$copy/skills/code-structure"
+rm -rf "$copy/skills/gh44-code-structure"
 "$copy/install.sh" > /dev/null
-[ ! -L "$HOME/.claude/skills/code-structure" ] || fail "dangling skill link left behind"
+[ ! -L "$HOME/.claude/skills/gh44-code-structure" ] || fail "dangling skill link left behind"
 ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 "$copy/install.sh" > /dev/null
 [ -L "$HOME/.claude/skills/foreign" ] || fail "removed a link that is not ours"

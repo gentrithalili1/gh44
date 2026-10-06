@@ -10,4 +10,4 @@
 - Name handlers `handle*` and booleans `is*`, `has*`, `should*`.
 - Hooks return data and outcomes; the component formats copy and toasts.
 - The importers decide where a file lives; state lives in the lowest unit that reads it.
-- These lines and more are enforced by my lint rules. Full structure guide: the `code-structure` skill.
+- These lines and more are enforced by my lint rules. Full structure guide: the `gh44-code-structure` skill.

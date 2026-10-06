@@ -2,7 +2,7 @@
 # PreToolUse hook: the first time Claude edits a TS file in a session, adds the
 # code-structure guide to its context, so the guide does not depend on Claude loading it.
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SKILL="$BRAIN/skills/code-structure/SKILL.md"
+SKILL="$BRAIN/skills/gh44-code-structure/SKILL.md"
 command -v jq > /dev/null && [ -f "$SKILL" ] || exit 0
 
 input="$(cat)"

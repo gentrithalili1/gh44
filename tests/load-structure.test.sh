@@ -11,7 +11,7 @@ out="$(send s1 /repo/Card.tsx)"
 jq -e '.hookSpecificOutput.hookEventName == "PreToolUse"' <<< "$out" > /dev/null || fail "not a PreToolUse output: $out"
 context="$(jq -r '.hookSpecificOutput.additionalContext' <<< "$out")"
 grep -q "## Placement: the importers decide" <<< "$context" || fail "structure guide missing"
-grep -q "^name: code-structure" <<< "$context" && fail "frontmatter should be stripped"
+grep -q "^name: gh44-code-structure" <<< "$context" && fail "frontmatter should be stripped"
 
 [ -z "$(send s1 /repo/Other.ts)" ] || fail "second TS edit in the same session must stay silent"
 [ -n "$(send s2 /repo/Other.ts)" ] || fail "a new session gets the guide again"

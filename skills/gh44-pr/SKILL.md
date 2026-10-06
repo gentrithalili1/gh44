@@ -1,6 +1,6 @@
 ---
-name: pr
-description: Ship finished work as a pull request: commit, push, open the PR and write its body. Use when Gentrit runs /pr or asks to open, create or describe a PR.
+name: gh44-pr
+description: Ship finished work as a pull request: commit, push, open the PR and write its body. Use when Gentrit runs /gh44-pr or asks to open, create or describe a PR.
 ---
 
 # PR

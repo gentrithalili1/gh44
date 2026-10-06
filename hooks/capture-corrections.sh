@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # UserPromptSubmit hook: appends prompts that look like corrections or preferences
-# to inbox.md, so /learn ingest can turn them into rules. Prints nothing.
+# to inbox.md, so /gh44-learn ingest can turn them into rules. Prints nothing.
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INBOX="$BRAIN/inbox.md"
 [ -f "$INBOX" ] && command -v jq > /dev/null || exit 0

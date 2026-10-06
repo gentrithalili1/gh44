@@ -24,7 +24,7 @@ printf '# Inbox\n\n<!-- items below -->\n' > "$brain/inbox.md"
 for i in $(seq 9); do echo "- item $i" >> "$brain/inbox.md"; done
 [ -z "$("$brain/hooks/budget-check.sh" "$tmp/ok.md" "$tmp/none")" ] || fail "9 inbox items should be silent"
 echo "- item 10" >> "$brain/inbox.md"
-"$brain/hooks/budget-check.sh" "$tmp/ok.md" "$tmp/none" | grep -q "10 items" || fail "10 inbox items should prompt /learn ingest"
+"$brain/hooks/budget-check.sh" "$tmp/ok.md" "$tmp/none" | grep -q "10 items" || fail "10 inbox items should prompt /gh44-learn ingest"
 
 # Rules count toward the always-loaded budget
 core="$(mktemp -d)"
