@@ -27,7 +27,7 @@ jq -e --arg m "$BRAIN/hooks/mark-turn.sh" --arg s "$BRAIN/hooks/check-changed.sh
   || fail "turn hooks missing: $(jq -c '.hooks' "$HOME/.claude/settings.json")"
 
 # Second run changes nothing
-[ -z "$("$BRAIN/install.sh")" ] || fail "second run was not a no-op"
+"$BRAIN/install.sh" | grep -q "Up to date" || fail "second run was not a no-op"
 jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 1, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
 
 # No settings.json yet
@@ -56,9 +56,19 @@ mkdir -p "$HOME/.claude/skills/learn"
 # A link to another location is reported with its target
 export HOME="$(mktemp -d)"
 mkdir -p "$HOME/.claude"
-ln -s /old/brain/CLAUDE.md "$HOME/.claude/CLAUDE.md"
+mkdir -p "$HOME/other" && touch "$HOME/other/CLAUDE.md"
+ln -s "$HOME/other/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 message="$("$BRAIN/install.sh" 2>&1 || true)"
-echo "$message" | grep -q "/old/brain/CLAUDE.md" || fail "conflict message lacks link target"
+echo "$message" | grep -q "$HOME/other/CLAUDE.md" || fail "conflict message lacks link target"
+
+# Links left by an old brain location that no longer exists are replaced
+export HOME="$(mktemp -d)"
+mkdir -p "$HOME/.claude/skills"
+ln -s /gone/brain/CLAUDE.md "$HOME/.claude/CLAUDE.md"
+ln -s /gone/brain/skills/learn "$HOME/.claude/skills/learn"
+"$BRAIN/install.sh" > /dev/null 2>&1 || fail "dangling links from an old location should be replaced"
+[ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$BRAIN/CLAUDE.md" ] || fail "CLAUDE.md not relinked"
+[ "$(readlink "$HOME/.claude/skills/learn")" = "$BRAIN/skills/learn" ] || fail "learn not relinked"
 
 # Brain path with a space, then moved: hook runs, and the old hook is replaced
 export HOME="$(mktemp -d)"

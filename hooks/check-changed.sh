@@ -9,7 +9,7 @@ BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 input="$(cat)"
 [ "$(jq -r '.stop_hook_active // false' <<< "$input")" = "true" ] && exit 0
 session="$(jq -r '.session_id // empty' <<< "$input" | tr -cd 'A-Za-z0-9_-')"
-marker="${TMPDIR:-/tmp}/agent-brain-turn-$session"
+marker="${TMPDIR:-/tmp}/gh44-turn-$session"
 cwd="$(jq -r '.cwd // empty' <<< "$input")"
 [ -n "$session" ] && [ -f "$marker" ] && [ -d "$cwd" ] || exit 0
 root="$(git -C "$cwd" rev-parse --show-toplevel 2> /dev/null)" || exit 0
@@ -24,13 +24,13 @@ done < <({ git -C "$root" diff --name-only; git -C "$root" ls-files --others --e
 
 report=""
 for file in "${files[@]}"; do
-  report+="$(jq -n --arg file "$file" '{tool_input: {file_path: $file}}' | "$BRAIN/hooks/check-code.sh" 2>&1 | grep -v '^agent-brain checks failed' || true)"$'\n'
+  report+="$(jq -n --arg file "$file" '{tool_input: {file_path: $file}}' | "$BRAIN/hooks/check-code.sh" 2>&1 | grep -v '^gh44 checks failed' || true)"$'\n'
 done
 
 report="$(sed '/^$/d' <<< "$report")"
 [ -z "$report" ] && exit 0
 {
-  echo "agent-brain checks failed on files changed this turn. Fix them, or tell the user why you kept them:"
+  echo "gh44 checks failed on files changed this turn. Fix them, or tell the user why you kept them:"
   echo "$report"
 } >&2
 exit 2

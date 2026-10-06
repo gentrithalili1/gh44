@@ -26,7 +26,7 @@ if git -C "$dir" rev-parse --verify -q HEAD > /dev/null 2>&1 \
 fi
 
 root="$(git -C "$dir" rev-parse --show-toplevel 2> /dev/null || echo "$dir")"
-rules_off="$(jq -c '.rulesOff // []' "$root/.agent-brain.json" 2> /dev/null || echo '[]')"
+rules_off="$(jq -c '.rulesOff // []' "$root/.gh44.json" 2> /dev/null || echo '[]')"
 
 report="$(jq -r --arg file "$file" --arg changed "$changed" --argjson off "$rules_off" '
   ($changed | if . == "all" then null else fromjson end) as $lines
@@ -35,7 +35,7 @@ report="$(jq -r --arg file "$file" --arg changed "$changed" --argjson off "$rule
   | "\($file):\(.line) \(.ruleId): \(.message)"' <<< "$problems")"
 [ -z "$report" ] && exit 0
 {
-  echo "agent-brain checks failed on lines you changed:"
+  echo "gh44 checks failed on lines you changed:"
   echo "$report"
 } >&2
 exit 2

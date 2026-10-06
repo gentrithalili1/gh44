@@ -15,14 +15,14 @@ done
 if [ "${#core[@]}" -gt 0 ]; then
   lines="$(awk 'END { print NR }' "${core[@]}")"
   if [ "$lines" -gt "$limit" ]; then
-    echo "agent-brain: core CLAUDE.md plus rules is $lines lines (budget $limit). Suggest /learn tidy to the user."
+    echo "gh44: core CLAUDE.md plus rules is $lines lines (budget $limit). Suggest /learn tidy to the user."
   fi
 fi
 
 if [ -f "$inbox" ]; then
   items="$(awk '/<!-- items below -->/ { below = 1; next } below && /^- / { count++ } END { print count + 0 }' "$inbox")"
   if [ "$items" -ge "$inbox_limit" ]; then
-    echo "agent-brain: inbox has $items items. Suggest /learn ingest to the user."
+    echo "gh44: inbox has $items items. Suggest /learn ingest to the user."
   fi
 fi
 exit 0

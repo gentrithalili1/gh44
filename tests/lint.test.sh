@@ -78,8 +78,8 @@ printf 'interface CardProps { title: string }\nexport function Card({ title }: C
 run_hook "$repo/Good.tsx"
 [ "$status" -eq 0 ] || fail "correct component flagged: $output"
 
-# A repository opts out of my rules in .agent-brain.json
-printf '{ "rulesOff": ["brain/component-props-name", "@typescript-eslint/consistent-type-assertions"] }\n' > "$repo/.agent-brain.json"
+# A repository opts out of my rules in .gh44.json
+printf '{ "rulesOff": ["brain/component-props-name", "@typescript-eslint/consistent-type-assertions"] }\n' > "$repo/.gh44.json"
 printf 'interface Props { title: string }\nexport function Card(props: Props) { return props as unknown }\n' > "$repo/OptOut.tsx"
 run_hook "$repo/OptOut.tsx"
 [ "$status" -eq 0 ] || fail "rulesOff must turn off my rules: $output"

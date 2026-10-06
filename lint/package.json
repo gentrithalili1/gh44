@@ -1,5 +1,5 @@
 {
-  "name": "agent-brain-lint",
+  "name": "gh44-lint",
   "private": true,
   "type": "module",
   "devDependencies": {

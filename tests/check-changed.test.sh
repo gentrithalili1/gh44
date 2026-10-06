@@ -24,7 +24,7 @@ stop s1
 [ "$status" -eq 0 ] || fail "no turn marker should pass: $output"
 
 start_turn s1
-touch -t 202001010100 "$TMPDIR/agent-brain-turn-s1"
+touch -t 202001010100 "$TMPDIR/gh44-turn-s1"
 
 stop s1
 [ "$status" -eq 0 ] || fail "files changed before the turn are the user's: $output"

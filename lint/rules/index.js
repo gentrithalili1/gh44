@@ -315,7 +315,7 @@ const noGenericFolders = {
 };
 
 export default {
-  meta: { name: "agent-brain" },
+  meta: { name: "gh44" },
   rules: {
     "component-props-name": componentPropsName,
     "no-class-component": noClassComponent,

@@ -140,9 +140,9 @@ const repoRoot = findRepoRoot(path.dirname(file))
 const owned = await ownedRules(repoRoot, file)
 
 const myRuleNames = config.flatMap((block) => Object.keys(block.rules ?? {}))
-// A repository can also opt out explicitly in .agent-brain.json: { "rulesOff": ["rule-id"] }.
+// A repository can also opt out explicitly in .gh44.json: { "rulesOff": ["rule-id"] }.
 const rulesOff = new Set(
-  readJson(path.join(repoRoot, '.agent-brain.json'))?.rulesOff ?? []
+  readJson(path.join(repoRoot, '.gh44.json'))?.rulesOff ?? []
 )
 const disabled = myRuleNames.filter(
   (rule) =>

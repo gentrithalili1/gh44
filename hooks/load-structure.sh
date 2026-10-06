@@ -8,7 +8,7 @@ command -v jq > /dev/null && [ -f "$SKILL" ] || exit 0
 input="$(cat)"
 case "$(jq -r '.tool_input.file_path // empty' <<< "$input")" in *.ts | *.tsx | *.mts | *.cts) ;; *) exit 0 ;; esac
 session="$(jq -r '.session_id // empty' <<< "$input" | tr -cd 'A-Za-z0-9_-')"
-marker="${TMPDIR:-/tmp}/agent-brain-structure-$session"
+marker="${TMPDIR:-/tmp}/gh44-structure-$session"
 [ -n "$session" ] && [ ! -f "$marker" ] || exit 0
 touch "$marker"
 
