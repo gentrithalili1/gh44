@@ -100,6 +100,19 @@ chmod +x "$fakebin/brew"
 PATH="$fakebin:/usr/bin:/bin" "$BRAIN/install.sh" > /dev/null 2>&1 || fail "install with brew failed"
 [ "$(cat "$fakebin/brew.log")" = "install ast-grep" ] || fail "brew not asked for ast-grep: $(cat "$fakebin/brew.log" 2>/dev/null)"
 
+# Lint packages are installed with pnpm when missing
+export HOME="$(mktemp -d)"
+lintbrain="$(mktemp -d)/brain"
+mkdir -p "$lintbrain/lint"
+cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$lintbrain"/
+cp "$BRAIN/lint/package.json" "$BRAIN/lint/pnpm-lock.yaml" "$lintbrain/lint/"
+pnpmbin="$(mktemp -d)"
+for tool in jq ast-grep; do ln -s "$(command -v "$tool")" "$pnpmbin/$tool"; done
+printf '#!/bin/sh\necho "$@" > "%s/pnpm.log"\n' "$pnpmbin" > "$pnpmbin/pnpm"
+chmod +x "$pnpmbin/pnpm"
+PATH="$pnpmbin:/usr/bin:/bin" "$lintbrain/install.sh" > /dev/null 2>&1 || fail "install with lint failed"
+grep -q "install --dir $lintbrain/lint --frozen-lockfile" "$pnpmbin/pnpm.log" || fail "pnpm not run: $(cat "$pnpmbin/pnpm.log" 2>/dev/null)"
+
 # Without Homebrew, missing tools stop the install with a hint
 export HOME="$(mktemp -d)"
 nobrew="$(mktemp -d)"

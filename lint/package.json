@@ -1,0 +1,11 @@
+{
+  "name": "agent-brain-lint",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "eslint-plugin-perfectionist": "^5.12.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.0"
+  }
+}

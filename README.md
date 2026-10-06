@@ -15,7 +15,7 @@ The repository's own `CLAUDE.md` or `AGENTS.md` wins on code conventions. This b
 
 ## Install
 
-Needs Homebrew. `install.sh` installs `jq` and `ast-grep` with it when they are missing.
+Needs Homebrew, Node and pnpm. `install.sh` installs `jq` and `ast-grep` with Homebrew when they are missing, and the lint packages with pnpm.
 
 ```bash
 git clone git@github.com:gentrithalili1/agent-brain.git ~/agent-brain
@@ -51,6 +51,29 @@ Each rule is one file in `checks/rules/`. They run on lines changed since `HEAD`
 - `pure-utils-no-react`: files in `utils/` don't import React, `react-intl` or Sentry (tests excluded)
 
 To add one, write a rule file and add a case to `tests/check-code.test.sh`. Try it with `ast-grep scan -c checks/sgconfig.yml <path>`.
+
+## Lint rules (ESLint)
+
+`lint/eslint.config.js` holds my ESLint rules. `hooks/check-code.sh` runs them on every TS file Claude edits, before the ast-grep rules:
+
+- Fixable problems (import order, for example) are fixed in the file silently. Claude never sees them and no tokens are spent.
+- Other errors on changed lines go back to Claude, just like the ast-grep checks.
+- **The repository wins.** A rule is turned off when the repository configures it in its ESLint or oxlint config (including `extends`), or when one of its `equivalents` is configured. `formatter:sort-imports` means the repository's formatter (oxfmt, Prettier plugin, Biome) sorts imports.
+
+To add a rule, add one line to `myRules`:
+
+```js
+const myRules = {
+  // ...
+  'no-nested-ternary': 'error',
+}
+```
+
+To use a rule from a plugin, add the plugin with `pnpm add -D <plugin> --dir lint` and register it under `plugins` in the config. If the rule overlaps with rules that repositories commonly use under another name, list those names in `equivalents`.
+
+Try a rule on real code: `node lint/run.mjs <file>`. Note that it fixes the file in place.
+
+Use ESLint when a rule already exists there (naming, import order, React patterns). Use an ast-grep rule in `checks/rules/` for your own patterns that no ESLint rule covers.
 
 ## Tests
 

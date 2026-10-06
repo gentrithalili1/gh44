@@ -19,6 +19,15 @@ if [ "${#missing[@]}" -gt 0 ]; then
   brew install "${missing[@]}"
 fi
 
+if [ -f "$BRAIN/lint/package.json" ] && [ ! -d "$BRAIN/lint/node_modules" ]; then
+  if command -v pnpm > /dev/null; then
+    echo "installing lint packages"
+    pnpm install --dir "$BRAIN/lint" --frozen-lockfile
+  else
+    echo "install: pnpm is missing, so ESLint checks are skipped (install Node and pnpm, then run this again)" >&2
+  fi
+fi
+
 sources=("$BRAIN/CLAUDE.md")
 targets=("$CLAUDE_DIR/CLAUDE.md")
 for skill in "$BRAIN"/skills/*/; do
