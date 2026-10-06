@@ -14,6 +14,21 @@ Repository rules win on a conflict. Follow the repository and mention the confli
 - `components/` and `hooks/` hold units only. `utils/` holds pure files only. `index.ts` only re-exports.
 - Never invent buckets such as `lib/`, `store/`, `shared/` or `features/`.
 
+## Components
+
+- Write function components only, never classes (enforced by `brain/no-class-component`).
+- Name the props interface after the component (enforced by `brain/component-props-name`):
+
+```tsx
+interface MyComponentProps {
+  title: string
+}
+
+function MyComponent({ title }: MyComponentProps) {
+  return <h2>{title}</h2>
+}
+```
+
 ## Placement: the importers decide
 
 - One production importer: put the file inside that importer's unit.

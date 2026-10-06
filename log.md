@@ -11,3 +11,5 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-05 | hooks/check-changed + mark-turn | added | end-of-turn check of files changed this turn | edits through the shell skipped the PostToolUse check
 - 2026-10-06 | hooks/check-changed | replaced | end-of-turn check counts only unstaged/untracked files, skips over 30 | flagged 5298 staged merge files on THU-3532
 - 2026-10-06 | lint/eslint.config.js | added | personal ESLint rules (sort-imports auto-fix, no-explicit-any); repo config wins per rule | "priority is to repository settings, if not it should default to mine"
+- 2026-10-06 | skills/code-structure + lint/rules | added | function components only; props interface named <Component>Props | "all should be functional components and the props should include the name of the component"
+- 2026-10-06 | frontend/.agent-brain.json | added | rulesOff brain/component-props-name in Join (repo uses `Props`, 1200 vs 889) | repo settings win

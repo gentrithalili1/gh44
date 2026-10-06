@@ -30,9 +30,13 @@ if git -C "$dir" rev-parse --verify -q HEAD > /dev/null 2>&1 \
     | jq -sc '.')"
 fi
 
-report="$(jq -r --arg file "$file" --arg changed "$changed" '
+root="$(git -C "$dir" rev-parse --show-toplevel 2> /dev/null || echo "$dir")"
+rules_off="$(jq -c '.rulesOff // []' "$root/.agent-brain.json" 2> /dev/null || echo '[]')"
+
+report="$(jq -r --arg file "$file" --arg changed "$changed" --argjson off "$rules_off" '
   ($changed | if . == "all" then null else fromjson end) as $lines
   | .[] | .line as $line | select($lines == null or ($lines | index($line)))
+  | select(.ruleId as $rule | $off | index($rule) | not)
   | "\($file):\(.line) \(.ruleId): \(.message)"' <<< "$problems")"
 [ -z "$report" ] && exit 0
 {

@@ -60,6 +60,14 @@ To add one, write a rule file and add a case to `tests/check-code.test.sh`. Try 
 - Other errors on changed lines go back to Claude, just like the ast-grep checks.
 - **The repository wins.** A rule is turned off when the repository configures it in its ESLint or oxlint config (including `extends`), or when one of its `equivalents` is configured. `formatter:sort-imports` means the repository's formatter (oxfmt, Prettier plugin, Biome) sorts imports.
 
+A repository can also opt out of any of my rules, ESLint or ast-grep, with a `.agent-brain.json` file at its root, listed in `.git/info/exclude` so it stays local:
+
+```json
+{ "rulesOff": ["brain/component-props-name"] }
+```
+
+My own rules live in `lint/rules/index.js` under the `brain/` prefix: `brain/no-class-component` and `brain/component-props-name`. Rules that apply to component files only go in `myComponentRules`.
+
 To add a rule, add one line to `myRules`:
 
 ```js

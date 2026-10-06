@@ -60,4 +60,28 @@ printf '// eslint-disable-next-line some-plugin/unknown-rule\nexport const y = 1
 run_hook "$repo/directive.ts"
 echo "$output" | grep -qi "definition for rule" && fail "unknown rule directive broke lint: $output"
 
+# Components: function components only, props named after the component
+new_repo
+printf 'import { Component } from "react"\nexport class Card extends Component {}\n' > "$repo/Class.tsx"
+run_hook "$repo/Class.tsx"
+echo "$output" | grep -q "brain/no-class-component" || fail "class component not reported: $output"
+
+printf 'interface ButtonProps { title: string }\nexport function Card(props: ButtonProps) { return null }\n' > "$repo/Card.tsx"
+run_hook "$repo/Card.tsx"
+echo "$output" | grep -q "Card.tsx:2 brain/component-props-name: .*CardProps" || fail "wrong props name not reported: $output"
+
+printf 'interface Props { title: string }\nexport const Card = ({ title }: Props) => title\n' > "$repo/Arrow.tsx"
+run_hook "$repo/Arrow.tsx"
+echo "$output" | grep -q "brain/component-props-name" || fail "arrow component with Props not reported: $output"
+
+printf 'interface CardProps { title: string }\nexport function Card({ title }: CardProps) { return title }\nfunction helper(props: OtherProps) { return props }\n' > "$repo/Good.tsx"
+run_hook "$repo/Good.tsx"
+[ "$status" -eq 0 ] || fail "correct component flagged: $output"
+
+# A repository opts out of my rules in .agent-brain.json
+printf '{ "rulesOff": ["brain/component-props-name", "no-as-cast"] }\n' > "$repo/.agent-brain.json"
+printf 'interface Props { title: string }\nexport function Card(props: Props) { return props as unknown }\n' > "$repo/OptOut.tsx"
+run_hook "$repo/OptOut.tsx"
+[ "$status" -eq 0 ] || fail "rulesOff must turn off ESLint and ast-grep rules: $output"
+
 echo "PASS lint"
