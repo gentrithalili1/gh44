@@ -9,3 +9,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-05 | hooks/check-code + checks/rules | added | ast-grep checks: no-as-cast, no-lint-disable, pure-utils-no-react | deterministic checks requested
 - 2026-10-05 | hooks/capture-corrections | added | auto-capture correction prompts into inbox.md | "it should learn from me"
 - 2026-10-05 | hooks/check-changed + mark-turn | added | end-of-turn check of files changed this turn | edits through the shell skipped the PostToolUse check
+- 2026-10-06 | hooks/check-changed | replaced | end-of-turn check counts only unstaged/untracked files, skips over 30 | flagged 5298 staged merge files on THU-3532

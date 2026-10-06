@@ -38,6 +38,19 @@ echo "$output" | grep -q "tracked.ts:2 no-as-cast" || fail "tracked change missi
 echo "$output" | grep -q "new.tsx:1 no-as-cast" || fail "untracked change missing: $output"
 echo "$output" | grep -q "wip.ts" && fail "reported the user's file: $output"
 
+printf 'export const merged = value as Merged\n' > "$repo/merged.ts"
+git -C "$repo" add merged.ts
+stop s1
+echo "$output" | grep -q "merged.ts" && fail "staged files come from git operations, not Claude: $output"
+git -C "$repo" rm -q --cached merged.ts && rm "$repo/merged.ts"
+
+bulk="$(mktemp -d)"
+git -C "$bulk" init -q
+for i in $(seq 31); do printf 'export const v = x as Y\n' > "$bulk/f$i.ts"; done
+status=0
+jq -n --arg cwd "$bulk" '{session_id: "s1", cwd: $cwd, stop_hook_active: false}' | "$BRAIN/hooks/check-changed.sh" > /dev/null 2>&1 || status=$?
+[ "$status" -eq 0 ] || fail "more than 30 changed files is a bulk operation and must be skipped"
+
 stop s1 true
 [ "$status" -eq 0 ] || fail "second stop in a row must pass to avoid a loop"
 
