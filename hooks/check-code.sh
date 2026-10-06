@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# PostToolUse hook: checks the edited TS file with my ESLint rules (fixing what can be
-# fixed) and my ast-grep rules. Only lines changed since HEAD are reported, so legacy
+# PostToolUse hook: checks the edited TS file with my ESLint rules, fixing what can be
+# fixed. Only lines changed since HEAD are reported, so legacy
 # code in the file is not flagged.
 set -euo pipefail
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -14,11 +14,6 @@ problems="[]"
 if command -v node > /dev/null && [ -d "$BRAIN/lint/node_modules" ]; then
   eslint="$(node "$BRAIN/lint/run.mjs" "$file" 2> /dev/null || true)"
   problems="$(jq -c '.' <<< "${eslint:-[]}" 2> /dev/null || echo '[]')"
-fi
-if command -v ast-grep > /dev/null; then
-  matches="$(ast-grep scan -c "$BRAIN/checks/sgconfig.yml" --json=compact "$file" 2> /dev/null || true)"
-  problems="$(jq -c --argjson eslint "$problems" \
-    '$eslint + map({line: (.range.start.line + 1), ruleId, message})' <<< "${matches:-[]}")"
 fi
 
 dir="$(dirname "$file")"

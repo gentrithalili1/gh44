@@ -1,7 +1,0 @@
-id: no-lint-disable
-language: tsx
-severity: error
-message: Fix the code instead of disabling the lint rule.
-rule:
-  kind: comment
-  regex: (eslint|oxlint)-disable

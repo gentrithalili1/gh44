@@ -89,16 +89,15 @@ ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 # Missing tools are installed with Homebrew
 export HOME="$(mktemp -d)"
 fakebin="$(mktemp -d)"
-ln -s "$(command -v jq)" "$fakebin/jq"
-cat > "$fakebin/brew" <<'BREW'
+for tool in readlink basename dirname; do ln -s "$(command -v "$tool")" "$fakebin/$tool"; done
+cat > "$fakebin/brew" <<BREW
 #!/bin/sh
-echo "$@" > "$(dirname "$0")/brew.log"
-shift
-for tool in "$@"; do printf '#!/bin/sh\n' > "$(dirname "$0")/$tool"; chmod +x "$(dirname "$0")/$tool"; done
+echo "\$@" > "$fakebin/brew.log"
+ln -s "$(command -v jq)" "$fakebin/jq"
 BREW
 chmod +x "$fakebin/brew"
-PATH="$fakebin:/usr/bin:/bin" "$BRAIN/install.sh" > /dev/null 2>&1 || fail "install with brew failed"
-[ "$(cat "$fakebin/brew.log")" = "install ast-grep" ] || fail "brew not asked for ast-grep: $(cat "$fakebin/brew.log" 2>/dev/null)"
+PATH="$fakebin:/bin" "$BRAIN/install.sh" > /dev/null 2>&1 || fail "install with brew failed"
+[ "$(cat "$fakebin/brew.log")" = "install jq" ] || fail "brew not asked for jq: $(cat "$fakebin/brew.log" 2>/dev/null)"
 
 # Lint packages are installed with pnpm when missing
 export HOME="$(mktemp -d)"
@@ -107,7 +106,7 @@ mkdir -p "$lintbrain/lint"
 cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$lintbrain"/
 cp "$BRAIN/lint/package.json" "$BRAIN/lint/pnpm-lock.yaml" "$lintbrain/lint/"
 pnpmbin="$(mktemp -d)"
-for tool in jq ast-grep; do ln -s "$(command -v "$tool")" "$pnpmbin/$tool"; done
+ln -s "$(command -v jq)" "$pnpmbin/jq"
 printf '#!/bin/sh\necho "$@" > "%s/pnpm.log"\n' "$pnpmbin" > "$pnpmbin/pnpm"
 chmod +x "$pnpmbin/pnpm"
 PATH="$pnpmbin:/usr/bin:/bin" "$lintbrain/install.sh" > /dev/null 2>&1 || fail "install with lint failed"
@@ -116,9 +115,9 @@ grep -q "install --dir $lintbrain/lint --frozen-lockfile" "$pnpmbin/pnpm.log" ||
 # Without Homebrew, missing tools stop the install with a hint
 export HOME="$(mktemp -d)"
 nobrew="$(mktemp -d)"
-ln -s "$(command -v jq)" "$nobrew/jq"
-message="$(PATH="$nobrew:/usr/bin:/bin" "$BRAIN/install.sh" 2>&1)" && fail "should fail without brew"
-echo "$message" | grep -q "ast-grep" || fail "hint should name ast-grep: $message"
+for tool in readlink basename dirname; do ln -s "$(command -v "$tool")" "$nobrew/$tool"; done
+message="$(PATH="$nobrew:/bin" "$BRAIN/install.sh" 2>&1)" && fail "should fail without brew"
+echo "$message" | grep -q "missing jq" || fail "hint should name jq: $message"
 [ ! -e "$HOME/.claude/CLAUDE.md" ] || fail "linked before tools were ready"
 
 echo "PASS install"

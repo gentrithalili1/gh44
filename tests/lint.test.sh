@@ -79,9 +79,9 @@ run_hook "$repo/Good.tsx"
 [ "$status" -eq 0 ] || fail "correct component flagged: $output"
 
 # A repository opts out of my rules in .agent-brain.json
-printf '{ "rulesOff": ["brain/component-props-name", "no-as-cast"] }\n' > "$repo/.agent-brain.json"
+printf '{ "rulesOff": ["brain/component-props-name", "@typescript-eslint/consistent-type-assertions"] }\n' > "$repo/.agent-brain.json"
 printf 'interface Props { title: string }\nexport function Card(props: Props) { return props as unknown }\n' > "$repo/OptOut.tsx"
 run_hook "$repo/OptOut.tsx"
-[ "$status" -eq 0 ] || fail "rulesOff must turn off ESLint and ast-grep rules: $output"
+[ "$status" -eq 0 ] || fail "rulesOff must turn off my rules: $output"
 
 echo "PASS lint"

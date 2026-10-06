@@ -13,3 +13,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-06 | lint/eslint.config.js | added | personal ESLint rules (sort-imports auto-fix, no-explicit-any); repo config wins per rule | "priority is to repository settings, if not it should default to mine"
 - 2026-10-06 | skills/code-structure + lint/rules | added | function components only; props interface named <Component>Props | "all should be functional components and the props should include the name of the component"
 - 2026-10-06 | frontend/.agent-brain.json | added | rulesOff brain/component-props-name in Join (repo uses `Props`, 1200 vs 889) | repo settings win
+- 2026-10-06 | lint/ | merged | ast-grep rules moved into ESLint (consistent-type-assertions, brain/no-lint-disable, brain/pure-utils); checks/ removed | "we should just keep the eslint, its easier to add new ones"

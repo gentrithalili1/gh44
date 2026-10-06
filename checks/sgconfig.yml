@@ -1,4 +1,0 @@
-ruleDirs:
-  - rules
-languageGlobs:
-  tsx: ["*.ts", "*.tsx", "*.mts", "*.cts"]

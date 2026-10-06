@@ -7,7 +7,7 @@ CLAUDE_DIR="$HOME/.claude"
 SETTINGS="$CLAUDE_DIR/settings.json"
 
 missing=()
-for tool in jq ast-grep; do
+for tool in jq; do
   command -v "$tool" > /dev/null || missing+=("$tool")
 done
 if [ "${#missing[@]}" -gt 0 ]; then

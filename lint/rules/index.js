@@ -93,10 +93,49 @@ const noClassComponent = {
   },
 }
 
+const noLintDisable = {
+  meta: {
+    type: 'problem',
+    docs: { description: 'Fix the code instead of disabling a lint rule.' },
+    messages: { fix: 'Fix the code instead of disabling the lint rule.' },
+    schema: [],
+  },
+  create(context) {
+    return {
+      Program() {
+        for (const comment of context.sourceCode.getAllComments()) {
+          if (/(eslint|oxlint)-disable/.test(comment.value)) context.report({ loc: comment.loc, messageId: 'fix' })
+        }
+      },
+    }
+  },
+}
+
+const pureUtils = {
+  meta: {
+    type: 'problem',
+    docs: { description: 'Files in utils/ stay pure: no React, i18n or Sentry.' },
+    messages: { pure: 'Files in utils/ stay pure. Move `{{source}}` code into a hook or component.' },
+    schema: [],
+  },
+  create(context) {
+    return {
+      ImportDeclaration(node) {
+        const source = node.source.value
+        if (/^(react|react-dom|react-intl|@sentry\/.+)$/.test(source)) {
+          context.report({ node, messageId: 'pure', data: { source } })
+        }
+      },
+    }
+  },
+}
+
 export default {
   meta: { name: 'agent-brain' },
   rules: {
     'component-props-name': componentPropsName,
     'no-class-component': noClassComponent,
+    'no-lint-disable': noLintDisable,
+    'pure-utils': pureUtils,
   },
 }

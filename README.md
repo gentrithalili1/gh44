@@ -8,14 +8,14 @@ My personal Claude Code setup. It makes every Claude Code session, in any reposi
 | -------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `CLAUDE.md`          | Every session (linked to `~/.claude/CLAUDE.md`)         | Core rules: communication, workflow, verification, code. Kept at 60 lines or fewer.                                                                    |
 | `skills/<topic>/`    | Only the description, until a task needs the full skill | Topic rules such as `code-structure`, and the `learn` skill                                                                                            |
-| `hooks/`             | Never in context; the harness runs them                 | `check-code.sh` runs `checks/rules/` on changed lines after each edit; `check-changed.sh` runs them at the end of each turn on every file changed in that turn (`mark-turn.sh` records the start); `capture-corrections.sh` fills `inbox.md`; `budget-check.sh` warns on core size and inbox count |
+| `hooks/`             | Never in context; the harness runs them                 | `check-code.sh` runs my ESLint rules on changed lines after each edit; `check-changed.sh` runs them at the end of each turn on every file changed in that turn (`mark-turn.sh` records the start); `capture-corrections.sh` fills `inbox.md`; `budget-check.sh` warns on core size and inbox count |
 | `log.md`, `inbox.md` | Never                                                   | Learning history and raw input                                                                                                                         |
 
 The repository's own `CLAUDE.md` or `AGENTS.md` wins on code conventions. This brain wins on how to work with me.
 
 ## Install
 
-Needs Homebrew, Node and pnpm. `install.sh` installs `jq` and `ast-grep` with Homebrew when they are missing, and the lint packages with pnpm.
+Needs Homebrew, Node and pnpm. `install.sh` installs `jq` with Homebrew when it is missing, and the lint packages with pnpm.
 
 ```bash
 git clone git@github.com:gentrithalili1/agent-brain.git ~/agent-brain
@@ -42,31 +42,21 @@ Each lesson goes to the cheapest layer that works:
 
 Every change is also recorded as one line in `log.md`. Review with `git status` and `git diff`, then commit.
 
-## Code checks
-
-Each rule is one file in `checks/rules/`. They run on lines changed since `HEAD`, so old code in a file is never flagged: after each Edit/Write, and again at the end of each turn for files changed in that turn by any means (shell edits included). Files you changed before the turn are left alone. Current rules:
-
-- `no-as-cast`: no `as` casts except `as const`
-- `no-lint-disable`: no `eslint-disable` or `oxlint-disable` comments
-- `pure-utils-no-react`: files in `utils/` don't import React, `react-intl` or Sentry (tests excluded)
-
-To add one, write a rule file and add a case to `tests/check-code.test.sh`. Try it with `ast-grep scan -c checks/sgconfig.yml <path>`.
-
 ## Lint rules (ESLint)
 
-`lint/eslint.config.js` holds my ESLint rules. `hooks/check-code.sh` runs them on every TS file Claude edits, before the ast-grep rules:
+`lint/eslint.config.js` holds all my deterministic code rules. `hooks/check-code.sh` runs them on every TS file Claude edits, and `hooks/check-changed.sh` runs them again at the end of each turn on every file changed in that turn by any means, shell edits included:
 
 - Fixable problems (import order, for example) are fixed in the file silently. Claude never sees them and no tokens are spent.
-- Other errors on changed lines go back to Claude, just like the ast-grep checks.
+- Other errors on changed lines go back to Claude to fix.
 - **The repository wins.** A rule is turned off when the repository configures it in its ESLint or oxlint config (including `extends`), or when one of its `equivalents` is configured. `formatter:sort-imports` means the repository's formatter (oxfmt, Prettier plugin, Biome) sorts imports.
 
-A repository can also opt out of any of my rules, ESLint or ast-grep, with a `.agent-brain.json` file at its root, listed in `.git/info/exclude` so it stays local:
+A repository can also opt out of any of my rules with a `.agent-brain.json` file at its root, listed in `.git/info/exclude` so it stays local:
 
 ```json
 { "rulesOff": ["brain/component-props-name"] }
 ```
 
-My own rules live in `lint/rules/index.js` under the `brain/` prefix: `brain/no-class-component` and `brain/component-props-name`. Rules that apply to component files only go in `myComponentRules`.
+My own rules live in `lint/rules/index.js` under the `brain/` prefix: `brain/no-class-component`, `brain/component-props-name`, `brain/no-lint-disable` and `brain/pure-utils`. Write one there when no published ESLint rule covers the convention. Rules that apply to component files only go in `myComponentRules`.
 
 To add a rule, add one line to `myRules`:
 
@@ -80,8 +70,6 @@ const myRules = {
 To use a rule from a plugin, add the plugin with `pnpm add -D <plugin> --dir lint` and register it under `plugins` in the config. If the rule overlaps with rules that repositories commonly use under another name, list those names in `equivalents`.
 
 Try a rule on real code: `node lint/run.mjs <file>`. Note that it fixes the file in place.
-
-Use ESLint when a rule already exists there (naming, import order, React patterns). Use an ast-grep rule in `checks/rules/` for your own patterns that no ESLint rule covers.
 
 ## Tests
 

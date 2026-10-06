@@ -34,8 +34,8 @@ printf 'export const c = value as C\n' > "$repo/new.tsx"
 printf 'x as y\n' > "$repo/notes.md"
 stop s1
 [ "$status" -eq 2 ] || fail "changes in this turn should block (status $status)"
-echo "$output" | grep -q "tracked.ts:2 no-as-cast" || fail "tracked change missing: $output"
-echo "$output" | grep -q "new.tsx:1 no-as-cast" || fail "untracked change missing: $output"
+echo "$output" | grep -q "tracked.ts:2 @typescript-eslint/consistent-type-assertions" || fail "tracked change missing: $output"
+echo "$output" | grep -q "new.tsx:1 @typescript-eslint/consistent-type-assertions" || fail "untracked change missing: $output"
 echo "$output" | grep -q "wip.ts" && fail "reported the user's file: $output"
 
 printf 'export const merged = value as Merged\n' > "$repo/merged.ts"
