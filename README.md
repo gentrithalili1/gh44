@@ -21,7 +21,7 @@ Every task goes through five steps. Small tasks can skip straight to execute; bi
 | 2. Plan | Ask for a plan, or switch to plan mode (`shift+tab`). Approve the step-by-step plan before any code is written. | `rules/workflow.md` |
 | 3. Execute | Let Claude build it slice by slice, with tests first where it makes sense. | `tdd`, `code-structure`, `diagnosing-bugs`, lint hooks |
 | 4. Review | Run `/gh44-review` on your branch, fix what matters, then `/code-review` for bugs and `/simplify` for cleanups. | `/gh44-review`, `/code-review`, `/simplify` |
-| 5. Ship | Ask Claude to commit, push and open the PR. It does this only when you ask. | `gh` CLI |
+| 5. Ship | Run `/pr` (or ask to open the PR): it checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | `/pr` |
 
 Long session or switching context? Run `/handoff` and start a new session from the file it writes.
 
@@ -36,6 +36,7 @@ Claude picks these when the work matches. You can also type their names.
 | `diagnosing-bugs` | A bug or slowdown without an obvious cause, or you say "debug this". |
 | `writing-for-agents` | Editing skills, rules or a `CLAUDE.md`, including this repo. |
 | `learn` | You correct Claude or state a preference. |
+| `pr` | You ask to open or describe a PR. |
 
 ### Skills you type
 
@@ -43,6 +44,7 @@ Claude picks these when the work matches. You can also type their names.
 | --- | --- |
 | `/grill-me` | Before planning a feature: Claude asks rounds of questions, each with a recommended answer. |
 | `/gh44-review [pr]` | Reviewing a PR, branch or local changes the way I review. Nothing is posted to GitHub unless you ask. |
+| `/pr` | Shipping: commit, push, open the PR with a filled-in body. Uses the repo's PR template if it has one. |
 | `/handoff [next focus]` | Writing the session down so a fresh session can continue it. |
 | `/learn`, `/learn ingest`, `/learn tidy` | Saving a rule, sorting the inbox, cleaning up the rules. |
 

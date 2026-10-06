@@ -12,3 +12,4 @@ Load the matching skill before starting the work:
 - `tdd`: building a feature or fixing a bug test-first.
 - `diagnosing-bugs`: a hard bug, regression or slowdown.
 - `writing-for-agents`: writing or editing skills, rules or a CLAUDE.md.
+- `pr`: committing, pushing or opening a pull request.
