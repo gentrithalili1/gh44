@@ -8,6 +8,7 @@
 - Keep a hook's result whole: `const userStore = useUserStore()`, then `userStore.add()`. Never destructure it.
 - Move logic that can stand alone into its own hook or util. Give hooks short names.
 - Name handlers `handle*` and booleans `is*`, `has*`, `should*`.
+- Name new things like their siblings: same prefix and full domain word (`EditorAiEditedField` next to `EditorAiSession`, `trackJobAdSaved` not `trackAdSaved`).
 - Hooks return data and outcomes; the component formats copy and toasts.
 - The importers decide where a file lives; state lives in the lowest unit that reads it.
 - These lines and more are enforced by my lint rules. Full structure guide: the `gh44-code-structure` skill.
