@@ -27,14 +27,9 @@ Adapted from Matt Pocock's `pr` skill, whose summary visuals come from Dex Horth
 
 - **Before:** <screenshot, output or failing test>
   **After:** <screenshot, output or passing test>
-
-## Risk
-
-**Door:** <one-way or two-way>
-**Blast radius:** <one or two words>, <what could break, if anything>
 ```
 
-Keep prose brief: no preamble, no list of every changed file.
+Keep the description short and plain enough to read in a minute: no preamble, no filler, no list of every changed file. Never add a Risk, Door or Blast radius section.
 
 ## Summary visuals
 
@@ -57,8 +52,3 @@ Pick the smallest view that makes the key point clear; usually one, rarely more 
 ## How to test
 
 Show before and after. A screenshot is best for a visual change; otherwise test output or console output. For a UI change, add the steps a reviewer should click through locally.
-
-## Risk
-
-- **Door:** two-way when a revert fully undoes it; one-way when it includes migrations, deleted data, public API or contract changes, or anything a revert cannot undo.
-- **Blast radius:** what the change could affect beyond its own feature: layout shift, consumers of a shared package, mobile, other apps, analytics.
