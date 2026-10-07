@@ -24,3 +24,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-07 | hooks/capture-corrections | merged | skip system-generated prompts starting with `<` | /learn ingest: agent messages and hook notices filled the inbox
 - 2026-10-07 | repo | replaced | renamed agent-brain to GH44 (~/gh44, github gentrithalili1/gh44, .gh44.json opt-out) | user request
 - 2026-10-06 | hooks/capture-corrections + .gitignore | replaced | capture only don't, never, always, stop, prefer, not like this; inbox.md is local and untracked, install.sh creates it | user request
+- 2026-10-07 | skills/gh44-review/SKILL.md | replaced | Output: numbered items with severity heading, path line, quoted comment, folded 'Same here', bold verdict | old flat path list was hard to follow, Gentrit via /gh44-learn

@@ -32,17 +32,32 @@ He does not comment on tests, formatting, import order, i18n or styling tokens. 
 ## How to write the comments
 
 - Ask, don't order: "can we…?", "should we…?", "WDYT?". Admit missing context when unsure: "I hope I'm not missing something!"
-- Label severity at the start: `Non blocking:` for most, `Suggestion:` for ideas. Mark a must-fix only for wrong data, extra requests or broken behaviour.
+- Pick a severity per comment: Non blocking for most, Suggestion for ideas, Must fix only for wrong data, extra requests or broken behaviour.
 - One comment per issue. On the next occurrence write only "same here".
 - Short and casual, often ending with "!". Code sketches in plain fenced blocks, not GitHub `suggestion` blocks.
 - Out-of-scope ideas: "we can handle this in a separate ticket".
 
 ## Output
 
+A numbered list, most severe first. Each item has a heading with its severity and short location, the full clickable path below it, then the comment as a quote:
+
 ```
-path/to/File.tsx:42  Non blocking: should we remove this comment? It is self-explanatory
-path/to/File.tsx:57  same here
-path/to/useThing.ts:12  this is doing an extra request every render, can we read `country` from the entity instead?
+### 1. 🔴 Must fix · `useThing.ts:12`
+`apps/jobs-app/src/hooks/useThing.ts:12`
+> this is doing an extra request every render, can we read `country` from the entity instead?
+
+### 2. 🟡 Non blocking · `File.tsx:42`
+`apps/jobs-app/src/components/File.tsx:42`
+> should we remove this comment? It is self-explanatory
+Same here: `apps/jobs-app/src/components/File.tsx:57`
+
+### 3. 🔵 Suggestion · `useCart.ts:30`
+`apps/jobs-app/src/hooks/useCart.ts:30`
+> `total` is just `items.length`, we can handle this in a separate ticket!
 ```
 
-End with a one-line verdict in his style: "LGTM 👍🏼", "clean job 🔥", or "a few non-blocking comments, otherwise LGTM!". If nothing needs a comment, say so.
+- Severity lives in the heading (🔴 Must fix, 🟡 Non blocking, 🔵 Suggestion), so the quoted comment starts straight with the content.
+- Repeats of an issue go on a `Same here:` line under the first item instead of a new item.
+- Code sketches go in a fenced block under the quote.
+
+After a `---` line, end with a bold one-line verdict in his style: "LGTM 👍🏼", "clean job 🔥", or "a few non-blocking comments, otherwise LGTM!". If nothing needs a comment, say so.
