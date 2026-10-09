@@ -27,3 +27,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-07 | skills/gh44-review/SKILL.md | replaced | Output: numbered items with severity heading, path line, quoted comment, folded 'Same here', bold verdict | old flat path list was hard to follow, Gentrit via /gh44-learn
 - 2026-10-07 | rules/code.md | added | Name new things like their siblings: same prefix and full domain word | Gentrit renamed AiEditedField→EditorAiEditedField and Ad→JobAd in jobs-app THU-3518
 - 2026-10-07 | skills/gh44-pr/SKILL.md | replaced | Drop Risk/Door/Blast radius; keep the description short, no filler | Gentrit via /gh44-learn after PR #14191
+- 2026-10-09 | skills/gh44-create-pr, skills/gh44-review-pr | renamed | from gh44-pr and gh44-review | Gentrit request

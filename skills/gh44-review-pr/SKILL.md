@@ -1,6 +1,6 @@
 ---
-name: gh44-review
-description: Review code the way Gentrit (gentrithalili1) reviews pull requests. Use when he runs /gh44-review, or asks to review a PR, a branch or local changes "like me".
+name: gh44-review-pr
+description: Review code the way Gentrit (gentrithalili1) reviews pull requests. Use when he runs /gh44-review-pr, or asks to review a PR, a branch or local changes "like me".
 ---
 
 # gh44 review

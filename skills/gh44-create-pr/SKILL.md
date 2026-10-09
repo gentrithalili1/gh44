@@ -1,6 +1,6 @@
 ---
-name: gh44-pr
-description: Ship finished work as a pull request: commit, push, open the PR and write its body. Use when Gentrit runs /gh44-pr or asks to open, create or describe a PR.
+name: gh44-create-pr
+description: Ship finished work as a pull request: commit, push, open the PR and write its body. Use when Gentrit runs /gh44-create-pr or asks to open, create or describe a PR.
 ---
 
 # PR
@@ -9,7 +9,7 @@ Adapted from Matt Pocock's `pr` skill, whose summary visuals come from Dex Horth
 
 ## Steps
 
-1. **Check it is ready.** Run the smallest check that proves the change works (tests, type check, lint) and report the result. If `/gh44-review` has not run on this branch, offer it once before shipping.
+1. **Check it is ready.** Run the smallest check that proves the change works (tests, type check, lint) and report the result. If `/gh44-review-pr` has not run on this branch, offer it once before shipping.
 2. **Branch.** On the default branch, create one first. Follow the repo's branch naming; take the ticket ID from the conversation or the branch name.
 3. **Commit.** Stage only the files of this change. Follow the repo's commit style (`git log --oneline -10`).
 4. **Push** with `git push -u origin HEAD`.
