@@ -29,6 +29,8 @@ function MyComponent({ title }: MyComponentProps) {
 }
 ```
 
+- Order a component body: hooks, then derived values, then handlers, then early returns right before the JSX. Handlers sit below the data they read.
+
 ## Placement: the importers decide
 
 - One production importer: put the file inside that importer's unit.

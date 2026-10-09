@@ -3,7 +3,6 @@
 - Fix the types or the code under test. Never silence them: no `as` beyond `as const`, no lint-disable comments.
 - Comment only complicated logic, and keep it short. Never comment trivial changes such as a new property, import or rename.
 - Function components only; props interface named after the component (`CardProps` for `Card`).
-- Order a component body: hooks, then derived values, then handlers, then early returns right before the JSX. Handlers sit below the data they read.
 - Avoid `useEffect`: derive values during render, act in event handlers, fetch with data hooks.
 - A function with 2 or more parameters takes one params object.
 - Keep a hook's result whole: `const userStore = useUserStore()`, then `userStore.add()`. Never destructure it.

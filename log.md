@@ -30,3 +30,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-09 | skills/gh44-create-pr, skills/gh44-review-pr | renamed | from gh44-pr and gh44-review | Gentrit request
 - 2026-10-09 | rules/code.md | replaced | Sibling-naming examples made generic (CartItemList, trackInvoicePaid) | Gentrit: old examples were project-specific
 - 2026-10-09 | rules/code.md | added | Component body order: hooks, derived values, handlers, early returns, JSX | Gentrit request, reviewed via question tool
+- 2026-10-09 | skills/gh44-code-structure/SKILL.md | moved | Component body order moved here from rules/code.md | Gentrit: belongs in code structure
