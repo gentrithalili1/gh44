@@ -33,3 +33,6 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-09 | skills/gh44-code-structure/SKILL.md | moved | Component body order moved here from rules/code.md | Gentrit: belongs in code structure
 - 2026-10-09 | skills/gh44-debug | renamed | from gh44-diagnosing-bugs | Gentrit request
 - 2026-10-09 | rules/code.md | added | SEO and rendering: SEO first on public pages; "use client" only on the smallest leaf that needs it | Gentrit request
+- 2026-10-09 | rules/code.md | added | no any; status unions; exhaustive switch; no magic values; no swallowed errors; no floating promises; delete dead code; JSX section (no nested ternaries, no index keys, no && leaks, variant props, a11y elements) | Gentrit picked from suggestion list
+- 2026-10-09 | lint | added | brain/no-jsx-nested-ternary, brain/no-index-key, brain/no-leaked-render | Gentrit picked from suggestion list
+- 2026-10-09 | skills/gh44-review-pr/SKILL.md | replaced | Lint-covered list and non-lint checks extended with the new code rules | Gentrit picked from suggestion list

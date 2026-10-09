@@ -127,4 +127,17 @@ expect_rule "$(w src/shared/format.ts 'export const pad = 1')" brain/no-generic-
 expect_rule "$(w src/lib/format.ts 'export const pad = 1')" brain/no-generic-folders
 expect_clean "$(w src/utils/format.ts 'export const pad = 1')"
 
+# JSX: nested ternaries, index keys, leaked renders
+expect_rule "$(w Ternary.tsx 'export function Ternary({ status }: TernaryProps) { return <div>{status === "a" ? <A /> : status === "b" ? <B /> : null}</div> }')" brain/no-jsx-nested-ternary
+expect_rule "$(w TernaryReturn.tsx 'export function TernaryReturn({ isA, isB }: TernaryReturnProps) { return isA ? <A /> : isB ? <B /> : null }')" brain/no-jsx-nested-ternary
+expect_clean "$(w TernaryOk.tsx 'export function TernaryOk({ isA }: TernaryOkProps) { const size = isA ? 1 : isA === false ? 2 : 3; return <div>{isA ? <A size={size} /> : null}</div> }')"
+
+expect_rule "$(w IndexKey.tsx 'export function IndexKey({ items }: IndexKeyProps) { return items.map((item, index) => <li key={index}>{item.name}</li>) }')" brain/no-index-key
+expect_rule "$(w IndexKeyTemplate.tsx 'export function IndexKeyTemplate({ items }: IndexKeyTemplateProps) { return items.map((item, i) => <li key={`row-${i}`}>{item.name}</li>) }')" brain/no-index-key
+expect_clean "$(w IndexKeyOk.tsx 'export function IndexKeyOk({ items }: IndexKeyOkProps) { return items.map((item, index) => <li key={item.id}>{index}</li>) }')"
+
+expect_rule "$(w Leaked.tsx 'export function Leaked({ items }: LeakedProps) { return <ul>{items.length && <li />}</ul> }')" brain/no-leaked-render
+expect_rule "$(w LeakedCount.tsx 'export function LeakedCount({ count }: LeakedCountProps) { return <ul>{count && <li />}</ul> }')" brain/no-leaked-render
+expect_clean "$(w LeakedOk.tsx 'export function LeakedOk({ items, isOpen, user }: LeakedOkProps) { return <ul title={user && user.name}>{isOpen && <li />}{items.length > 0 && <li />}{!!user && <li />}{user?.isAdmin && isOpen && <li />}{Boolean(user) && <li />}{IS_FF_X_ENABLED && <li />}{items.length ? <li /> : null}</ul> }')"
+
 echo "PASS lint"

@@ -314,6 +314,120 @@ const noGenericFolders = {
   },
 };
 
+const unwrap = (node) => (node?.type === "TSAsExpression" ? node.expression : node);
+const isJsx = (node) => node?.type === "JSXElement" || node?.type === "JSXFragment";
+
+const noJsxNestedTernary = {
+  meta: {
+    type: "suggestion",
+    docs: { description: "No nested ternaries in JSX; extract a small component." },
+    messages: {
+      nested: "Avoid nested ternaries in JSX. Extract a small component, or use an early return.",
+    },
+    schema: [],
+  },
+  create(context) {
+    return {
+      ConditionalExpression(node) {
+        if (node.parent?.type === "ConditionalExpression") return;
+        const branches = [unwrap(node.consequent), unwrap(node.alternate)];
+        if (!branches.some((branch) => branch?.type === "ConditionalExpression")) return;
+        const isInJsx =
+          branches.some(isJsx) ||
+          context.sourceCode
+            .getAncestors(node)
+            .some((ancestor) => ancestor.type === "JSXExpressionContainer");
+        if (isInJsx) context.report({ node, messageId: "nested" });
+      },
+    };
+  },
+};
+
+const iteratorMethods = new Set(["map", "flatMap", "forEach"]);
+
+const isIndexParam = (name, ancestors) =>
+  ancestors.some(
+    (fn) =>
+      (fn.type === "ArrowFunctionExpression" || fn.type === "FunctionExpression") &&
+      fn.params[1]?.type === "Identifier" &&
+      fn.params[1].name === name &&
+      fn.parent?.type === "CallExpression" &&
+      fn.parent.callee.type === "MemberExpression" &&
+      iteratorMethods.has(fn.parent.callee.property.name),
+  );
+
+const keyIdentifiers = (node) => {
+  if (!node) return [];
+  if (node.type === "Identifier") return [node.name];
+  if (node.type === "TemplateLiteral") return node.expressions.flatMap(keyIdentifiers);
+  if (node.type === "BinaryExpression") return [...keyIdentifiers(node.left), ...keyIdentifiers(node.right)];
+  if (node.type === "CallExpression") {
+    return node.callee.type === "MemberExpression"
+      ? keyIdentifiers(node.callee.object)
+      : node.arguments.flatMap(keyIdentifiers);
+  }
+  return [];
+};
+
+const noIndexKey = {
+  meta: {
+    type: "problem",
+    docs: { description: "Never use an array index as `key`." },
+    messages: { indexKey: "Do not use the index `{{name}}` as `key`; use a stable id from the item." },
+    schema: [],
+  },
+  create(context) {
+    return {
+      JSXAttribute(node) {
+        if (node.name.name !== "key" || node.value?.type !== "JSXExpressionContainer") return;
+        const ancestors = context.sourceCode.getAncestors(node);
+        const name = keyIdentifiers(node.value.expression).find((identifier) =>
+          isIndexParam(identifier, ancestors),
+        );
+        if (name) context.report({ node, messageId: "indexKey", data: { name } });
+      },
+    };
+  },
+};
+
+const isBooleanName = (node) =>
+  (node?.type === "Identifier" && (booleanPrefix.test(node.name) || /^(IS|HAS|SHOULD|CAN)_/.test(node.name))) ||
+  (node?.type === "MemberExpression" && isBooleanName(node.property)) ||
+  (node?.type === "ChainExpression" && isBooleanName(node.expression)) ||
+  (node?.type === "CallExpression" &&
+    ((node.callee.type === "Identifier" && node.callee.name === "Boolean") ||
+      isBooleanName(node.callee)));
+
+const isSafeCondition = (node) =>
+  isBooleanExpression(node) ||
+  isBooleanName(node) ||
+  (node?.type === "LogicalExpression" && isSafeCondition(node.left) && isSafeCondition(node.right));
+
+const noLeakedRender = {
+  meta: {
+    type: "problem",
+    docs: { description: "Render conditionally with a boolean or a ternary, never `count && <X />`." },
+    messages: {
+      leaked:
+        "`{{condition}}` may render `0` or `\"\"`. Use a boolean (`is*`, `has*`, `!!`, a comparison) or `condition ? <X /> : null`.",
+    },
+    schema: [],
+  },
+  create(context) {
+    return {
+      "JSXExpressionContainer > LogicalExpression[operator='&&']"(node) {
+        if (node.parent.parent?.type === "JSXAttribute") return;
+        if (isSafeCondition(node.left)) return;
+        context.report({
+          node: node.left,
+          messageId: "leaked",
+          data: { condition: context.sourceCode.getText(node.left) },
+        });
+      },
+    };
+  },
+};
+
 export default {
   meta: { name: "gh44" },
   rules: {
@@ -328,5 +442,8 @@ export default {
     "no-hook-destructure": noHookDestructure,
     "index-reexport-only": indexReexportOnly,
     "no-generic-folders": noGenericFolders,
+    "no-jsx-nested-ternary": noJsxNestedTernary,
+    "no-index-key": noIndexKey,
+    "no-leaked-render": noLeakedRender,
   },
 };

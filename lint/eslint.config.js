@@ -32,6 +32,9 @@ const myComponentRules = {
   "brain/no-class-component": "error",
   "brain/component-props-name": "error",
   "brain/handler-names": "error",
+  "brain/no-jsx-nested-ternary": "error",
+  "brain/no-index-key": "error",
+  "brain/no-leaked-render": "error",
 };
 
 // Other names for the same concern. If the repository configures any of them, my rule is
@@ -48,6 +51,12 @@ export const equivalents = {
     "react/prefer-function-component",
     "react-x/no-class-component",
     "@eslint-react/no-class-component",
+  ],
+  "brain/no-jsx-nested-ternary": ["no-nested-ternary", "unicorn/no-nested-ternary"],
+  "brain/no-index-key": ["react/no-array-index-key", "@eslint-react/no-array-index-key"],
+  "brain/no-leaked-render": [
+    "react/jsx-no-leaked-render",
+    "@eslint-react/no-leaked-conditional-rendering",
   ],
 };
 
