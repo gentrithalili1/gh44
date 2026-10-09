@@ -127,11 +127,12 @@ add_hook() {
 add_hook SessionStart budget-check.sh
 add_hook UserPromptSubmit capture-corrections.sh
 add_hook UserPromptSubmit mark-turn.sh
+add_hook UserPromptSubmit worktree-keyword.sh
 add_hook PreToolUse load-structure.sh "Edit|Write|MultiEdit"
 add_hook PostToolUse check-code.sh "Edit|Write|MultiEdit"
 add_hook Stop check-changed.sh
 changes=$((changes + added))
-ok "6 hooks$(changed "$added")"
+ok "7 hooks$(changed "$added")"
 
 if [ "$changes" -eq 0 ]; then
   printf '\n%sUp to date.%s\n\n' "$bold" "$reset"

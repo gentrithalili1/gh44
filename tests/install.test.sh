@@ -28,7 +28,7 @@ jq -e --arg m "$BRAIN/hooks/mark-turn.sh" --arg s "$BRAIN/hooks/check-changed.sh
 
 # Second run changes nothing
 "$BRAIN/install.sh" | grep -q "Up to date" || fail "second run was not a no-op"
-jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 1, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
+jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 3, 1, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
 
 # No settings.json yet
 export HOME="$(mktemp -d)"

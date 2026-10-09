@@ -23,6 +23,8 @@ Every task goes through five steps. Small tasks can skip straight to execute; bi
 | 4. Review | Run `/gh44-review` on your branch, fix what matters, then `/code-review` for bugs and `/simplify` for cleanups. | `/gh44-review`, `/code-review`, `/simplify` |
 | 5. Ship | Run `/gh44-pr` (or ask to open the PR): it checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | `/gh44-pr` |
 
+Want a ticket in its own worktree? Put `worktree:THU-3432` (or any name) in your prompt, and Claude starts there from the latest `main`.
+
 Long session or switching context? Run `/gh44-handoff` and start a new session from the file it writes.
 
 ### Skills that load on their own
