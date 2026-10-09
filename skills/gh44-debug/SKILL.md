@@ -1,5 +1,5 @@
 ---
-name: gh44-diagnosing-bugs
+name: gh44-debug
 description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose" or "debug this", or a bug or slowdown has no obvious cause.
 ---
 

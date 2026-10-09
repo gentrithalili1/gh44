@@ -19,7 +19,7 @@ Every task goes through five steps. Small tasks can skip straight to execute; bi
 | --- | --- | --- |
 | 1. Clarify | Type `/gh44-grill-me` and describe the feature or ticket. Answer each round until nothing is left open. | `/gh44-grill-me` |
 | 2. Plan | Ask for a plan, or switch to plan mode (`shift+tab`). Approve the step-by-step plan before any code is written. | `rules/workflow.md` |
-| 3. Execute | Let Claude build it slice by slice, with tests first where it makes sense. | `gh44-tdd`, `gh44-code-structure`, `gh44-diagnosing-bugs`, lint hooks |
+| 3. Execute | Let Claude build it slice by slice, with tests first where it makes sense. | `gh44-tdd`, `gh44-code-structure`, `gh44-debug`, lint hooks |
 | 4. Review | Run `/gh44-review-pr` on your branch, fix what matters, then `/code-review` for bugs and `/simplify` for cleanups. | `/gh44-review-pr`, `/code-review`, `/simplify` |
 | 5. Ship | Run `/gh44-create-pr` (or ask to open the PR): it checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | `/gh44-create-pr` |
 
@@ -35,7 +35,7 @@ Claude picks these when the work matches. You can also type their names.
 | --- | --- |
 | `gh44-code-structure` | Creating, moving or splitting TS/React files. A hook also adds it on the first TS edit of a session. |
 | `gh44-tdd` | Building a feature or fixing a bug test-first. |
-| `gh44-diagnosing-bugs` | A bug or slowdown without an obvious cause, or you say "debug this". |
+| `gh44-debug` | A bug or slowdown without an obvious cause, or you say "debug this". |
 | `gh44-writing-for-agents` | Editing skills, rules or a `CLAUDE.md`, including this repo. |
 | `gh44-learn` | You correct Claude or state a preference. |
 | `gh44-create-pr` | You ask to open or describe a PR. |
