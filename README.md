@@ -23,7 +23,7 @@ Every task goes through five steps. Small tasks can skip straight to execute; bi
 | 4. Review | Run `/gh44-review-pr` on your branch, fix what matters, then `/code-review` for bugs and `/simplify` for cleanups. | `/gh44-review-pr`, `/code-review`, `/simplify` |
 | 5. Ship | Run `/gh44-create-pr` (or ask to open the PR): it checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | `/gh44-create-pr` |
 
-Want a ticket in its own worktree? Put `worktree:<ticket-or-name>` (e.g. `worktree:ABC-123`) in your prompt, and Claude starts there from the latest `main`, in the folder the repo's `AGENTS.md`/`CLAUDE.md` asks for (else `.claude/worktrees/`).
+Want a ticket in its own worktree? Start your prompt with `worktree:<ticket-or-name>` (e.g. `worktree:ABC-123 fix the login`), and Claude starts there from the latest `main`, in the folder the repo's `AGENTS.md`/`CLAUDE.md` asks for (else `.claude/worktrees/`).
 
 Long session or switching context? Run `/gh44-handoff` and start a new session from the file it writes.
 

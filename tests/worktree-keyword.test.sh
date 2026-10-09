@@ -12,11 +12,12 @@ grep -q 'EnterWorktree with name `THU-3432`' <<< "$(jq -r '.hookSpecificOutput.a
 grep -q "origin/main" <<< "$out" || fail "base must be origin/main: $out"
 grep -q "AGENTS.md says where worktrees go" <<< "$out" || fail "repo location rule missing: $out"
 
-out="$(send "please start worktree:refactor/form.groups-v2")"
+out="$(send "  worktree:refactor/form.groups-v2 please")"
 grep -q '`refactor/form.groups-v2`' <<< "$out" || fail "names with / . - should match: $out"
 
 [ -z "$(send "fix the login redirect")" ] || fail "no keyword must stay silent"
 [ -z "$(send "see myworktree:foo")" ] || fail "keyword inside a word must stay silent"
+[ -z "$(send "in readme: put worktree:THU-3432 there")" ] || fail "keyword after the start must stay silent"
 [ -z "$(send "worktree: foo")" ] || fail "empty name must stay silent"
 
 echo "PASS worktree-keyword"
