@@ -12,3 +12,8 @@
 - Hooks return data and outcomes; the component formats copy and toasts.
 - The importers decide where a file lives; state lives in the lowest unit that reads it.
 - These lines and more are enforced by my lint rules. Full structure guide: the `gh44-code-structure` skill.
+
+## SEO and rendering
+
+- Prioritize SEO on public pages: server-render the content that should be indexed, use semantic HTML (one `h1`, headings in order, `<a href>` for navigation) and give every page its own title, description and image `alt`.
+- Server components by default. Add `"use client"` only when a component needs state, effects, event handlers or browser APIs, and push it down to the smallest leaf that does.
