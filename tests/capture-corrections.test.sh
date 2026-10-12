@@ -28,12 +28,14 @@ send "no, use a prop instead of context" > /dev/null
 send "do not explain too much, that was wrong" > /dev/null
 send "<agent-message from=\"x\"> never do that </agent-message>" > /dev/null
 send "<task-notification> <summary>don't stop</summary>" > /dev/null
+send "# On-call triage Never page for a single event" > /dev/null
+send "never $(printf 'x%.0s' $(seq 400))" > /dev/null
 [ "$(wc -l < "$copy/inbox.md")" -eq "$before" ] || fail "captured a non-correction: $(tail -3 "$copy/inbox.md")"
 
 send "$(printf 'never do this\nsecond line')" > /dev/null
 tail -1 "$copy/inbox.md" | grep -q "never do this second line" || fail "multi-line prompt not flattened"
 
-send "never $(printf 'x%.0s' $(seq 600))" > /dev/null
+send "never $(printf 'x%.0s' $(seq 390))" > /dev/null
 [ "$(tail -1 "$copy/inbox.md" | wc -c)" -lt 400 ] || fail "long prompt not truncated"
 
 rm "$copy/inbox.md"
