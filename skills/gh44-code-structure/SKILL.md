@@ -9,8 +9,8 @@ Repository rules win on a conflict. Follow the repository and mention the confli
 
 ## Unit shape
 
-- A unit is a folder for one component or one hook. A scene and `src` are units too.
-- Required: `Thing.tsx`, `Thing.test.tsx`, `index.ts`. Optional: `Thing.elements.tsx` (JSX only, no hooks), `messages.ts`, `types.ts`, `components/`, `hooks/`, `utils/`.
+- A unit is a folder for one component or one hook. A page (route) and `src` are units too.
+- Required: `Thing.tsx`, `Thing.test.tsx`, `index.ts`. Optional: `Thing.styles.tsx` (styled, presentational wrappers only: no hooks, copy or logic), `messages.ts`, `types.ts`, `components/`, `hooks/`, `utils/`.
 - `components/` and `hooks/` hold units only. `utils/` holds pure files only. `index.ts` only re-exports.
 - Never invent buckets such as `lib/`, `store/`, `shared/` or `features/`.
 
@@ -60,7 +60,7 @@ Imports go one way only: component, then hook, then pure.
 - Constants: the nearest `utils/`. Types: `types.ts` of the lowest unit that needs them.
 - GraphQL documents: beside the hook that runs them.
 - Copy: `messages.ts` of the unit that renders it.
-- Route entry: the scene's `index.ts`.
+- Route entry: the page's `index.ts`.
 
 ## Splitting hooks
 
