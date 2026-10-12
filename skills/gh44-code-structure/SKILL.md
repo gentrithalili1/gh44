@@ -10,7 +10,7 @@ Repository rules win on a conflict. Follow the repository and mention the confli
 ## Unit shape
 
 - A unit is a folder for one component or one hook. A page (route) and `src` are units too.
-- Required: `Thing.tsx`, `Thing.test.tsx`, `index.ts`. Optional: `Thing.styles.tsx` (styled, presentational wrappers only: no hooks, copy or logic), `messages.ts`, `types.ts`, `components/`, `hooks/`, `utils/`.
+- Required: `Thing.tsx`, `Thing.test.tsx`, `index.ts`. Optional: `Thing.elements.tsx` (the component's presentational building pieces: no hooks, copy or logic), `messages.ts`, `types.ts`, `components/`, `hooks/`, `utils/`.
 - `components/` and `hooks/` hold units only. `utils/` holds pure files only. `index.ts` only re-exports.
 - Never invent buckets such as `lib/`, `store/`, `shared/` or `features/`.
 
