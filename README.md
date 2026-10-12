@@ -47,6 +47,7 @@ Claude picks these when the work matches. You can also type their names.
 | `/gh44-grill-me` | Before planning a feature: Claude asks rounds of questions, each with a recommended answer. |
 | `/gh44-review-pr [pr]` | Reviewing a PR, branch or local changes the way I review. Nothing is posted to GitHub unless you ask. |
 | `/gh44-create-pr` | Shipping: commit, push, open the PR with a filled-in body. Uses the repo's PR template if it has one. |
+| `/gh44-resolve-conflicts <pr>` | A PR has merge conflicts: merges the base in a worktree, resolves, shows you the resolutions, pushes after you approve. |
 | `/gh44-handoff [next focus]` | Writing the session down so a fresh session can continue it. |
 | `/gh44-learn`, `/gh44-learn ingest`, `/gh44-learn tidy` | Saving a rule, sorting the inbox, cleaning up the rules. |
 
