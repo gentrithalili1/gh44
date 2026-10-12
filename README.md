@@ -24,6 +24,7 @@ git clone git@github.com:gentrithalili1/gh44.git ~/gh44 && ~/gh44/install.sh
 - [Learning loop](#learning-loop)
 - [Repository layout](#repository-layout)
 - [Install](#install)
+- [Uninstall](#uninstall)
 - [Credits](#credits)
 
 ---
@@ -181,6 +182,7 @@ gh44/
 ├── tests/           # shell tests for hooks, lint and install
 ├── docs/            # design spec and plan
 ├── install.sh       # idempotent installer
+├── uninstall.sh     # removes links, hooks and optionally the repo
 ├── log.md           # append-only log of every rule learned
 └── inbox.md         # captured corrections (gitignored)
 ```
@@ -203,6 +205,19 @@ The installer is safe to run again. It:
 2. Installs the lint packages with pnpm.
 3. Symlinks `CLAUDE.md`, `rules/` and every skill into `~/.claude`. It stops before changing anything if a real file is in the way.
 4. Registers the 7 hooks, backing up `settings.json` first.
+
+---
+
+## Uninstall
+
+```bash
+~/gh44/uninstall.sh                # remove links and hooks, keep the repo
+~/gh44/uninstall.sh --remove-repo  # also delete ~/gh44
+```
+
+It only removes links that point into this repo and hooks that run its scripts, and it backs up `settings.json` first. Your other skills, hooks and settings stay.
+
+`--remove-repo` refuses, before changing anything, when something would be lost: uncommitted changes, unpushed commits, or items still in `inbox.md`.
 
 ---
 
