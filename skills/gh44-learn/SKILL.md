@@ -17,8 +17,8 @@ Skip the approval only when he stated the rule plainly and you are very sure of 
 
 ## Modes
 
-- `/gh44-learn [lesson]` (capture): the lesson is the argument, or the latest correction in this session.
-- `/gh44-learn ingest`: process each item (`hooks/capture-corrections.sh` adds raw prompts that look like corrections; drop the ones that are not lessons) below `<!-- items below -->` in `inbox.md`, then delete the processed items. Keep an item and report it when its link cannot be read. Read links with the right tool: Artifact `read` for claude.ai artifacts, WebFetch for other URLs.
+- `/gh44-learn [lesson]` (capture): the lesson is the argument, or the latest correction in this session. `hooks/capture-corrections.sh` also starts this mode by itself for short prompts that open with a correction keyword; after handling the lesson (learned or rejected), delete its line from `inbox.md`.
+- `/gh44-learn ingest`: process each item (lessons the capture hook flagged but that were not handled in their session, plus anything pasted by hand; drop the ones that are not lessons) below `<!-- items below -->` in `inbox.md`, then delete the processed items. Keep an item and report it when its link cannot be read. Read links with the right tool: Artifact `read` for claude.ai artifacts, WebFetch for other URLs.
 - `/gh44-learn tidy`: review `CLAUDE.md`, every `rules/*.md` and every `skills/*/SKILL.md`. Merge duplicates, resolve contradictions, remove stale rules. Rewrite each "never" rule as the behaviour to follow, keeping "never" only for a hard guardrail, paired with the positive target. If `CLAUDE.md` plus `rules/` is over 60 lines, move the most topic-specific rules into skills. List the rules that a script could check as hook candidates.
 
 ## Route each lesson (first match wins)

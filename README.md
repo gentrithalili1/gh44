@@ -7,7 +7,7 @@ Every Claude Code session, in any repository, starts with my rules and works the
 - **Rules** (`rules/`) tell Claude how I work: communication, workflow and code.
 - **Skills** (`skills/`) load when the work needs them. See [How to use it](#how-to-use-it). Some are adapted from [Matt Pocock's skills](https://github.com/mattpocock/skills) (MIT, see `NOTICE`).
 - **Lint checks** (`lint/`) run on every edit and fix or flag my code conventions, without using tokens.
-- **Learning:** corrections are captured, and `/gh44-learn` turns them into rules after I approve.
+- **Learning:** short corrections are learned in the same session, with no command needed; `/gh44-learn` is there for everything else.
 
 The repository's own conventions always win over mine.
 
@@ -55,7 +55,7 @@ Claude picks these when the work matches. You can also type their names.
 
 - **Every TS edit:** ESLint runs with my rules and fixes or reports problems on changed lines.
 - **End of each turn:** every TS file changed in that turn is checked again, however it was edited.
-- **Every prompt:** messages that look like corrections are saved to `inbox.md` for `/gh44-learn ingest`.
+- **Every prompt:** a prompt of up to 100 characters that starts with *don't, never, always, stop, prefer, I prefer* or *not like this* (optionally after `no,`) makes Claude learn it right after doing the task. It is also saved to `inbox.md` and removed once handled, so `/gh44-learn ingest` only picks up what was missed.
 - **Session start:** warns when the core rules go over 60 lines or the inbox fills up.
 
 ## Install
