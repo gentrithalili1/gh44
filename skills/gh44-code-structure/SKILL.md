@@ -12,6 +12,7 @@ Repository rules win on a conflict. Follow the repository and mention the confli
 - A unit is a folder for one component or one hook. A page (route) and `src` are units too.
 - Required: `Thing.tsx`, `Thing.test.tsx`, `index.ts`. Optional: `Thing.elements.tsx` (the component's presentational building pieces: no hooks, copy or logic), `messages.ts`, `types.ts`, `components/`, `hooks/`, `utils/`.
 - `components/` and `hooks/` hold units only. `utils/` holds pure files only. `index.ts` only re-exports.
+- Presentational pieces (style props, passthrough props, children) go in `Thing.elements.tsx`. A piece moves to `components/` once it needs a hook, a handler, logic, copy or its own test.
 - Never invent buckets such as `lib/`, `store/`, `shared/` or `features/`.
 
 ## Components
