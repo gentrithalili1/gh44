@@ -36,3 +36,5 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-09 | rules/code.md | added | no any; status unions; exhaustive switch; no magic values; no swallowed errors; no floating promises; delete dead code; JSX section (no nested ternaries, no index keys, no && leaks, variant props, a11y elements) | Gentrit picked from suggestion list
 - 2026-10-09 | lint | added | brain/no-jsx-nested-ternary, brain/no-index-key, brain/no-leaked-render | Gentrit picked from suggestion list
 - 2026-10-09 | skills/gh44-review-pr/SKILL.md | replaced | Lint-covered list and non-lint checks extended with the new code rules | Gentrit picked from suggestion list
+- 2026-10-12 | hooks/capture-corrections | replaced | skip prompts over 400 chars and pasted documents starting with `#`: long prompts are task briefs from scripts and agents, not corrections | inbox filled with on-call triage and Slack prompts
+- 2026-10-12 | rules/code.md | added | Data layer (repo first, data hook wraps the client, server data only in the cache, update cache after mutations) and Forms (repo first, else hook around react-hook-form + zod in hooks/) | Gentrit picked from gh44 audit

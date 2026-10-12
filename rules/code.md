@@ -31,3 +31,15 @@
 
 - Prioritize SEO on public pages: server-render the content that should be indexed, use semantic HTML (one `h1`, headings in order, `<a href>` for navigation) and give every page its own title, description and image `alt`.
 - Server components by default. Add `"use client"` only when a component needs state, effects, event handlers or browser APIs, and push it down to the smallest leaf that does.
+
+## Data layer
+
+- Follow the repository's data layer (Apollo, TanStack Query over REST, …) unless I ask otherwise. For a fresh setup I usually say how; these are my defaults.
+- Fetch through a data hook that wraps the client (`useJob`, `useSaveJob`). Components call the hook, not the client.
+- Server data lives in the client's cache only: read it from the hook, never copy it into `useState` or a context.
+- After a mutation, update the cache (return the changed entity, or write it) instead of refetching.
+
+## Forms
+
+- Follow the repository's form setup when it has one.
+- Otherwise: a custom hook wrapping react-hook-form with a zod schema, in the form's own `hooks/` (`useJobForm`). The hook owns the schema, defaults and submit; the component renders the fields.
