@@ -12,7 +12,7 @@ Built from his real review comments (57 comments on 31 PRs). Review what a perso
 - A PR link or number: `gh pr diff <n>` and `gh pr view <n>`.
 - Nothing given: the current branch against its base, `git diff $(git merge-base origin/main HEAD)`.
 
-Read the changed files around each hunk before commenting. Never post to GitHub unless he asks.
+Read the changed files around each hunk before commenting. Post to GitHub only through the pending review below.
 
 ## What to look for, most frequent first
 
@@ -61,3 +61,31 @@ Same here: `src/components/File.tsx:57`
 - Code sketches go in a fenced block under the quote.
 
 After a `---` line, end with a bold one-line verdict in his style: "LGTM 👍🏼", "clean job 🔥", or "a few non-blocking comments, otherwise LGTM!". If nothing needs a comment, say so.
+
+## Pending review
+
+When the input was a PR and there is at least one comment, ask with the question tool: post all as a pending review (recommended), post some (he types the item numbers), or skip.
+
+A pending review is a draft only he can see; he edits, picks Approve / Comment / Request changes and submits it on GitHub. Create it with one call and no `event` field, which is what keeps it pending:
+
+```sh
+gh api repos/{owner}/{repo}/pulls/{n}/reviews --method POST --input review.json
+```
+
+```json
+{
+  "commit_id": "<headRefOid from gh pr view --json headRefOid>",
+  "comments": [
+    { "path": "src/hooks/useThing.ts", "line": 12, "side": "RIGHT", "body": "**Must fix:** this is doing an extra request…" }
+  ]
+}
+```
+
+- One inline comment per item, on its exact line; each `Same here:` location gets its own comment with body "same here".
+- Body: severity label in bold without the emoji (`**Non blocking:**`), then the quote text and any code sketch, unchanged.
+- Use `start_line` + `line` for a comment on a range, `"side": "LEFT"` for a deleted line.
+- Inline comments only land on lines inside the diff. Put any item outside it in the review `body` as `path:line` plus the comment.
+- Write `review.json` to a temp dir and delete it after.
+- GitHub allows one pending review per person per PR. On a 422 about an existing pending review, tell him to submit or discard it and offer to retry.
+
+Done when the call returns `"state": "PENDING"`: reply with the PR link and the count of comments posted, and remind him to submit it on GitHub.
