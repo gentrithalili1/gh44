@@ -89,29 +89,20 @@ flowchart LR
 
 ## Skills
 
-### Load on their own
+In workflow order. **Auto** skills load when the work matches, and you can also type them. **You type** skills run only when you call them.
 
-Claude picks these when the work matches. You can also type their names.
-
-| Skill | Loads when | What you get |
-| --- | --- | --- |
-| `gh44-tdd` | Building a feature or fixing a bug test-first. | Red-green-refactor loop, integration tests, mocking guidance. |
-| `gh44-debug` | A bug or slowdown without an obvious cause, or you say "debug this". | A diagnosis loop for hard bugs and performance regressions. |
-| `gh44-writing-for-agents` | Editing skills, rules or a `CLAUDE.md`, including this repo. | How to write short, testable instructions for agents. |
-| `gh44-learn` | You correct Claude or state a preference. | Saves the rule to the right file in this repo. |
-| `gh44-create-pr` | You ask to open or describe a PR. | Commit, push and a filled-in PR body. |
-| `gh44-ticket` | You run `/gh44-ticket` or paste a Linear or Sentry link to work on. | Reads the ticket, opens a worktree on its branch, then plans (Linear) or debugs (Sentry). Read-only on Linear. |
-
-### You type
-
-| Command | Use it for |
-| --- | --- |
-| `/gh44-grill-me` | Before planning a feature: rounds of questions, each with a recommended answer. |
-| `/gh44-review-pr [pr]` | Reviewing a PR, branch or local changes the way I review. Nothing is posted to GitHub unless you ask. |
-| `/gh44-create-pr` | Shipping: commit, push, open the PR. Uses the repo's PR template if it has one. |
-| `/gh44-resolve-conflicts <pr>` | Merges the base in a worktree, resolves, shows you the resolutions, pushes after you approve. |
-| `/gh44-handoff [next focus]` | Writing the session down so a fresh session can continue it. |
-| `/gh44-learn` · `ingest` · `tidy` | Saving a rule, sorting the inbox, cleaning up the rules. |
+| Step | Skill | How it starts | What it does |
+| --- | --- | --- | --- |
+| Start | `/gh44-ticket <Linear or Sentry link>` | Auto | Reads the ticket, creates a ready-to-run worktree named after the ticket ID, then plans (Linear) or debugs (Sentry). Read-only on Linear and Sentry. |
+| Clarify | `/gh44-grill-me` | You type | Rounds of questions, each with a recommended answer, until nothing is open. |
+| Build | `/gh44-tdd` | Auto | Red-green-refactor loop, integration tests, mocking guidance. |
+| Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs and slowdowns. |
+| Review | `/gh44-review-pr [pr]` | Auto | Reviews a PR, branch or local changes the way I review. Posts only what you pick. |
+| Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
+| Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR with the repo's template. |
+| Session | `/gh44-handoff [next focus]` | You type | Writes the session down so a fresh session can continue it. |
+| Brain | `/gh44-learn` · `ingest` · `tidy` | Auto | Saves a correction as a rule, sorts the inbox, cleans up the rules. |
+| Brain | `/gh44-writing-for-agents` | Auto | How to write skills, rules and `CLAUDE.md` files, this repo included. |
 
 ---
 
