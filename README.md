@@ -33,7 +33,7 @@ git clone git@github.com:gentrithalili1/gh44.git ~/gh44 && ~/gh44/install.sh
 
 | Part | Lives in | What it does | Token cost |
 | --- | --- | --- | --- |
-| 🧭 **Rules** | `rules/` | How I work: communication, workflow, code, precedence, learning. Loaded in every session. | Always loaded, kept under 60 lines |
+| 🧭 **Rules** | `rules/` | How I work: communication, workflow, code, precedence, learning. Loaded in every session. | Always loaded, kept under 160 lines |
 | 🧰 **Skills** | `skills/` | Step-by-step playbooks for clarifying, TDD, debugging, reviewing, shipping. Loaded only when the work needs them. | Only when used |
 | 🔍 **Lint checks** | `lint/` | My conventions as ESLint rules, run on every TS edit. Fixes what it can, sends the rest back to Claude. | None |
 | 🪝 **Hooks** | `hooks/` | Glue that runs lint, captures corrections, opens worktrees and guards the rules budget. | None |
@@ -73,7 +73,7 @@ flowchart LR
 | --- | --- | --- |
 | **1. Clarify** | Type `/gh44-grill-me` and describe the feature or ticket. Answer each round until nothing is left open. | `/gh44-grill-me` |
 | **2. Plan** | Ask for a plan, or switch to plan mode (`shift+tab`). Approve the step-by-step plan before any code is written. | `rules/workflow.md` |
-| **3. Execute** | Let Claude build it slice by slice, tests first where it makes sense. | `gh44-tdd`, `gh44-code-structure`, `gh44-debug`, lint hooks |
+| **3. Execute** | Let Claude build it slice by slice, tests first where it makes sense. | `gh44-tdd`, `gh44-debug`, lint hooks |
 | **4. Review** | Run `/gh44-review-pr` on your branch, fix what matters, then `/code-review` for bugs and `/simplify` for cleanups. | `/gh44-review-pr`, `/code-review`, `/simplify` |
 | **5. Ship** | Run `/gh44-create-pr`: it checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | `/gh44-create-pr` |
 
@@ -93,7 +93,6 @@ Claude picks these when the work matches. You can also type their names.
 
 | Skill | Loads when | What you get |
 | --- | --- | --- |
-| `gh44-code-structure` | Writing, reviewing, creating, moving or splitting TS/React code. A hook also adds it on the first TS edit of a session. | Types and exports, components, JSX, hooks, where files live, data layer, forms, tests, SEO and rendering. |
 | `gh44-tdd` | Building a feature or fixing a bug test-first. | Red-green-refactor loop, integration tests, mocking guidance. |
 | `gh44-debug` | A bug or slowdown without an obvious cause, or you say "debug this". | A diagnosis loop for hard bugs and performance regressions. |
 | `gh44-writing-for-agents` | Editing skills, rules or a `CLAUDE.md`, including this repo. | How to write short, testable instructions for agents. |
@@ -115,13 +114,14 @@ Claude picks these when the work matches. You can also type their names.
 
 ## Rules
 
-Always loaded, in every repository. Kept short on purpose: the session-start hook warns when they pass 60 lines.
+Always loaded, in every repository. Kept short on purpose: the session-start hook warns when they pass 160 lines.
 
 | File | Covers |
 | --- | --- |
 | [`communication.md`](rules/communication.md) | Casual, short answers. One best option: just do it. Several real options: ask once, recommend one. |
-| [`workflow.md`](rules/workflow.md) | Clarify → plan → execute → review → ship. Smallest correct change. Verify before saying done. Merge, never rebase. |
-| [`code.md`](rules/code.md) | Language-agnostic code rules: types, state unions, errors, async, naming, default stack. |
+| [`workflow.md`](rules/workflow.md) | Clarify → plan → execute → review → ship. Smallest correct change. Verify before saying done. Merge from `main`. |
+| [`code.md`](rules/code.md) | Types, errors, async, naming, React and JSX, SEO and rendering, data layer, forms, tests. |
+| [`structure.md`](rules/structure.md) | Where files live: unit shape, placement by importers, state flow, file kinds, homes, splitting hooks, refactors. |
 | [`precedence.md`](rules/precedence.md) | The repo wins on code conventions; my rules win on how to work with me. |
 | [`learning.md`](rules/learning.md) | When Claude may write a rule on its own, and when it must ask first. |
 
@@ -149,11 +149,10 @@ Registered in `~/.claude/settings.json` by `install.sh`. All shell, no tokens.
 
 | When | Hook | Does |
 | --- | --- | --- |
-| Session start | `budget-check.sh` | Warns when core rules pass 60 lines or the inbox fills up. |
+| Session start | `budget-check.sh` | Warns when core rules pass 160 lines or the inbox fills up. |
 | Every prompt | `capture-corrections.sh` | Catches short corrections (see [Learning loop](#learning-loop)). |
 | Every prompt | `worktree-keyword.sh` | Handles the `worktree:<name>` prefix. |
 | Every prompt | `mark-turn.sh` | Marks the start of a turn for the end-of-turn check. |
-| Before a TS edit | `load-structure.sh` | Loads `gh44-code-structure` on the first TS edit of a session. |
 | After a TS edit | `check-code.sh` | Runs ESLint on the changed lines; fixes or reports. |
 | End of turn | `check-changed.sh` | Re-checks every TS file changed in the turn, however it was edited. |
 
@@ -166,7 +165,7 @@ GH44 gets better every time I correct it.
 1. **Capture.** A prompt of up to 100 characters starting with *don't, never, always, stop, prefer, I prefer* or *not like this* (optionally after `no,`) is flagged and saved to `inbox.md`.
 2. **Learn.** Claude finishes the task, then writes the rule to the right file here, commits and pushes, and tells me in one line. If it's unsure, it shows me the rule first and waits.
 3. **Ingest.** `/gh44-learn ingest` sorts anything still left in the inbox, including notes and links I paste there myself.
-4. **Tidy.** `/gh44-learn tidy` merges duplicates, resolves contradictions, drops stale rules and moves topic-specific ones into skills when the core passes 60 lines.
+4. **Tidy.** `/gh44-learn tidy` merges duplicates, resolves contradictions, drops stale rules and moves topic-specific ones into skills when the core passes 160 lines.
 
 ---
 

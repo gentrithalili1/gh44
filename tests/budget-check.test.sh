@@ -7,16 +7,16 @@ HOOK="$isolated/hooks/budget-check.sh"
 fail() { echo "FAIL: $1" >&2; exit 1; }
 tmp="$(mktemp -d)"
 
-seq 60 > "$tmp/ok.md"
-[ -z "$("$HOOK" "$tmp/ok.md" "$tmp/none")" ] || fail "60 lines should be silent"
+seq 160 > "$tmp/ok.md"
+[ -z "$("$HOOK" "$tmp/ok.md" "$tmp/none")" ] || fail "160 lines should be silent"
 
-seq 61 > "$tmp/big.md"
-"$HOOK" "$tmp/big.md" "$tmp/none" | grep -q "61 lines" || fail "61 lines should warn"
+seq 161 > "$tmp/big.md"
+"$HOOK" "$tmp/big.md" "$tmp/none" | grep -q "161 lines" || fail "161 lines should warn"
 
 [ -z "$("$HOOK" "$tmp/missing.md" "$tmp/none")" ] || fail "missing file should be silent"
 
-printf '%s\n' $(seq 60) > "$tmp/no-newline.md"; printf '61' >> "$tmp/no-newline.md"
-"$HOOK" "$tmp/no-newline.md" "$tmp/none" | grep -q "61 lines" || fail "last line without newline should count"
+printf '%s\n' $(seq 160) > "$tmp/no-newline.md"; printf '161' >> "$tmp/no-newline.md"
+"$HOOK" "$tmp/no-newline.md" "$tmp/none" | grep -q "161 lines" || fail "last line without newline should count"
 
 brain="$(mktemp -d)/brain"
 mkdir -p "$brain/hooks" && cp "$HOOK" "$brain/hooks/"
@@ -28,11 +28,11 @@ echo "- item 10" >> "$brain/inbox.md"
 
 # Rules count toward the always-loaded budget
 core="$(mktemp -d)"
-seq 30 > "$core/CLAUDE.md"
+seq 100 > "$core/CLAUDE.md"
 mkdir -p "$core/rules"
-seq 20 > "$core/rules/a.md"
-[ -z "$("$HOOK" "$core/CLAUDE.md" "$core/rules")" ] || fail "50 lines in total should be silent"
+seq 50 > "$core/rules/a.md"
+[ -z "$("$HOOK" "$core/CLAUDE.md" "$core/rules")" ] || fail "150 lines in total should be silent"
 seq 11 > "$core/rules/b.md"
-"$HOOK" "$core/CLAUDE.md" "$core/rules" | grep -q "61 lines" || fail "CLAUDE.md plus rules over 60 should warn"
+"$HOOK" "$core/CLAUDE.md" "$core/rules" | grep -q "161 lines" || fail "CLAUDE.md plus rules over 160 should warn"
 
 echo "PASS budget-check"

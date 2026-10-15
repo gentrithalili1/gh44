@@ -12,7 +12,7 @@ echo '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"plugin.sh
 [ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$BRAIN/CLAUDE.md" ] || fail "CLAUDE.md not linked"
 [ "$(readlink "$HOME/.claude/skills/gh44-learn")" = "$BRAIN/skills/gh44-learn" ] || fail "learn not linked"
 [ "$(readlink "$HOME/.claude/rules")" = "$BRAIN/rules" ] || fail "rules not linked"
-[ "$(readlink "$HOME/.claude/skills/gh44-code-structure")" = "$BRAIN/skills/gh44-code-structure" ] || fail "code-structure not linked"
+[ "$(readlink "$HOME/.claude/skills/gh44-tdd")" = "$BRAIN/skills/gh44-tdd" ] || fail "tdd not linked"
 jq -e --arg c "$BRAIN/hooks/budget-check.sh" \
   '[.hooks.SessionStart[].hooks[].command] == ["plugin.sh", $c]' "$HOME/.claude/settings.json" > /dev/null \
   || fail "hooks wrong: $(cat "$HOME/.claude/settings.json")"
@@ -28,7 +28,12 @@ jq -e --arg m "$BRAIN/hooks/mark-turn.sh" --arg s "$BRAIN/hooks/check-changed.sh
 
 # Second run changes nothing
 "$BRAIN/install.sh" | grep -q "Up to date" || fail "second run was not a no-op"
-jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 3, 1, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
+jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 3, 0, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
+
+# A retired hook is dropped from settings
+jq --arg c "$BRAIN/hooks/load-structure.sh" '.hooks.PreToolUse = [{matcher: "Edit", hooks: [{type: "command", command: $c}]}]' "$HOME/.claude/settings.json" > "$HOME/s.json" && mv "$HOME/s.json" "$HOME/.claude/settings.json"
+"$BRAIN/install.sh" > /dev/null
+jq -e '.hooks.PreToolUse == null' "$HOME/.claude/settings.json" > /dev/null || fail "retired hook left in settings"
 
 # No settings.json yet
 export HOME="$(mktemp -d)"
@@ -76,8 +81,8 @@ spaced="$(mktemp -d)/my brain"
 mkdir -p "$spaced" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$spaced"/
 "$spaced/install.sh" > /dev/null
 command="$(jq -r '.hooks.SessionStart[0].hooks[0].command' "$HOME/.claude/settings.json")"
-seq 61 > "$HOME/big.md"
-bash -c "$command $HOME/big.md $HOME/no-rules" | grep -q "61 lines" || fail "hook command breaks on a path with a space"
+seq 161 > "$HOME/big.md"
+bash -c "$command $HOME/big.md $HOME/no-rules" | grep -q "161 lines" || fail "hook command breaks on a path with a space"
 moved="$(mktemp -d)/moved"
 mv "$spaced" "$moved"
 rm "$HOME/.claude/CLAUDE.md" "$HOME/.claude/rules" "$HOME/.claude/skills/"*
@@ -90,9 +95,9 @@ export HOME="$(mktemp -d)"
 copy="$(mktemp -d)/brain"
 mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$copy"/
 "$copy/install.sh" > /dev/null
-rm -rf "$copy/skills/gh44-code-structure"
+rm -rf "$copy/skills/gh44-tdd"
 "$copy/install.sh" > /dev/null
-[ ! -L "$HOME/.claude/skills/gh44-code-structure" ] || fail "dangling skill link left behind"
+[ ! -L "$HOME/.claude/skills/gh44-tdd" ] || fail "dangling skill link left behind"
 ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 "$copy/install.sh" > /dev/null
 [ -L "$HOME/.claude/skills/foreign" ] || fail "removed a link that is not ours"

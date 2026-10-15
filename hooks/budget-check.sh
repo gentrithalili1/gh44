@@ -4,7 +4,7 @@
 file="${1:-$HOME/.claude/CLAUDE.md}"
 rules="${2:-$HOME/.claude/rules}"
 inbox="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/inbox.md"
-limit=60
+limit=160
 inbox_limit=10
 
 core=()

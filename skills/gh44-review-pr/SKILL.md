@@ -19,13 +19,13 @@ Read the changed files around each hunk before commenting. Post to GitHub only t
 1. **Comments that repeat the code.** JSDoc or inline comments that restate the code, narrate the ticket or explain history: ask to remove them.
 2. **Re-created code.** A type, util, constant or validator that already exists in the repo or a shared package: point to it and ask to reuse or export it. Two places that must stay in sync should share one constant.
 3. **Extra requests.** A new query for data that is already in props, an existing fragment or the cache: ask to add the field to the existing query or read it from what is passed in.
-4. **Wrong file.** Code that doesn't follow the repo's file layout (its `AGENTS.md`/`CLAUDE.md` and sibling folders) or, where the repo is silent, the `gh44-code-structure` guide: helper JSX, constants or non-hook logic in the wrong file. Reason: consistency.
+4. **Wrong file.** Code that doesn't follow the repo's file layout (its `AGENTS.md`/`CLAUDE.md` and sibling folders) or, where the repo is silent, my `~/.claude/rules/structure.md`: helper JSX, constants or non-hook logic in the wrong file. Reason: consistency.
 5. **Is this needed?** An unneeded `try/catch`, an extra returned field, a rename that hides an API, an unfamiliar pattern: ask a short question, no fix needed.
 6. **Readability.** A long condition becomes named booleans; a timer or rotation inside a component becomes its own hook. Sketch the fix in a plain code block.
 7. **Behaviour.** If the change affects UI, say what to try locally and what could go wrong (stale error after submit, value overwritten on load).
 8. **Modern React.** Prefer current APIs, for example `useEffectEvent` over a ref that mirrors a callback.
 
-Also check his code rules in `~/.claude/rules/code.md` and the `gh44-code-structure` skill when the lint hooks cannot catch them: logic that could stand alone as a hook or util, long hook names, state lifted too high, boolean piles instead of a status union, non-exhaustive `switch`, boolean props instead of a `variant`, wrong element for the job (`div` with `onClick`, input without a label), magic values, swallowed errors, floating promises and code left dead by the change.
+Also check his rules in `~/.claude/rules/code.md` and `~/.claude/rules/structure.md` when the lint hooks cannot catch them: logic that could stand alone as a hook or util, long hook names, state lifted too high, boolean piles instead of a status union, non-exhaustive `switch`, boolean props instead of a `variant`, wrong element for the job (`div` with `onClick`, input without a label), magic values, swallowed errors, floating promises and code left dead by the change.
 
 He does not comment on tests, formatting, import order, i18n or styling tokens. Skip them unless something is broken.
 
