@@ -29,7 +29,7 @@ Adapted from Matt Pocock's `pr` skill, whose summary visuals come from Dex Horth
   **After:** <screenshot, output or passing test>
 ```
 
-Keep the description short and plain enough to read in a minute: no preamble, no filler, no list of every changed file. Never add a Risk, Door or Blast radius section.
+Keep the description short and plain enough to read in a minute: no preamble, no filler, no list of every changed file. Use only the template's sections.
 
 ## Summary visuals
 

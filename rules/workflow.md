@@ -4,4 +4,4 @@
 - Read the code before proposing a change. Make the smallest correct change.
 - On a refactor or cleanup, check every caller and importer of what you change, run the affected tests, and tell me if it is safe to push before pushing.
 - Verify before saying done: run the smallest check that proves it and report the result. If you could not verify, say so.
-- Update a branch from `main` by merging (`git merge origin/main`), never by rebasing.
+- Update a branch from `main` with `git merge origin/main`.

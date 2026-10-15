@@ -93,7 +93,7 @@ Claude picks these when the work matches. You can also type their names.
 
 | Skill | Loads when | What you get |
 | --- | --- | --- |
-| `gh44-code-structure` | Creating, moving or splitting TS/React files. A hook also adds it on the first TS edit of a session. | Where files live, how to name and split components, hooks and utils. |
+| `gh44-code-structure` | Writing, reviewing, creating, moving or splitting TS/React code. A hook also adds it on the first TS edit of a session. | Types and exports, components, JSX, hooks, where files live, data layer, forms, tests, SEO and rendering. |
 | `gh44-tdd` | Building a feature or fixing a bug test-first. | Red-green-refactor loop, integration tests, mocking guidance. |
 | `gh44-debug` | A bug or slowdown without an obvious cause, or you say "debug this". | A diagnosis loop for hard bugs and performance regressions. |
 | `gh44-writing-for-agents` | Editing skills, rules or a `CLAUDE.md`, including this repo. | How to write short, testable instructions for agents. |
@@ -121,7 +121,7 @@ Always loaded, in every repository. Kept short on purpose: the session-start hoo
 | --- | --- |
 | [`communication.md`](rules/communication.md) | Casual, short answers. One best option: just do it. Several real options: ask once, recommend one. |
 | [`workflow.md`](rules/workflow.md) | Clarify → plan → execute → review → ship. Smallest correct change. Verify before saying done. Merge, never rebase. |
-| [`code.md`](rules/code.md) | Types, errors, async, naming, React and JSX, SEO and rendering, data layer, forms. |
+| [`code.md`](rules/code.md) | Language-agnostic code rules: types, state unions, errors, async, naming, default stack. |
 | [`precedence.md`](rules/precedence.md) | The repo wins on code conventions; my rules win on how to work with me. |
 | [`learning.md`](rules/learning.md) | When Claude may write a rule on its own, and when it must ask first. |
 
