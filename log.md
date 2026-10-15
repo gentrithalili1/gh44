@@ -48,3 +48,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-15 | rules/code.md | added | type over interface except props, no enum; named exports via index.ts; React Compiler instead of manual memo; Tests: RTL by role, userEvent, MSW, no snapshots | Gentrit, rules Q&A round 1
 - 2026-10-15 | rules/code.md | added | styling from tokens only; skeleton + error boundary + empty state; Intl formatting, ISO UTC dates | Gentrit, rules Q&A round 2
 - 2026-10-15 | rules/learning.md, skills/gh44-learn/SKILL.md | replaced | approval goes through the question tool; also for changes Claude proposes itself; plain, sure statements still skip it | "ask me with the question tool … if you are very sure, do not ask me"
+- 2026-10-15 | rules/learning.md, skills/gh44-learn/SKILL.md | replaced | "learn this" writes directly when sure; inbox items always asked with the question tool | "if I say learn this … but if you have something in inbox … ask me"
