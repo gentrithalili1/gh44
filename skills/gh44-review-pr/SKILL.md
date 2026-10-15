@@ -64,10 +64,17 @@ After a `---` line, end with a bold one-line verdict in his style: "LGTM üëçüè
 
 ## Pending review
 
-When the input was a PR and there is at least one comment, show him the numbered comments first, then ask with the question tool. Put the full numbered list in each option's `preview` too, so he sees the comments while he picks. Two options:
+When the input was a PR, he approves what goes to GitHub: post only what he picks. Show him the full review first, then ask with the question tool, with the full review in each option's `preview` too, so he sees it while he picks.
+
+At least one comment:
 
 1. **Post all** (recommended): every comment goes into the pending review.
-2. **Post some**: he types the item numbers to post in Other, for example `1, 3`.
+2. **Post some**: he types the item numbers in Other, for example `1, 3`; only those go into the pending review.
+
+No comments:
+
+1. **Approve PR** (recommended): `gh pr review <n> --approve --body "<verdict>"`. Done when gh confirms the approval; reply with the PR link.
+2. **Skip**: post nothing.
 
 A pending review is a draft only he can see; he edits, picks Approve / Comment / Request changes and submits it on GitHub. Create it with one call and no `event` field, which is what keeps it pending:
 
