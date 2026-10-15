@@ -13,6 +13,7 @@ echo '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"plugin.sh
 [ "$(readlink "$HOME/.claude/skills/gh44-learn")" = "$BRAIN/skills/gh44-learn" ] || fail "learn not linked"
 [ "$(readlink "$HOME/.claude/rules")" = "$BRAIN/rules" ] || fail "rules not linked"
 [ "$(readlink "$HOME/.claude/skills/gh44-tdd")" = "$BRAIN/skills/gh44-tdd" ] || fail "tdd not linked"
+[ "$(readlink "$HOME/.claude/agents/gh44-reviewer.md")" = "$BRAIN/agents/gh44-reviewer.md" ] || fail "reviewer agent not linked"
 jq -e --arg c "$BRAIN/hooks/budget-check.sh" \
   '[.hooks.SessionStart[].hooks[].command] == ["plugin.sh", $c]' "$HOME/.claude/settings.json" > /dev/null \
   || fail "hooks wrong: $(cat "$HOME/.claude/settings.json")"
@@ -93,11 +94,12 @@ jq -e --arg c "$moved/hooks/budget-check.sh" '[.hooks.SessionStart[].hooks[].com
 # Removed skills leave no dangling links
 export HOME="$(mktemp -d)"
 copy="$(mktemp -d)/brain"
-mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$copy"/
+mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$BRAIN"/agents "$copy"/
 "$copy/install.sh" > /dev/null
-rm -rf "$copy/skills/gh44-tdd"
+rm -rf "$copy/skills/gh44-tdd" "$copy/agents/gh44-verifier.md"
 "$copy/install.sh" > /dev/null
 [ ! -L "$HOME/.claude/skills/gh44-tdd" ] || fail "dangling skill link left behind"
+[ ! -L "$HOME/.claude/agents/gh44-verifier.md" ] || fail "dangling agent link left behind"
 ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 "$copy/install.sh" > /dev/null
 [ -L "$HOME/.claude/skills/foreign" ] || fail "removed a link that is not ours"

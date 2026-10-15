@@ -18,6 +18,7 @@ git clone git@github.com:gentrithalili1/gh44.git ~/gh44 && ~/gh44/install.sh
 - [How it works](#how-it-works)
 - [The workflow](#the-workflow)
 - [Skills](#skills)
+- [Agents](#agents)
 - [Rules](#rules)
 - [Lint checks](#lint-checks)
 - [Hooks](#hooks)
@@ -35,6 +36,7 @@ git clone git@github.com:gentrithalili1/gh44.git ~/gh44 && ~/gh44/install.sh
 | --- | --- | --- | --- |
 | 🧭 **Rules** | `rules/` | How I work: communication, workflow, code, precedence, learning. Loaded in every session. | Always loaded, kept under 160 lines |
 | 🧰 **Skills** | `skills/` | Step-by-step playbooks for clarifying, TDD, debugging, reviewing, shipping. Loaded only when the work needs them. | Only when used |
+| 🤖 **Agents** | `agents/` | Subagents that review and verify in a fresh context, so the main session stays clean. | Only when used |
 | 🔍 **Lint checks** | `lint/` | My conventions as ESLint rules, run on every TS edit. Fixes what it can, sends the rest back to Claude. | None |
 | 🪝 **Hooks** | `hooks/` | Glue that runs lint, captures corrections, opens worktrees and guards the rules budget. | None |
 | 🧠 **Learning** | `inbox.md`, `/gh44-learn` | Turns my corrections into new rules, committed back to this repo. | Only when learning |
@@ -98,6 +100,7 @@ Claude picks these when the work matches. You can also type their names.
 | `gh44-writing-for-agents` | Editing skills, rules or a `CLAUDE.md`, including this repo. | How to write short, testable instructions for agents. |
 | `gh44-learn` | You correct Claude or state a preference. | Saves the rule to the right file in this repo. |
 | `gh44-create-pr` | You ask to open or describe a PR. | Commit, push and a filled-in PR body. |
+| `gh44-ticket` | You run `/gh44-ticket` or paste a Linear or Sentry link to work on. | Reads the ticket, opens a worktree on its branch, then plans (Linear) or debugs (Sentry). Read-only on Linear. |
 
 ### You type
 
@@ -109,6 +112,17 @@ Claude picks these when the work matches. You can also type their names.
 | `/gh44-resolve-conflicts <pr>` | Merges the base in a worktree, resolves, shows you the resolutions, pushes after you approve. |
 | `/gh44-handoff [next focus]` | Writing the session down so a fresh session can continue it. |
 | `/gh44-learn` · `ingest` · `tidy` | Saving a rule, sorting the inbox, cleaning up the rules. |
+
+---
+
+## Agents
+
+Linked into `~/.claude/agents`. Each runs in its own context and returns only its result.
+
+| Agent | Used by | Returns |
+| --- | --- | --- |
+| `gh44-reviewer` | `/gh44-review-pr`, before `/gh44-create-pr` | The review in my style. Read-only; posting stays in the main session. |
+| `gh44-verifier` | "Verify before done", `/gh44-create-pr` | `PASS`, or the typecheck, lint and related-test failures for the changed packages. |
 
 ---
 
@@ -176,6 +190,7 @@ gh44/
 ├── CLAUDE.md        # entry point, linked to ~/.claude/CLAUDE.md
 ├── rules/           # always-on rules
 ├── skills/          # gh44-* skills, each linked into ~/.claude/skills
+├── agents/          # gh44-* subagents, each linked into ~/.claude/agents
 ├── hooks/           # shell hooks registered by install.sh
 ├── lint/            # ESLint config and custom rules
 ├── tests/           # shell tests for hooks, lint and install

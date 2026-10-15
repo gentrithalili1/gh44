@@ -8,7 +8,7 @@ copy_brain() {
   local dir
   dir="$(mktemp -d)/brain"
   mkdir -p "$dir"
-  cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/uninstall.sh "$BRAIN"/hooks "$BRAIN"/skills "$dir"/
+  cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/uninstall.sh "$BRAIN"/hooks "$BRAIN"/skills "$BRAIN"/agents "$dir"/
   echo "$dir"
 }
 
@@ -22,6 +22,7 @@ ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 [ ! -e "$HOME/.claude/CLAUDE.md" ] || fail "CLAUDE.md link left"
 [ ! -e "$HOME/.claude/rules" ] || fail "rules link left"
 [ ! -L "$HOME/.claude/skills/gh44-learn" ] || fail "skill link left"
+[ ! -L "$HOME/.claude/agents/gh44-reviewer.md" ] || fail "agent link left"
 [ -L "$HOME/.claude/skills/foreign" ] || fail "removed a link that is not ours"
 jq -e '. == {"model":"opus","hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"plugin.sh"}]}]}}' "$HOME/.claude/settings.json" > /dev/null \
   || fail "settings wrong: $(cat "$HOME/.claude/settings.json")"

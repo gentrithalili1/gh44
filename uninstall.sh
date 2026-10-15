@@ -54,10 +54,10 @@ fi
 
 step 1 Links
 unlinked=0
-for link in "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/rules" "$CLAUDE_DIR"/skills/*; do
+for link in "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/rules" "$CLAUDE_DIR"/skills/* "$CLAUDE_DIR"/agents/*; do
   [ -L "$link" ] || continue
   case "$(readlink "$link")" in
-    "$BRAIN/CLAUDE.md" | "$BRAIN/rules" | "$BRAIN"/skills/*) rm "$link" && unlinked=$((unlinked + 1)) ;;
+    "$BRAIN/CLAUDE.md" | "$BRAIN/rules" | "$BRAIN"/skills/* | "$BRAIN"/agents/*) rm "$link" && unlinked=$((unlinked + 1)) ;;
   esac
 done
 changes=$((changes + unlinked))

@@ -14,6 +14,10 @@ Built from his real review comments (57 comments on 31 PRs). Review what a perso
 
 Read the changed files around each hunk before commenting. Post to GitHub only through the pending review below.
 
+## Run in a fresh context
+
+Unless you are the `gh44-reviewer` agent, dispatch it with the input and wait for its review. Show its output to him unchanged, then do the Pending review step yourself.
+
 ## What to look for, most frequent first
 
 1. **Comments that repeat the code.** JSDoc or inline comments that restate the code, narrate the ticket or explain history: ask to remove them.

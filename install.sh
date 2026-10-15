@@ -61,6 +61,12 @@ for skill in "$BRAIN"/skills/*/; do
   sources+=("$skill")
   targets+=("$CLAUDE_DIR/skills/$(basename "$skill")")
 done
+skill_count=$((${#targets[@]} - 2))
+for agent in "$BRAIN"/agents/*.md; do
+  [ -f "$agent" ] || continue
+  sources+=("$agent")
+  targets+=("$CLAUDE_DIR/agents/$(basename "$agent")")
+done
 
 # Check every target before linking anything, so a conflict never leaves a half install.
 # A link whose target no longer exists (the brain moved) is replaced.
@@ -81,7 +87,7 @@ if [ "${#conflicts[@]}" -gt 0 ]; then
   exit 1
 fi
 
-mkdir -p "$CLAUDE_DIR/skills"
+mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/agents"
 linked=0
 for i in "${!targets[@]}"; do
   target="${targets[$i]}"
@@ -90,14 +96,14 @@ for i in "${!targets[@]}"; do
   ln -s "${sources[$i]}" "$target"
   linked=$((linked + 1))
 done
-for link in "$CLAUDE_DIR"/skills/*; do
+for link in "$CLAUDE_DIR"/skills/* "$CLAUDE_DIR"/agents/*; do
   [ -L "$link" ] && [ ! -e "$link" ] || continue
   case "$(readlink "$link")" in
-    "$BRAIN"/skills/*) rm "$link" && linked=$((linked + 1)) ;;
+    "$BRAIN"/skills/* | "$BRAIN"/agents/*) rm "$link" && linked=$((linked + 1)) ;;
   esac
 done
 changes=$((changes + linked))
-ok "CLAUDE.md, rules, $((${#targets[@]} - 2)) skills$(changed "$linked")"
+ok "CLAUDE.md, rules, $skill_count skills, $((${#targets[@]} - 2 - skill_count)) agents$(changed "$linked")"
 
 step 4 Hooks
 # inbox.md is gitignored, so a fresh clone needs one for capture-corrections to write to.
