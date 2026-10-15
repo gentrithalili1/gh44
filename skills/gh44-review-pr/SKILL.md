@@ -31,32 +31,32 @@ He does not comment on tests, formatting, import order, i18n or styling tokens. 
 
 ## How to write the comments
 
-- Ask, don't order: "can we…?", "should we…?", "WDYT?". Admit missing context when unsure: "I hope I'm not missing something!"
+- Ask, don't order: "can we…?", "should we…?", "WDYT?". "I hope I'm not missing something!" goes on at most one comment per review, the one where you really lack context.
 - Pick a severity per comment: Non blocking for most, Suggestion for ideas, Must fix only for wrong data, extra requests or broken behaviour.
 - One comment per issue. On the next occurrence write only "same here".
-- Short and casual, often ending with "!". Code sketches in plain fenced blocks, not GitHub `suggestion` blocks.
+- Short, concise and nonchalant: one or two sentences, often ending with "!". Name the issue and the ask; leave out the reasoning chain. Code sketches in plain fenced blocks, not GitHub `suggestion` blocks.
 - Out-of-scope ideas: "we can handle this in a separate ticket".
 
 ## Output
 
-A numbered list, most severe first. Each item has a heading with its severity and short location, the full clickable path below it, then the comment as a quote:
+A markdown numbered list, most severe first; he picks what to post by these numbers. Each item starts with its severity and short location, then the full clickable path, then the comment as a quote:
 
 ```
-### 1. 🔴 Must fix · `useThing.ts:12`
-`src/hooks/useThing.ts:12`
-> this is doing an extra request every render, can we read `country` from the entity instead?
+1. 🔴 Must fix · `useThing.ts:12`
+   `src/hooks/useThing.ts:12`
+   > this is doing an extra request every render, can we read `country` from the entity instead?
 
-### 2. 🟡 Non blocking · `File.tsx:42`
-`src/components/File.tsx:42`
-> should we remove this comment? It is self-explanatory
-Same here: `src/components/File.tsx:57`
+2. 🟡 Non blocking · `File.tsx:42`
+   `src/components/File.tsx:42`
+   > should we remove this comment? It is self-explanatory
+   Same here: `src/components/File.tsx:57`
 
-### 3. 🔵 Suggestion · `useCart.ts:30`
-`src/hooks/useCart.ts:30`
-> `total` is just `items.length`, we can handle this in a separate ticket!
+3. 🔵 Suggestion · `useCart.ts:30`
+   `src/hooks/useCart.ts:30`
+   > `total` is just `items.length`, we can handle this in a separate ticket!
 ```
 
-- Severity lives in the heading (🔴 Must fix, 🟡 Non blocking, 🔵 Suggestion), so the quoted comment starts straight with the content.
+- Severity leads the item (🔴 Must fix, 🟡 Non blocking, 🔵 Suggestion), so the quoted comment starts straight with the content.
 - Repeats of an issue go on a `Same here:` line under the first item instead of a new item.
 - Code sketches go in a fenced block under the quote.
 
@@ -70,6 +70,7 @@ At least one comment:
 
 1. **Post all** (recommended): every comment goes into the pending review.
 2. **Post some**: he types the item numbers in Other, for example `1, 3`; only those go into the pending review.
+3. **Approve PR**: approve as below, with no comments.
 
 No comments:
 
