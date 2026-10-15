@@ -17,12 +17,11 @@ Done when you can state the goal, the acceptance criteria and the parts of the c
 
 ## 2. Create the worktree
 
-Run in the repo root, after `git fetch origin`:
+Name: the ticket ID, used for both the worktree folder and the branch: the Linear identifier (`ABC-123` from `linear.app/<workspace>/issue/ABC-123/...`) or `sentry-<shortId>`. Run `git fetch origin` first. `<base>` is the remote default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`, usually `origin/main`). Take the first case that matches:
 
-- Name: the ticket ID, used for both the worktree folder and the branch: the Linear identifier (`THU-3662` from `linear.app/.../issue/THU-3662/...`) or `sentry-<shortId>`.
-- If `git worktree list` already has that branch, enter it with `EnterWorktree` `path` and say you are resuming.
-- Otherwise `git worktree add <dir>/<name> -b <name> origin/main`, where `<dir>` is what the repo's `CLAUDE.md`/`AGENTS.md` says, else `.claude/worktrees`. Then `EnterWorktree` with that `path`.
-- Make it ready to run: copy every gitignored `.env*` file from the main checkout to the same path in the worktree (from `git ls-files --others --ignored --exclude-standard`, skipping `node_modules` and worktree folders), then install dependencies with the lockfile frozen in the background while you go on to step 3. Done when the install has finished and the env files are in place, so he can start the app there anytime.
+- **Already in a linked worktree** (`git rev-parse --git-dir` differs from `--git-common-dir`, for example one the editor created): if HEAD is detached, `git switch --no-track -c <name> <base>`. If dependencies are not installed yet, run `~/gh44/hooks/prepare-worktree.sh <this worktree> <main checkout>` in the background. Stay here.
+- **`git worktree list` has the branch `<name>`:** `EnterWorktree` with its `path` and say you are resuming.
+- **In the main checkout:** `git worktree add --no-track <dir>/<name> -b <name> <base>`, where `<dir>` is what the repo's `CLAUDE.md`/`AGENTS.md` says, else `.worktrees`. `EnterWorktree` with that `path`, then run `~/gh44/hooks/prepare-worktree.sh <path> <main checkout>` in the background while you go on to step 3; check it finished before running code.
 
 Tell him in one line: the worktree path and branch.
 

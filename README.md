@@ -81,7 +81,7 @@ flowchart LR
 
 ### Shortcuts
 
-- **Worktree per ticket:** start a prompt with `worktree:<ticket-or-name>` (e.g. `worktree:ABC-123 fix the login`). Claude starts there from the latest `main`, in the folder the repo's `AGENTS.md`/`CLAUDE.md` asks for, else `.claude/worktrees/`.
+- **Worktree per ticket:** `/gh44-ticket <link>` creates `.worktrees/<ticket ID>` on its own branch from the latest `main` (see [Worktrees and your editor](#worktrees-and-your-editor)).
 - **Hand off a long session:** run `/gh44-handoff` and start a fresh session from the file it writes.
 - **Merge conflicts:** run `/gh44-resolve-conflicts <pr>`.
 
@@ -156,10 +156,19 @@ Registered in `~/.claude/settings.json` by `install.sh`. All shell, no tokens.
 | --- | --- | --- |
 | Session start | `budget-check.sh` | Warns when core rules pass 160 lines or the inbox fills up. |
 | Every prompt | `capture-corrections.sh` | Catches short corrections (see [Learning loop](#learning-loop)). |
-| Every prompt | `worktree-keyword.sh` | Handles the `worktree:<name>` prefix. |
 | Every prompt | `mark-turn.sh` | Marks the start of a turn for the end-of-turn check. |
 | After a TS edit | `check-code.sh` | Runs ESLint on the changed lines; fixes or reports. |
 | End of turn | `check-changed.sh` | Re-checks every TS file changed in the turn, however it was edited. |
+| New worktree | `prepare-worktree.sh` | Puts a detached worktree on a branch named after its folder, from the remote's default branch. Copies the main checkout's gitignored `.env*` files and installs from the lockfile. A repo's git-excluded `.worktree-setup.sh` replaces these steps. Run by `/gh44-ticket` and by your editor's worktree hook. |
+
+### Worktrees and your editor
+
+`/gh44-ticket` works in any setup:
+
+- **Agent in a terminal:** run it from the main checkout. It creates `.worktrees/<ticket ID>`, prepares it and moves the session there.
+- **Agent inside an editor window:** a running session cannot move to another window, so create the worktree in the editor first, named after the ticket ID, then run `/gh44-ticket <link>` in that worktree's window. It prepares the worktree and creates the branch if the editor's hook did not.
+
+If the editor can run a command after it creates a worktree, point it at `~/gh44/hooks/prepare-worktree.sh <worktree> <main checkout>`, and set its worktree folder to `.worktrees`, so the worktree is ready before the agent starts.
 
 ---
 

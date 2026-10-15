@@ -133,11 +133,10 @@ add_hook() {
 add_hook SessionStart budget-check.sh
 add_hook UserPromptSubmit capture-corrections.sh
 add_hook UserPromptSubmit mark-turn.sh
-add_hook UserPromptSubmit worktree-keyword.sh
 add_hook PostToolUse check-code.sh "Edit|Write|MultiEdit"
 add_hook Stop check-changed.sh
 # Retired hooks: drop their entries so settings never point at a deleted script.
-for script in load-structure.sh; do
+for script in load-structure.sh worktree-keyword.sh; do
   if jq -e --arg suffix "/hooks/$script" '[.. | objects | select((.command? // "") | endswith($suffix))] | length > 0' "$SETTINGS" > /dev/null; then
     [ "$added" -gt 0 ] || cp "$SETTINGS" "$SETTINGS.bak.$(date +%Y%m%d%H%M%S)"
     updated="$(jq --arg suffix "/hooks/$script" '.hooks |= with_entries(.value |= (map(.hooks |= map(select((.command // "") | endswith($suffix) | not))) | map(select(.hooks | length > 0)))) | .hooks |= with_entries(select(.value | length > 0))' "$SETTINGS")"
@@ -146,7 +145,7 @@ for script in load-structure.sh; do
   fi
 done
 changes=$((changes + added))
-ok "6 hooks$(changed "$added")"
+ok "5 hooks$(changed "$added")"
 
 if [ "$changes" -eq 0 ]; then
   printf '\n%sUp to date.%s\n\n' "$bold" "$reset"
