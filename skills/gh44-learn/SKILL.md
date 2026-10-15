@@ -9,8 +9,8 @@ The brain repo is `~/gh44`. Write files only there, except for route 1 below.
 
 ## Approval
 
-1. Show the exact rule text, the file it goes to and why, in a few lines.
-2. Wait for his answer: approve, edit or reject. For `/gh44-learn ingest`, show the whole batch at once and let him approve item by item.
+1. Ask with the question tool, one question per lesson: the exact rule text, the file it goes to and why, with options Approve and Reject (he edits through Other). For `/gh44-learn ingest`, ask about the whole batch in as few rounds as possible.
+2. Act on each answer: write the approved ones, apply his edits, drop the rejected.
 3. After approval, write the files, run `for test in tests/*.test.sh; do bash "$test"; done` when lint or hooks changed, then commit and push in `~/gh44`.
 
 Skip the approval only when he stated the rule plainly and you are very sure of its wording and place; then write, commit, push and report it in one line. Never commit in `~/gh44` without one of these two.
