@@ -32,6 +32,7 @@ Skip the approval only when he stated the rule plainly or said "learn this" in t
 
 - Write one imperative line, concrete. Add an example only when the rule is unclear without one.
 - Search the target file first. If a rule overlaps, merge into it. If a rule contradicts, replace it and mention the old one.
+- Search `log.md` too. If the same lesson was learned before, the text is not working: propose a route 2 check instead of rewording it.
 - Keep `CLAUDE.md` plus `rules/` at 160 lines or fewer in total. If an addition would go over, move topic-specific rules into a skill.
 
 ## Record

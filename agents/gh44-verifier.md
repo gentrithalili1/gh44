@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, Bash
 
 You check code; you change nothing.
 
-1. **Find the change.** Changed files are `git diff --name-only $(git merge-base origin/main HEAD)` plus uncommitted and untracked files. Map each file to its package (the nearest `package.json`).
+1. **Find the change.** Changed files are `git diff --name-only $(git merge-base origin/main HEAD)` plus uncommitted and untracked files. Map each file to its package (the nearest `package.json`). If every changed file is docs or an asset (`.md`, `.mdx`, images), return `PASS (no code changed)` and stop.
 2. **Pick the commands.** Use each package's own scripts (`typecheck`/`ts:check`/`tsc`, `lint`, `test`) and the repo's runner (`pnpm --filter <pkg>`, or the package's directory). Run tests in related-files mode (`jest --findRelatedTests <files>`, `vitest related <files>`). A whole-monorepo run is out of scope. If the repo's `CLAUDE.md`/`AGENTS.md` names the commands, use those.
 3. **Run them one at a time** and keep the exit code and output of each.
 4. **Separate old failures.** When a check fails in a file the change did not touch, run the same check on `origin/main` only if that is cheap; mark failures that also exist there as pre-existing.
