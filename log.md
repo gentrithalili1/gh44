@@ -44,3 +44,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-12 | skills/gh44-code-structure/SKILL.md | replaced | Back to Thing.elements.tsx for a component's presentational building pieces | Gentrit: elements is his naming, not JOIN-only
 - 2026-10-12 | rules/workflow.md | added | on a refactor or cleanup, check every caller and importer, run affected tests, report push safety first | /gh44-learn ingest, item 5 approved
 - 2026-10-12 | skills/gh44-code-structure/SKILL.md | added | elements.tsx for presentational pieces; move to components/ once it needs hook, handler, logic, copy or a test | Gentrit approved
+- 2026-10-15 | rules/code.md | added | Stack: repo first, else TanStack first (Start, Router, Query, Table, Store, Form), TypeScript, pnpm, shadcn/ui, oxlint, oxfmt; fresh data layer is TanStack Query; Forms switch to TanStack Form + zod | "prioritize tanstack, everything tanstack related", Gentrit approved
