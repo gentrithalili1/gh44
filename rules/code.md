@@ -1,6 +1,8 @@
 # Code
 
 - Fix the types or the code under test. Never silence them: no `any` (use `unknown` and narrow), no `as` beyond `as const`, no lint-disable comments.
+- `type` for every shape except props interfaces. String-literal unions or `as const` objects in place of `enum`.
+- Named exports only (default only where the framework requires it). Import a unit through its folder's `index.ts`.
 - Model state as a status union, not a pile of booleans: `status: 'idle' | 'loading' | 'error' | 'success'`, not `isLoading` + `isError`.
 - Handle every case of a union: `switch` with a `never` check in `default`, so a new variant breaks the build.
 - No magic strings or numbers: name them as constants in the nearest `utils/`.
@@ -10,6 +12,7 @@
 - Comment only complicated logic, and keep it short. Never comment trivial changes such as a new property, import or rename.
 - Function components only; props interface named after the component (`CardProps` for `Card`).
 - Avoid `useEffect`: derive values during render, act in event handlers, fetch with data hooks.
+- Leave memoization to the React Compiler: write plain values and functions, no `useMemo`, `useCallback` or `memo`.
 - A function with 2 or more parameters takes one params object.
 - Keep a hook's result whole: `const userStore = useUserStore()`, then `userStore.add()`. Never destructure it.
 - Move logic that can stand alone into its own hook or util. Give hooks short names.
@@ -26,6 +29,10 @@
 - Render conditionally with a real boolean (`is*`, `has*`, `!!x`, a comparison) or `x ? <X /> : null`. Never `count && <X />`: it renders `0`.
 - One `variant` prop over several boolean props: `variant="primary"`, not `isPrimary isLarge`.
 - `<button>` for actions, `<a>` or the router link for navigation, and a label for every input.
+
+## Tests
+
+- Testing Library queries by role or label (test ids only as a last resort), `userEvent` for interaction, MSW for the network. Assert on what the user sees; no snapshot tests.
 
 ## SEO and rendering
 
