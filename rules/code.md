@@ -19,6 +19,7 @@
 - Name handlers `handle*` and booleans `is*`, `has*`, `should*`.
 - Name new things like their siblings: same prefix and full domain word (`CartItemList` next to `CartSummary`, not `ItemList`; `trackInvoicePaid` not `trackPaid`).
 - Hooks return data and outcomes; the component formats copy and toasts.
+- Format dates, numbers and currency with Intl / react-intl in the user's locale, in the component. Store and pass dates as ISO strings in UTC.
 - The importers decide where a file lives; state lives in the lowest unit that reads it.
 - These lines and more are enforced by my lint rules. Full structure guide: the `gh44-code-structure` skill.
 
@@ -29,6 +30,8 @@
 - Render conditionally with a real boolean (`is*`, `has*`, `!!x`, a comparison) or `x ? <X /> : null`. Never `count && <X />`: it renders `0`.
 - One `variant` prop over several boolean props: `variant="primary"`, not `isPrimary isLarge`.
 - `<button>` for actions, `<a>` or the router link for navigation, and a label for every input.
+- Style from the design tokens or theme: every color, spacing, radius and font is a token, not a raw hex or px value.
+- Loading shows a skeleton shaped like the final layout; errors hit an error boundary per route or section with a retry; empty lists show an empty state.
 
 ## Tests
 
