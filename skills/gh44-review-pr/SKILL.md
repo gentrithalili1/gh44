@@ -64,7 +64,10 @@ After a `---` line, end with a bold one-line verdict in his style: "LGTM ğŸ‘ğŸ
 
 ## Pending review
 
-When the input was a PR and there is at least one comment, ask with the question tool: post all as a pending review (recommended), post some (he types the item numbers), or skip.
+When the input was a PR and there is at least one comment, show him the numbered comments first, then ask with the question tool. Put the full numbered list in each option's `preview` too, so he sees the comments while he picks. Two options:
+
+1. **Post all** (recommended): every comment goes into the pending review.
+2. **Post some**: he types the item numbers to post in Other, for example `1, 3`.
 
 A pending review is a draft only he can see; he edits, picks Approve / Comment / Request changes and submits it on GitHub. Create it with one call and no `event` field, which is what keeps it pending:
 
