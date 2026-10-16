@@ -64,20 +64,26 @@ flowchart LR
 
 ## The workflow
 
-Every task goes through five steps. Small tasks skip straight to **Execute**; big ones use every step.
+Five steps: **Clarify → Plan → Execute → Review → Ship**. Size the task first:
+
+- **Small task** (a bug, a copy change, one clear area): go straight to **Execute**, then **Ship**.
+- **Big task** (a feature, open questions, several areas): every step, in order. A step ends before the next one starts.
 
 ```mermaid
 flowchart LR
     A[1. Clarify] --> B[2. Plan] --> C[3. Execute] --> D[4. Review] --> E[5. Ship]
+    S([Small task]) -.-> C
 ```
 
-| Step | What you do | What runs |
-| --- | --- | --- |
-| **1. Clarify** | Type `/gh44-grill-me` and describe the feature or ticket. Answer each round until nothing is left open. | `/gh44-grill-me` |
-| **2. Plan** | Ask for a plan, or switch to plan mode (`shift+tab`). Approve the step-by-step plan before any code is written. | `rules/workflow.md` |
-| **3. Execute** | Let Claude build it slice by slice, tests first where it makes sense. | `gh44-tdd`, `gh44-debug`, lint hooks |
-| **4. Review** | Run `/gh44-review-pr` on your branch, fix what matters, then `/code-review` for bugs and `/simplify` for cleanups. | `/gh44-review-pr`, `/code-review`, `/simplify` |
-| **5. Ship** | Run `/gh44-create-pr`: it checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | `/gh44-create-pr` |
+| Step | You run | What happens | Done when |
+| --- | --- | --- | --- |
+| **1. Clarify** | `/gh44-clarify [ticket]` | Reads the Linear or Sentry ticket if you pass one, then interviews you in rounds of numbered questions, each with a recommended answer. Claude looks up facts itself and asks you only for decisions. | Nothing is left open and you confirm you are on the same page. |
+| **2. Plan** | Ask for a plan, or plan mode (`shift+tab`) | A short step-by-step plan. No code yet. | You approve the plan. |
+| **3. Execute** | Let Claude build | Slice by slice, tests first where it makes sense (`gh44-tdd`), `gh44-debug` for hard bugs. Lint hooks fix or flag every edit, and `gh44-verifier` runs typecheck, lint and related tests before Claude says done. | The verifier passes. |
+| **4. Review** | `/gh44-review-pr`, then `/code-review` and `/simplify` | A review in my style, then a bug hunt, then cleanups. | You have fixed what matters. |
+| **5. Ship** | `/gh44-create-pr` | Checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | The PR is open. |
+
+**Clarify is a proxy.** The interview is Matt Pocock's [`grilling`](https://github.com/mattpocock/skills) skill, installed unchanged (see [Upstream skills](#upstream-skills)). `/gh44-clarify` only adds reading the ticket first, and is named after the step it runs.
 
 ### Shortcuts
 
@@ -94,17 +100,15 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | Step | Skill | How it starts | What it does |
 | --- | --- | --- | --- |
 | Start | `/gh44-ticket <Linear or Sentry link>` | Auto | Reads the ticket, creates a ready-to-run worktree named after the ticket ID, then plans (Linear) or debugs (Sentry). Read-only on Linear and Sentry. |
-| Clarify | `/gh44-grill-me [ticket]` | You type | Reads the ticket if given, then runs Matt's `grilling`: rounds of questions, each with a recommended answer, until nothing is open. |
+| Clarify | `/gh44-clarify [ticket]` | You type | Proxy: reads the ticket if given, then runs Matt's `grilling` unchanged until nothing is open. |
 | Build | `/gh44-tdd` | Auto | Red-green-refactor loop, integration tests, mocking guidance. |
 | Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs and slowdowns. |
 | Review | `/gh44-review-pr [pr]` | Auto | Reviews a PR, branch or local changes the way I review. Posts only what you pick. |
 | Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
 | Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR with the repo's template. |
-| Session | `/gh44-handoff [next focus]` | You type | Runs Matt's `handoff` to write the session down, then prints the commands to continue in a fresh session. |
+| Session | `/gh44-handoff [next focus]` | You type | Proxy: runs Matt's `handoff` unchanged, then prints the commands to continue in a fresh session. |
 | Brain | `/gh44-learn` · `ingest` · `tidy` | Auto | Saves a correction as a rule, sorts the inbox, cleans up the rules. |
 | Brain | `/gh44-writing-for-agents` | Auto | How to write skills, rules and `CLAUDE.md` files, this repo included. |
-
----
 
 ### Upstream skills
 
@@ -112,7 +116,7 @@ Skills I use exactly as their author wrote them are installed, not copied into `
 
 | Skill | From | Called by |
 | --- | --- | --- |
-| `grilling` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-grill-me` |
+| `grilling` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-clarify` |
 | `handoff` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-handoff` |
 
 ---

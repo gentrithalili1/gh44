@@ -1,5 +1,5 @@
 ---
-name: gh44-grill-me
+name: gh44-clarify
 description: A relentless interview to sharpen a plan or design.
 disable-model-invocation: true
 ---
