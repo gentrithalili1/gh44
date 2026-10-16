@@ -3,6 +3,10 @@ set -euo pipefail
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fail() { echo "FAIL: $1" >&2; exit 1; }
 cd /
+# npx stands in for the skills CLI, so no test reaches the network.
+stubbin="$(mktemp -d)"
+ln -s "$BRAIN/tests/fake-npx" "$stubbin/npx"
+export PATH="$stubbin:$PATH"
 
 copy_brain() {
   local dir
@@ -24,6 +28,8 @@ ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 [ ! -L "$HOME/.claude/skills/gh44-learn" ] || fail "skill link left"
 [ ! -L "$HOME/.claude/agents/gh44-reviewer.md" ] || fail "agent link left"
 [ -L "$HOME/.claude/skills/foreign" ] || fail "removed a link that is not ours"
+[ ! -e "$HOME/.claude/skills/grilling" ] && [ ! -e "$HOME/.claude/skills/handoff" ] || fail "upstream skill left"
+jq -e '.skills == {}' "$HOME/.agents/.skill-lock.json" > /dev/null || fail "lock entries left: $(cat "$HOME/.agents/.skill-lock.json")"
 jq -e '. == {"model":"opus","hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"plugin.sh"}]}]}}' "$HOME/.claude/settings.json" > /dev/null \
   || fail "settings wrong: $(cat "$HOME/.claude/settings.json")"
 [ -d "$BRAIN" ] || fail "repo deleted without the flag"
@@ -37,6 +43,13 @@ mkdir -p "$HOME/.claude"
 echo mine > "$HOME/.claude/CLAUDE.md"
 "$BRAIN/uninstall.sh" > /dev/null
 [ "$(cat "$HOME/.claude/CLAUDE.md")" = mine ] || fail "real CLAUDE.md removed"
+
+# An upstream-named skill installed from another repository stays
+export HOME="$(mktemp -d)"
+mkdir -p "$HOME/.claude/skills/grilling" "$HOME/.agents"
+echo '{"version":3,"skills":{"grilling":{"source":"someone/else"}}}' > "$HOME/.agents/.skill-lock.json"
+"$BRAIN/uninstall.sh" > /dev/null
+[ -d "$HOME/.claude/skills/grilling" ] || fail "removed a skill from another repository"
 
 # Unknown argument stops the run
 "$BRAIN/uninstall.sh" --nope > /dev/null 2>&1 && fail "should reject unknown argument"

@@ -5,7 +5,9 @@ set -euo pipefail
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 SETTINGS="$CLAUDE_DIR/settings.json"
-STEPS=4
+UPSTREAM="$BRAIN/upstream-skills.txt"
+SKILLS_CLI="skills@1.7.2"
+STEPS=5
 changes=0
 
 if [ -t 1 ]; then
@@ -13,7 +15,7 @@ if [ -t 1 ]; then
 else
   bold="" dim="" green="" red="" reset=""
 fi
-step() { printf '%s[%s/%s]%s %-7s ' "$dim" "$1" "$STEPS" "$reset" "$2"; }
+step() { printf '%s[%s/%s]%s %-8s ' "$dim" "$1" "$STEPS" "$reset" "$2"; }
 ok() { printf '%s✓%s %s\n' "$green" "$reset" "$1"; }
 failed() { printf '%s✗%s %s\n' "$red" "$reset" "$1"; }
 changed() { [ "$1" -gt 0 ] && printf ' (%s changed)' "$1" || true; }
@@ -105,7 +107,41 @@ done
 changes=$((changes + linked))
 ok "CLAUDE.md, rules, $skill_count skills, $((${#targets[@]} - 2 - skill_count)) agents$(changed "$linked")"
 
-step 4 Hooks
+step 4 Upstream
+upstream_total=0
+missing_upstream=()
+if [ -f "$UPSTREAM" ]; then
+  while read -r repo skill; do
+    case "$repo" in "" | "#"*) continue ;; esac
+    upstream_total=$((upstream_total + 1))
+    [ -e "$CLAUDE_DIR/skills/$skill" ] || missing_upstream+=("$repo $skill")
+  done < "$UPSTREAM"
+fi
+if [ "${#missing_upstream[@]}" -eq 0 ]; then
+  ok "$upstream_total skills"
+elif ! command -v npx > /dev/null; then
+  failed "skipped, npx is missing"
+  echo "install: npx is missing, so the skills in upstream-skills.txt are not installed (install Node, then run this again)" >&2
+else
+  installed=0 not_installed=0
+  for entry in "${missing_upstream[@]}"; do
+    read -r repo skill <<< "$entry"
+    if npx -y "$SKILLS_CLI" add "$repo" -g -a claude-code --copy -y -s "$skill" > /dev/null 2>&1; then
+      installed=$((installed + 1))
+    else
+      not_installed=$((not_installed + 1))
+      echo "install: could not install $skill from $repo (check the network, then run this again)" >&2
+    fi
+  done
+  changes=$((changes + installed))
+  if [ "$not_installed" -gt 0 ]; then
+    failed "$not_installed of $upstream_total skills not installed"
+  else
+    ok "$upstream_total skills$(changed "$installed")"
+  fi
+fi
+
+step 5 Hooks
 # inbox.md is gitignored, so a fresh clone needs one for capture-corrections to write to.
 if [ ! -f "$BRAIN/inbox.md" ]; then
   printf '# Inbox\n\nPaste raw rules, notes and links below the marker. Run `/learn ingest` to sort them.\n\n<!-- items below -->\n' > "$BRAIN/inbox.md"

@@ -94,15 +94,26 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | Step | Skill | How it starts | What it does |
 | --- | --- | --- | --- |
 | Start | `/gh44-ticket <Linear or Sentry link>` | Auto | Reads the ticket, creates a ready-to-run worktree named after the ticket ID, then plans (Linear) or debugs (Sentry). Read-only on Linear and Sentry. |
-| Clarify | `/gh44-grill-me` | You type | Rounds of questions, each with a recommended answer, until nothing is open. |
+| Clarify | `/gh44-grill-me [ticket]` | You type | Reads the ticket if given, then runs Matt's `grilling`: rounds of questions, each with a recommended answer, until nothing is open. |
 | Build | `/gh44-tdd` | Auto | Red-green-refactor loop, integration tests, mocking guidance. |
 | Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs and slowdowns. |
 | Review | `/gh44-review-pr [pr]` | Auto | Reviews a PR, branch or local changes the way I review. Posts only what you pick. |
 | Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
 | Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR with the repo's template. |
-| Session | `/gh44-handoff [next focus]` | You type | Writes the session down so a fresh session can continue it. |
+| Session | `/gh44-handoff [next focus]` | You type | Runs Matt's `handoff` to write the session down, then prints the commands to continue in a fresh session. |
 | Brain | `/gh44-learn` · `ingest` · `tidy` | Auto | Saves a correction as a rule, sorts the inbox, cleans up the rules. |
 | Brain | `/gh44-writing-for-agents` | Auto | How to write skills, rules and `CLAUDE.md` files, this repo included. |
+
+---
+
+### Upstream skills
+
+Skills I use exactly as their author wrote them are installed, not copied into `skills/`. [`upstream-skills.txt`](upstream-skills.txt) lists them, and a thin `gh44-*` proxy calls each one, so every command I type stays `/gh44-*`. Update them with `npx skills update -g`.
+
+| Skill | From | Called by |
+| --- | --- | --- |
+| `grilling` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-grill-me` |
+| `handoff` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-handoff` |
 
 ---
 
@@ -196,7 +207,8 @@ gh44/
 ├── tests/           # shell tests for hooks, lint and install
 ├── docs/            # design spec and plan
 ├── install.sh       # idempotent installer
-├── uninstall.sh     # removes links, hooks and optionally the repo
+├── uninstall.sh     # removes links, hooks, upstream skills and optionally the repo
+├── upstream-skills.txt  # skills installed as they are, called by gh44 proxies
 ├── log.md           # append-only log of every rule learned
 └── inbox.md         # captured corrections (gitignored)
 ```
@@ -218,18 +230,19 @@ The installer is safe to run again. It:
 1. Installs `jq` with Homebrew if it's missing.
 2. Installs the lint packages with pnpm.
 3. Symlinks `CLAUDE.md`, `rules/` and every skill into `~/.claude`. It stops before changing anything if a real file is in the way.
-4. Registers the 7 hooks, backing up `settings.json` first.
+4. Installs the skills in `upstream-skills.txt` with the [`skills`](https://github.com/vercel-labs/skills) CLI, as copies in `~/.claude/skills`. A skill already there is left alone.
+5. Registers the 7 hooks, backing up `settings.json` first.
 
 ---
 
 ## Uninstall
 
 ```bash
-gh44/uninstall.sh                # remove links and hooks, keep the repo
+gh44/uninstall.sh                # remove links, hooks and upstream skills, keep the repo
 gh44/uninstall.sh --remove-repo  # also delete the repo
 ```
 
-It only removes links that point into this repo and hooks that run its scripts, and it backs up `settings.json` first. Your other skills, hooks and settings stay.
+It only removes links that point into this repo, hooks that run its scripts and upstream skills the skills lock file records as installed from their listed repository, and it backs up `settings.json` first. Your other skills, hooks and settings stay.
 
 `--remove-repo` refuses, before changing anything, when something would be lost: uncommitted changes, unpushed commits, or items still in `inbox.md`.
 

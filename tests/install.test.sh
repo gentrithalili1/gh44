@@ -3,6 +3,10 @@ set -euo pipefail
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fail() { echo "FAIL: $1" >&2; exit 1; }
 cd /
+# npx stands in for the skills CLI, so no test reaches the network.
+stubbin="$(mktemp -d)"
+ln -s "$BRAIN/tests/fake-npx" "$stubbin/npx"
+export PATH="$stubbin:$PATH"
 
 # Existing settings with a plugin hook on the same event
 export HOME="$(mktemp -d)"
@@ -27,8 +31,13 @@ jq -e --arg m "$BRAIN/hooks/mark-turn.sh" --arg s "$BRAIN/hooks/check-changed.sh
   '[.hooks.UserPromptSubmit[].hooks[].command][1] == $m and [.hooks.Stop[].hooks[].command] == [$s]' "$HOME/.claude/settings.json" > /dev/null \
   || fail "turn hooks missing: $(jq -c '.hooks' "$HOME/.claude/settings.json")"
 
+grep -qx -- "-y skills@1.7.2 add mattpocock/skills -g -a claude-code --copy -y -s grilling" "$HOME/npx.log" || fail "grilling not installed: $(cat "$HOME/npx.log")"
+[ -f "$HOME/.claude/skills/grilling/SKILL.md" ] && [ ! -L "$HOME/.claude/skills/grilling" ] || fail "grilling not copied"
+[ -f "$HOME/.claude/skills/handoff/SKILL.md" ] || fail "handoff not copied"
+
 # Second run changes nothing
 "$BRAIN/install.sh" | grep -q "Up to date" || fail "second run was not a no-op"
+[ "$(wc -l < "$HOME/npx.log")" -eq 2 ] || fail "installed upstream skills again: $(cat "$HOME/npx.log")"
 jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 0, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
 
 # A retired hook is dropped from settings
@@ -137,5 +146,21 @@ for tool in readlink basename dirname; do ln -s "$(command -v "$tool")" "$nobrew
 message="$(PATH="$nobrew:/bin" "$BRAIN/install.sh" 2>&1)" && fail "should fail without brew"
 echo "$message" | grep -q "missing jq" || fail "hint should name jq: $message"
 [ ! -e "$HOME/.claude/CLAUDE.md" ] || fail "linked before tools were ready"
+
+# An upstream skill already present is left alone
+export HOME="$(mktemp -d)"
+mkdir -p "$HOME/.claude/skills/grilling"
+echo mine > "$HOME/.claude/skills/grilling/SKILL.md"
+"$BRAIN/install.sh" > /dev/null
+[ "$(cat "$HOME/.claude/skills/grilling/SKILL.md")" = mine ] || fail "existing grilling replaced"
+grep -q -- "-s grilling" "$HOME/npx.log" && fail "installed grilling over an existing one"
+
+# Without npx, upstream skills are skipped with a hint and the rest installs
+export HOME="$(mktemp -d)"
+nonpx="$(mktemp -d)"
+for tool in readlink basename dirname jq; do ln -s "$(command -v "$tool")" "$nonpx/$tool"; done
+message="$(PATH="$nonpx:/bin" "$BRAIN/install.sh" 2>&1)" || fail "install without npx failed: $message"
+echo "$message" | grep -q "npx is missing" || fail "hint should name npx: $message"
+[ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$BRAIN/CLAUDE.md" ] || fail "CLAUDE.md not linked without npx"
 
 echo "PASS install"

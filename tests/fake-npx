@@ -1,0 +1,14 @@
+#!/bin/sh
+# Stands in for `npx skills add <repo> ... -s <skill>` in tests: logs the call and installs a stub skill.
+echo "$@" >> "$HOME/npx.log"
+prev="" repo="" skill=""
+for arg; do
+  [ "$prev" = add ] && repo="$arg"
+  [ "$prev" = -s ] && skill="$arg"
+  prev="$arg"
+done
+mkdir -p "$HOME/.claude/skills/$skill" "$HOME/.agents"
+printf -- '---\nname: %s\n---\n' "$skill" > "$HOME/.claude/skills/$skill/SKILL.md"
+lock="$HOME/.agents/.skill-lock.json"
+[ -f "$lock" ] || echo '{"version":3,"skills":{}}' > "$lock"
+jq --arg skill "$skill" --arg repo "$repo" '.skills[$skill] = {source: $repo}' "$lock" > "$lock.tmp" && mv "$lock.tmp" "$lock"

@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-# Uninstalls GH44: removes its links and hooks from ~/.claude. With --remove-repo, also deletes
+# Uninstalls GH44: removes its links, hooks and upstream skills from ~/.claude. With --remove-repo, also deletes
 # this repository, but only when nothing would be lost. Safe to run again.
 set -euo pipefail
 
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 SETTINGS="$CLAUDE_DIR/settings.json"
+UPSTREAM="$BRAIN/upstream-skills.txt"
+SKILL_LOCK="$HOME/.agents/.skill-lock.json"
 REMOVE_REPO_FLAG="--remove-repo"
 INBOX_MARKER="<!-- items below -->"
-STEPS=3
+STEPS=4
 changes=0
 
 case "${1:-}" in
@@ -25,7 +27,7 @@ if [ -t 1 ]; then
 else
   bold="" dim="" green="" red="" reset=""
 fi
-step() { printf '%s[%s/%s]%s %-7s ' "$dim" "$1" "$STEPS" "$reset" "$2"; }
+step() { printf '%s[%s/%s]%s %-8s ' "$dim" "$1" "$STEPS" "$reset" "$2"; }
 ok() { printf '%s✓%s %s\n' "$green" "$reset" "$1"; }
 failed() { printf '%s✗%s %s\n' "$red" "$reset" "$1"; }
 
@@ -87,7 +89,23 @@ fi
 changes=$((changes + removed))
 ok "$removed removed"
 
-step 3 Repo
+step 3 Upstream
+# Only skills the lock file records as installed from that repository, so a copy from elsewhere stays.
+dropped=0
+if [ -f "$UPSTREAM" ] && [ -f "$SKILL_LOCK" ]; then
+  while read -r repo skill; do
+    case "$repo" in "" | "#"*) continue ;; esac
+    jq -e --arg skill "$skill" --arg repo "$repo" '.skills[$skill].source == $repo' "$SKILL_LOCK" > /dev/null || continue
+    rm -rf "${CLAUDE_DIR:?}/skills/$skill"
+    updated="$(jq --arg skill "$skill" 'del(.skills[$skill])' "$SKILL_LOCK")"
+    printf '%s\n' "$updated" > "$SKILL_LOCK"
+    dropped=$((dropped + 1))
+  done < "$UPSTREAM"
+fi
+changes=$((changes + dropped))
+ok "$dropped removed"
+
+step 4 Repo
 if [ "$remove_repo" = true ]; then
   rm -rf "$BRAIN"
   ok "deleted $BRAIN"
