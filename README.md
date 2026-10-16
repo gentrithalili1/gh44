@@ -5,7 +5,7 @@
 Clone it once and every Claude Code session, in any repository, works the way I do: same rules, same workflow, same code conventions. It checks itself with lint hooks that cost no tokens, and it learns from my corrections as I go.
 
 ```bash
-git clone git@github.com:gentrithalili1/gh44.git ~/gh44 && ~/gh44/install.sh
+git clone git@github.com:gentrithalili1/gh44.git && gh44/install.sh
 ```
 
 > The repository's own `CLAUDE.md` / `AGENTS.md` always wins on code conventions. GH44 fills the gaps.
@@ -54,7 +54,7 @@ flowchart LR
     S -->|edits TS| L[lint hooks<br/>fix or flag]
     L --> S
     S -->|my correction| N[inbox.md]
-    N -->|/gh44-learn| R[new rule in ~/gh44]
+    N -->|/gh44-learn| R[new rule in GH44]
     R -->|commit + push| C
 ```
 
@@ -168,7 +168,7 @@ Registered in `~/.claude/settings.json` by `install.sh`. All shell, no tokens.
 - **Agent in a terminal:** run it from the main checkout. It creates `.worktrees/<ticket ID>`, prepares it and moves the session there.
 - **Agent inside an editor window:** a running session cannot move to another window, so create the worktree in the editor first, named after the ticket ID, then run `/gh44-ticket <link>` in that worktree's window. It prepares the worktree and creates the branch if the editor's hook did not.
 
-If the editor can run a command after it creates a worktree, point it at `~/gh44/hooks/prepare-worktree.sh <worktree> <main checkout>`, and set its worktree folder to `.worktrees`, so the worktree is ready before the agent starts.
+If the editor can run a command after it creates a worktree, point it at `<gh44>/hooks/prepare-worktree.sh <worktree> <main checkout>`, and set its worktree folder to `.worktrees`, so the worktree is ready before the agent starts.
 
 ---
 
@@ -208,7 +208,7 @@ gh44/
 **Needs:** Homebrew, Node and pnpm.
 
 ```bash
-git clone git@github.com:gentrithalili1/gh44.git ~/gh44 && ~/gh44/install.sh
+git clone git@github.com:gentrithalili1/gh44.git && gh44/install.sh
 ```
 
 Then open a new Claude Code session.
@@ -225,8 +225,8 @@ The installer is safe to run again. It:
 ## Uninstall
 
 ```bash
-~/gh44/uninstall.sh                # remove links and hooks, keep the repo
-~/gh44/uninstall.sh --remove-repo  # also delete ~/gh44
+gh44/uninstall.sh                # remove links and hooks, keep the repo
+gh44/uninstall.sh --remove-repo  # also delete the repo
 ```
 
 It only removes links that point into this repo and hooks that run its scripts, and it backs up `settings.json` first. Your other skills, hooks and settings stay.

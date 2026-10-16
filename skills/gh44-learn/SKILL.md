@@ -1,19 +1,19 @@
 ---
 name: gh44-learn
-description: Save how Gentrit works into ~/gh44. Use when he corrects you, states a preference or a rule, says "learn this" or "remember this", or runs /gh44-learn, /gh44-learn ingest or /gh44-learn tidy.
+description: Save how Gentrit works into the brain repo. Use when he corrects you, states a preference or a rule, says "learn this" or "remember this", or runs /gh44-learn, /gh44-learn ingest or /gh44-learn tidy.
 ---
 
 # Learn
 
-The brain repo is `~/gh44`. Write files only there, except for route 1 below.
+The brain repo is the folder `~/.claude/CLAUDE.md` links to (`dirname "$(readlink ~/.claude/CLAUDE.md)"`). Write files only there, except for route 1 below.
 
 ## Approval
 
 1. Ask with the question tool, one question per lesson: the exact rule text, the file it goes to and why, with options Approve and Reject (he edits through Other). Inbox items always go through this question. For `/gh44-learn ingest`, ask about the whole batch in as few rounds as possible.
 2. Act on each answer: write the approved ones, apply his edits, drop the rejected.
-3. After approval, write the files, run `for test in tests/*.test.sh; do bash "$test"; done` when lint or hooks changed, then commit and push in `~/gh44`.
+3. After approval, write the files, run `for test in tests/*.test.sh; do bash "$test"; done` when lint or hooks changed, then commit and push in the brain repo.
 
-Skip the approval only when he stated the rule plainly or said "learn this" in this session, and you are very sure of its wording and place; then write, commit, push and report it in one line. Never commit in `~/gh44` without one of these two.
+Skip the approval only when he stated the rule plainly or said "learn this" in this session, and you are very sure of its wording and place; then write, commit, push and report it in one line. Never commit in the brain repo without one of these two.
 
 ## Modes
 
@@ -25,7 +25,7 @@ Skip the approval only when he stated the rule plainly or said "learn this" in t
 
 1. **Repository-specific** (true only because of one repo's setup: its tooling, folders, team, product or internal services, for example "use oxfmt, not prettier" in a repo that ships oxfmt): do not put it in the brain. Save it to the current project's auto-memory and say so. If it would hold in any repo he works in, it is not route 1. A repo-specific skill goes in that repo's skills folder, listed in `.git/info/exclude`; never in the brain. When a repo's convention conflicts with one of my lint rules, add the rule id to `rulesOff` in that repo's `.gh44.json`, also listed in `.git/info/exclude`.
 2. **Script-checkable** (a command, file pattern or tool call that must always or never happen): propose the check in one line. A code rule becomes an ESLint rule in `lint/eslint.config.js`: an existing rule from ESLint or an installed plugin, otherwise a new `brain/` rule in `lint/rules/index.js`, with a test in `tests/lint.test.sh`. A command or tool-call pattern becomes a hook in `hooks/`, registered in `install.sh`. Write either only after he agrees. When a hook enforces a rule, keep the rule line and append `(enforced by hooks/<name>)`.
-3. **Applies to some work only** (a language, framework, file type or task type): add it to the matching `skills/gh44-<topic>/SKILL.md`. If no skill matches, create `skills/gh44-<topic>/SKILL.md` (every brain skill starts with `gh44-`). Its description must say when to load it. Add the skill to `## Topic skills` in `CLAUDE.md`, then run `~/gh44/install.sh` to link it.
+3. **Applies to some work only** (a language, framework, file type or task type): add it to the matching `skills/gh44-<topic>/SKILL.md`. If no skill matches, create `skills/gh44-<topic>/SKILL.md` (every brain skill starts with `gh44-`). Its description must say when to load it. Add the skill to `## Topic skills` in `CLAUDE.md`, then run the brain repo's `install.sh` to link it.
 4. **Applies to every session**: add it to the matching `rules/<topic>.md` (precedence, communication, workflow, code, learning), or create a new topic file. Keep `CLAUDE.md` to who I am and the skill list.
 
 ## Write the rule

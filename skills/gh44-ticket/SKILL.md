@@ -19,9 +19,9 @@ Done when you can state the goal, the acceptance criteria and the parts of the c
 
 Name: the ticket ID, used for both the worktree folder and the branch: the Linear identifier (`ABC-123` from `linear.app/<workspace>/issue/ABC-123/...`) or `sentry-<shortId>`. Run `git fetch origin` first. `<base>` is the remote default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`, usually `origin/main`). Take the first case that matches:
 
-- **Already in a linked worktree** (`git rev-parse --git-dir` differs from `--git-common-dir`, for example one the editor created): if HEAD is detached, `git switch --no-track -c <name> <base>`. If dependencies are not installed yet, run `~/gh44/hooks/prepare-worktree.sh <this worktree> <main checkout>` in the background. Stay here.
+- **Already in a linked worktree** (`git rev-parse --git-dir` differs from `--git-common-dir`, for example one the editor created): if HEAD is detached, `git switch --no-track -c <name> <base>`. If dependencies are not installed yet, run `"$(dirname "$(readlink ~/.claude/CLAUDE.md)")/hooks/prepare-worktree.sh" <this worktree> <main checkout>` in the background. Stay here.
 - **`git worktree list` has the branch `<name>`:** `EnterWorktree` with its `path` and say you are resuming.
-- **In the main checkout:** `git worktree add --no-track <dir>/<name> -b <name> <base>`, where `<dir>` is what the repo's `CLAUDE.md`/`AGENTS.md` says, else `.worktrees`. `EnterWorktree` with that `path`, then run `~/gh44/hooks/prepare-worktree.sh <path> <main checkout>` in the background while you go on to step 3; check it finished before running code.
+- **In the main checkout:** `git worktree add --no-track <dir>/<name> -b <name> <base>`, where `<dir>` is what the repo's `CLAUDE.md`/`AGENTS.md` says, else `.worktrees`. `EnterWorktree` with that `path`, then run `"$(dirname "$(readlink ~/.claude/CLAUDE.md)")/hooks/prepare-worktree.sh" <path> <main checkout>` in the background while you go on to step 3; check it finished before running code.
 
 Tell him in one line: the worktree path and branch.
 
