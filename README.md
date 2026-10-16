@@ -78,12 +78,20 @@ flowchart LR
 | Step | You run | What happens | Done when |
 | --- | --- | --- | --- |
 | **1. Clarify** | `/gh44-clarify [ticket]` | Reads the Linear or Sentry ticket if you pass one, then interviews you in rounds of numbered questions, each with a recommended answer. Claude looks up facts itself and asks you only for decisions. | Nothing is left open and you confirm you are on the same page. |
-| **2. Plan** | Ask for a plan, or plan mode (`shift+tab`) | A short step-by-step plan. No code yet. | You approve the plan. |
-| **3. Execute** | Let Claude build | Slice by slice, tests first where it makes sense (`gh44-tdd`), `gh44-debug` for hard bugs. Lint hooks fix or flag every edit, and `gh44-verifier` runs typecheck, lint and related tests before Claude says done. | The verifier passes. |
+| **2. Plan** | `/gh44-plan [ticket]` | Turns the clarified conversation, or a ticket on its own, into test seams and tracer-bullet slices, each with what it delivers, the units it touches, acceptance criteria and the slices that must land first. No code yet. | You approve the plan. |
+| **3. Execute** | Let Claude build from the approved plan | Slice by slice, tests first where it makes sense (`gh44-tdd`), `gh44-debug` for hard bugs. Lint hooks fix or flag every edit, and `gh44-verifier` runs typecheck, lint and related tests before Claude says done. | The verifier passes. |
 | **4. Review** | `/gh44-review-pr`, then `/code-review` and `/simplify` | A review in my style, then a bug hunt, then cleanups. | You have fixed what matters. |
 | **5. Ship** | `/gh44-create-pr` | Checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | The PR is open. |
 
 **Clarify is a proxy.** The interview is Matt Pocock's [`grilling`](https://github.com/mattpocock/skills) skill, installed unchanged (see [Upstream skills](#upstream-skills)). `/gh44-clarify` only adds reading the ticket first, and is named after the step it runs.
+
+**Clarify and Plan run in the same session**, so the plan builds on everything the interview settled. Clarify decides _what_ to build; Plan decides _how_. A ticket that is already clear can go straight to `/gh44-plan <ticket>`: it asks up to 4 open questions itself, and sends you to `/gh44-clarify` when there are more. A plan with one slice means the task is small, so it skips to Execute.
+
+```text
+/gh44-clarify ABC-123   # optional: when the ticket is fuzzy
+/gh44-plan              # seams + slices → you approve
+                        # Claude builds from the approved plan
+```
 
 ### Shortcuts
 
@@ -101,6 +109,7 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | --- | --- | --- | --- |
 | Start | `/gh44-ticket <Linear or Sentry link>` | Auto | Reads the ticket, creates a ready-to-run worktree named after the ticket ID, then plans (Linear) or debugs (Sentry). Read-only on Linear and Sentry. |
 | Clarify | `/gh44-clarify [ticket]` | You type | Proxy: reads the ticket if given, then runs Matt's `grilling` unchanged until nothing is open. |
+| Plan | `/gh44-plan [ticket]` | You type | Test seams and tracer-bullet slices with blocking edges, from the conversation or a ticket. Ends when you approve. |
 | Build | `/gh44-tdd` | Auto | Red-green-refactor loop, integration tests, mocking guidance. |
 | Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs and slowdowns. |
 | Review | `/gh44-review-pr [pr]` | Auto | Reviews a PR, branch or local changes the way I review. Posts only what you pick. |
