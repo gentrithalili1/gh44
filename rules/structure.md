@@ -11,6 +11,7 @@
 ## Components
 
 - Order a component body: hooks, then derived values, then handlers, then early returns right before the JSX. Handlers sit below the data they read.
+- Many derived values: move each one into the child component whose JSX reads it; group values about one thing into a pure `get*` util (`getCartSummary(cart)`); derive from server data in the query hook's `select` with a module-level function. Keep one-liners inline.
 
 ## Splitting hooks
 
