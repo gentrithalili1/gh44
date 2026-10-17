@@ -144,7 +144,7 @@ fi
 step 5 Hooks
 # inbox.md is gitignored, so a fresh clone needs one for capture-corrections to write to.
 if [ ! -f "$BRAIN/inbox.md" ]; then
-  printf '# Inbox\n\nPaste raw rules, notes and links below the marker. Run `/learn ingest` to sort them.\n\n<!-- items below -->\n' > "$BRAIN/inbox.md"
+  printf '# Inbox\n\nPaste raw rules, notes and links below the marker. Run `/gh44-learn ingest` to sort them.\n\n<!-- items below -->\n' > "$BRAIN/inbox.md"
   changes=$((changes + 1))
 fi
 [ -f "$SETTINGS" ] || echo '{}' > "$SETTINGS"
