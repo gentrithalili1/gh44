@@ -10,11 +10,8 @@ git clone git@github.com:gentrithalili1/gh44.git && gh44/install.sh
 
 > The repository's own `CLAUDE.md` / `AGENTS.md` always wins on code conventions. GH44 fills the gaps.
 
-<br><br>
-
----
-
-<br><br>
+<br>
+<br>
 
 ## How it works
 
@@ -31,21 +28,18 @@ flowchart LR
     R -->|commit + push| C
 ```
 
-| Part | Lives in | Loaded |
-| --- | --- | --- |
-| 🧭 **Rules**: how I work and how I write code | `rules/` | Every session (under 160 lines) |
-| 🧰 **Skills**: the workflow steps | `skills/` + [Matt's skills](#skills) | When used |
-| 🤖 **Agents**: review and verify in a fresh context | `agents/` | When used |
-| 🔍 **Lint + hooks**: my conventions as ESLint rules | `lint/`, `hooks/` | Free, no tokens |
-| 🧠 **Learning**: corrections become rules | `/gh44-learn` | When learning |
+| Part                                                | Lives in                             | Loaded                          |
+| --------------------------------------------------- | ------------------------------------ | ------------------------------- |
+| 🧭 **Rules**: how I work and how I write code       | `rules/`                             | Every session (under 160 lines) |
+| 🧰 **Skills**: the workflow steps                   | `skills/` + [Matt's skills](#skills) | When used                       |
+| 🤖 **Agents**: review and verify in a fresh context | `agents/`                            | When used                       |
+| 🔍 **Lint + hooks**: my conventions as ESLint rules | `lint/`, `hooks/`                    | Free, no tokens                 |
+| 🧠 **Learning**: corrections become rules           | `/gh44-learn`                        | When learning                   |
 
 Everything is linked, not copied: editing this repo changes every session at once.
 
-<br><br>
-
----
-
-<br><br>
+<br>
+<br>
 
 ## The workflow
 
@@ -63,88 +57,110 @@ flowchart LR
 /gh44-create-pr         # commit, push, open the PR
 ```
 
-| Step | You run | What happens |
-| --- | --- | --- |
-| **1. Clarify** | `/gh44-clarify [ticket]` | Reads the ticket, then interviews you in rounds of numbered questions with a recommended answer each. Claude looks up the facts and asks you only for decisions. |
-| **2. Plan** | `/gh44-plan [ticket]` | Test seams and tracer-bullet slices: what each delivers, the units it touches, acceptance criteria, what must land first. Ends when you approve. |
+| Step             | You run                                 | What happens                                                                                                                                                                |
+| ---------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. Clarify**   | `/gh44-clarify [ticket]`                | Reads the ticket, then interviews you in rounds of numbered questions with a recommended answer each. Claude looks up the facts and asks you only for decisions.            |
+| **2. Plan**      | `/gh44-plan [ticket]`                   | Test seams and tracer-bullet slices: what each delivers, the units it touches, acceptance criteria, what must land first. Ends when you approve.                            |
 | **3. Implement** | `/gh44-implement [ticket] [--worktree]` | Each slice red → green (`tdd`), then typecheck and its tests. Then `gh44-verifier` and `gh44-reviewer`: clear fixes applied, judgement calls listed for you. Never commits. |
-| **4. Decide** | Read implement's report | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt. |
-| **5. Ship** | `/gh44-create-pr` | Verifies, commits, pushes, opens the PR. The body has a summary visual, before/after evidence and merge danger. |
+| **4. Decide**    | Read implement's report                 | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt.                                                                               |
+| **5. Ship**      | `/gh44-create-pr`                       | Verifies, commits, pushes, opens the PR. The body has a summary visual, before/after evidence and merge danger.                                                             |
 
 - **Small task** (a bug, one clear area): start at `/gh44-implement <ticket>`.
 - **Clear ticket**: start at `/gh44-plan <ticket>`. It asks up to 4 questions itself and sends you to `/gh44-clarify` when there are more.
 - **Clarify, plan and implement run in one session**, so each builds on the last. Clarify decides _what_, plan decides _how_.
 - **Your rules apply without being asked**: they load in every session, the plan places files by `structure.md`, and lint and the verifier check the result.
 
-<br><br>
-
----
-
-<br><br>
+<br>
+<br>
 
 ## Skills
 
-**Mine**, in workflow order. _You type_ = only runs when you call it. _Auto_ = Claude also loads it when the work matches.
+<br>
 
-| Skill | Starts | What it does |
-| --- | --- | --- |
-| `/gh44-clarify [ticket]` | You type | Reads the ticket, then runs Matt's `grilling` unchanged. |
-| `/gh44-plan [ticket]` | You type | Seams and slices from the conversation or a ticket. |
-| `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the plan or a small ticket, verifies, reviews itself, reports. |
-| `/gh44-debug` | Auto | Diagnosis loop for hard bugs, slowdowns and Sentry issues. |
-| `/gh44-code-review [pr]` | Auto | Reviews a PR, branch or local changes on **Standards** (repo rules → my rules → my habits → smells) and **Spec** (the ticket's criteria). Someone else's PR: posts what you pick. Yours: applies what you pick. |
-| `/gh44-resolve-conflicts <pr>` | You type | Merges the base in, shows the resolutions, pushes after you approve. |
-| `/gh44-create-pr` | Auto | Verifies, commits, pushes, opens the PR; Matt's `pr` writes the body. |
-| `/gh44-handoff [next focus]` | You type | Runs Matt's `handoff`, then prints the commands to continue in a fresh session. |
-| `/gh44-learn` · `ingest` · `tidy` · `retro` | Auto | Turns corrections into rules (see [Learning](#learning)). |
+### Mine
 
-**Matt Pocock's**, installed unchanged from [`upstream-skills.txt`](upstream-skills.txt). Update with `npx skills update -g`.
+In workflow order. _You type_ = only runs when you call it. _Auto_ = Claude also loads it when the work matches.
 
-| Skill | Used by |
-| --- | --- |
-| `grilling` | `/gh44-clarify` |
-| `handoff` | `/gh44-handoff` |
-| `tdd` | `/gh44-implement` for every slice, and Claude for any test-first work |
-| `codebase-design` | `tdd`, when an interface's shape is unclear |
-| `pr` | `/gh44-create-pr`, and Claude whenever it writes a PR body |
-| `writing-for-agents` | Claude, when writing skills, rules or a `CLAUDE.md` |
+| Skill                                          | Starts   | What it does                                                                                                                                                                                                    |
+| ---------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/gh44-clarify [ticket]`                       | You type | Reads the ticket, then runs Matt's `grilling` unchanged.                                                                                                                                                        |
+| `/gh44-plan [ticket]`                          | You type | Seams and slices from the conversation or a ticket.                                                                                                                                                             |
+| `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the plan or a small ticket, verifies, reviews itself, reports.                                                                                                                                           |
+| `/gh44-debug`                                  | Auto     | Diagnosis loop for hard bugs, slowdowns and Sentry issues.                                                                                                                                                      |
+| `/gh44-code-review [pr]`                       | Auto     | Reviews a PR, branch or local changes on **Standards** (repo rules → my rules → my habits → smells) and **Spec** (the ticket's criteria). Someone else's PR: posts what you pick. Yours: applies what you pick. |
+| `/gh44-resolve-conflicts <pr>`                 | You type | Merges the base in, shows the resolutions, pushes after you approve.                                                                                                                                            |
+| `/gh44-create-pr`                              | Auto     | Verifies, commits, pushes, opens the PR; Matt's `pr` writes the body.                                                                                                                                           |
+| `/gh44-handoff [next focus]`                   | You type | Runs Matt's `handoff`, then prints the commands to continue in a fresh session.                                                                                                                                 |
+| `/gh44-learn` · `ingest` · `tidy` · `retro`    | Auto     | Turns corrections into rules (see [Learning](#learning)).                                                                                                                                                       |
 
-**Agents**, each in its own context, returning only a result:
+<br><br>
 
-| Agent | Used by | Returns |
-| --- | --- | --- |
+<br>
+
+### Matt Pocock's
+
+Installed unchanged from [`upstream-skills.txt`](upstream-skills.txt). Update with `npx skills update -g`.
+
+| Skill                | Used by                                                               |
+| -------------------- | --------------------------------------------------------------------- |
+| `grilling`           | `/gh44-clarify`                                                       |
+| `handoff`            | `/gh44-handoff`                                                       |
+| `tdd`                | `/gh44-implement` for every slice, and Claude for any test-first work |
+| `codebase-design`    | `tdd`, when an interface's shape is unclear                           |
+| `pr`                 | `/gh44-create-pr`, and Claude whenever it writes a PR body            |
+| `writing-for-agents` | Claude, when writing skills, rules or a `CLAUDE.md`                   |
+
+<br>
+
+### Agents
+
+Each runs in its own context and returns only a result:
+
+| Agent           | Used by                           | Returns                                                                  |
+| --------------- | --------------------------------- | ------------------------------------------------------------------------ |
 | `gh44-verifier` | implement, create-pr, code-review | `PASS`, or the typecheck, lint and test failures of the changed packages |
-| `gh44-reviewer` | implement, code-review | The review, read-only |
+| `gh44-reviewer` | implement, code-review            | The review, read-only                                                    |
 
-<br><br>
-
----
-
-<br><br>
+<br>
+<br>
 
 ## Rules, lint and hooks
 
-**Rules** ([`rules/`](rules/)) load in every session: [`communication`](rules/communication.md), [`workflow`](rules/workflow.md), [`code`](rules/code.md), [`structure`](rules/structure.md), [`precedence`](rules/precedence.md) and [`learning`](rules/learning.md).
+<br>
 
-**Lint** ([`lint/`](lint/)) turns my conventions into ESLint rules. Every TS edit is fixed quietly, so the red → green loop runs uninterrupted; what is left is reported at the end of the turn and Claude fixes it. **A rule the repo already configures turns mine off.**
+### Rules
 
-| Area | Rules |
-| --- | --- |
-| Types | No `any`, no `as` assertions, no lint-disable comments |
-| Naming | `is*`/`has*`/`should*` booleans, `handle*` handlers, `<Component>Props` |
-| Functions & hooks | Params object for 2+ parameters, no hook destructuring, no `useEffect` |
-| JSX | Function components, no nested ternaries, no index `key`, no leaky `&&` |
-| Structure | Sorted imports, re-export-only `index` files, no generic folders, pure `utils/` |
+[`rules/`](rules/) load in every session: [`communication`](rules/communication.md), [`workflow`](rules/workflow.md), [`code`](rules/code.md), [`structure`](rules/structure.md), [`precedence`](rules/precedence.md) and [`learning`](rules/learning.md).
 
-**Hooks** ([`hooks/`](hooks/)), all shell:
+<br>
 
-| When | Hook | Does |
-| --- | --- | --- |
-| Session start | `budget-check.sh` | Warns when rules pass 160 lines or the inbox fills up |
-| Every prompt | `capture-corrections.sh`, `mark-turn.sh` | Saves short corrections to the inbox; marks the turn start |
-| After a TS edit | `check-code.sh` | Fixes what ESLint can, quietly |
-| End of turn | `check-changed.sh` | Reports what is left in the TS files changed this turn |
-| New worktree | `prepare-worktree.sh` | Branch from `main`, copies `.env*` files, installs deps. Used by `--worktree`, `/gh44-resolve-conflicts` and your editor |
+### Lint
+
+[`lint/`](lint/) turns my conventions into ESLint rules. Every TS edit is fixed quietly, so the red → green loop runs uninterrupted; what is left is reported at the end of the turn and Claude fixes it. **A rule the repo already configures turns mine off.**
+
+| Area              | Rules                                                                           |
+| ----------------- | ------------------------------------------------------------------------------- |
+| Types             | No `any`, no `as` assertions, no lint-disable comments                          |
+| Naming            | `is*`/`has*`/`should*` booleans, `handle*` handlers, `<Component>Props`         |
+| Functions & hooks | Params object for 2+ parameters, no hook destructuring, no `useEffect`          |
+| JSX               | Function components, no nested ternaries, no index `key`, no leaky `&&`         |
+| Structure         | Sorted imports, re-export-only `index` files, no generic folders, pure `utils/` |
+
+<br>
+
+### Hooks
+
+[`hooks/`](hooks/), all shell:
+
+| When            | Hook                                     | Does                                                                                                                     |
+| --------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Session start   | `budget-check.sh`                        | Warns when rules pass 160 lines or the inbox fills up                                                                    |
+| Every prompt    | `capture-corrections.sh`, `mark-turn.sh` | Saves short corrections to the inbox; marks the turn start                                                               |
+| After a TS edit | `check-code.sh`                          | Fixes what ESLint can, quietly                                                                                           |
+| End of turn     | `check-changed.sh`                       | Reports what is left in the TS files changed this turn                                                                   |
+| New worktree    | `prepare-worktree.sh`                    | Branch from `main`, copies `.env*` files, installs deps. Used by `--worktree`, `/gh44-resolve-conflicts` and your editor |
+
+<br>
 
 ### Worktrees
 
@@ -155,11 +171,8 @@ flowchart LR
 
 A repo's git-excluded `.worktree-setup.sh` replaces the default setup.
 
-<br><br>
-
----
-
-<br><br>
+<br>
+<br>
 
 ## Learning
 
@@ -173,11 +186,8 @@ GH44 gets better every time I correct it.
 
 Every change is recorded in [`log.md`](log.md).
 
-<br><br>
-
----
-
-<br><br>
+<br>
+<br>
 
 ## Install and uninstall
 
@@ -203,11 +213,8 @@ gh44/
 └── inbox.md             # captured corrections (gitignored)
 ```
 
-<br><br>
-
----
-
-<br><br>
+<br>
+<br>
 
 ## Credits
 
