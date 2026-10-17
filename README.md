@@ -32,7 +32,7 @@ flowchart LR
 | --------------------------------------------------- | ------------------------------------ | ------------------------------- |
 | 🧭 **Rules**: how I work and how I write code       | `rules/`                             | Every session (under 160 lines) |
 | 🧰 **Skills**: the workflow steps                   | `skills/` + [Matt's skills](#skills) | When used                       |
-| 🤖 **Agents**: review and verify in a fresh context | `agents/`                            | When used                       |
+| 🤖 **Agents**: build, research, review and verify in the background | `agents/`              | When used                       |
 | 🔍 **Lint + hooks**: my conventions as ESLint rules | `lint/`, `hooks/`                    | Free, no tokens                 |
 | 🧠 **Learning**: corrections become rules           | `/gh44-learn`                        | When learning                   |
 
@@ -118,14 +118,16 @@ Installed unchanged from [`upstream-skills.txt`](upstream-skills.txt). Update wi
 
 ### Agents
 
-Each runs in its own context and returns only a result:
+Each runs in its own context and returns only a result. The long ones run in the background, so you keep talking to Claude while they work.
 
-| Agent           | Used by                           | Returns                                                                  |
-| --------------- | --------------------------------- | ------------------------------------------------------------------------ |
-| `gh44-verifier` | implement, create-pr, code-review | `PASS`, or the typecheck, lint and test failures of the changed packages |
-| `gh44-reviewer` | implement, code-review            | The review, read-only                                                    |
-| `gh44-implementer` | implement | Builds the approved plan in the background; reports done or blocked |
-| `gh44-researcher` | Any "search / find the latest on X" | A short cited report from primary sources. Read-only, skips the code rules |
+| Agent              | Started by                                        | Does                                                                                                   | Returns                                                       |
+| ------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| `gh44-implementer` | `/gh44-implement`                                 | Builds the approved plan slice by slice (`tdd`, typecheck, tests) in the background. Never commits.   | Done or blocked, the slices built, what changed from the plan |
+| `gh44-researcher`  | You asking to search or find the latest on X      | Reads official docs, changelogs and releases, newest first. Read-only; skips your `CLAUDE.md` and rules | A short answer, cited details, whether it affects your rules  |
+| `gh44-verifier`    | implement, create-pr, code-review                 | Runs the repo's typecheck, lint and related tests for the changed packages                             | `PASS`, or the failures                                       |
+| `gh44-reviewer`    | implement, code-review                            | Reviews the change on Standards and Spec. Read-only                                                    | The numbered review                                           |
+
+**While the implementer runs:** talk and plan with Claude as usual. When you agree on a change, Claude sends it to the running implementer, or resumes it with the change if it already finished. When it reports blocked, Claude asks you and passes your answer on. Claude leaves the code alone meanwhile, so the two never edit the same files.
 
 <br>
 <br>
