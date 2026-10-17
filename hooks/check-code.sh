@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# PostToolUse hook: checks the edited TS file with my ESLint rules, fixing what can be
-# fixed. Only lines changed since HEAD are reported, so legacy
-# code in the file is not flagged.
+# PostToolUse hook: fixes the edited TS file with my ESLint rules and stays quiet, so the
+# red → green loop is not interrupted. With --report (run by check-changed.sh at the end of
+# the turn), it also reports what is left on lines changed since HEAD, so legacy code in
+# the file is not flagged.
 set -euo pipefail
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPORT_FLAG="--report"
 
 command -v jq > /dev/null || exit 0
 file="$(jq -r '.tool_input.file_path // empty')"
@@ -15,6 +17,7 @@ if command -v node > /dev/null && [ -d "$BRAIN/lint/node_modules" ]; then
   eslint="$(node "$BRAIN/lint/run.mjs" "$file" 2> /dev/null || true)"
   problems="$(jq -c '.' <<< "${eslint:-[]}" 2> /dev/null || echo '[]')"
 fi
+[ "${1:-}" = "$REPORT_FLAG" ] || exit 0
 
 dir="$(dirname "$file")"
 changed="all"

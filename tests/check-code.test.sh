@@ -6,7 +6,7 @@ fail() { echo "FAIL: $1" >&2; exit 1; }
 
 run_hook() {
   status=0
-  output="$(jq -n --arg file "$1" '{tool_name: "Edit", tool_input: {file_path: $file}}' | "$HOOK" 2>&1)" || status=$?
+  output="$(jq -n --arg file "$1" '{tool_name: "Edit", tool_input: {file_path: $file}}' | "$HOOK" --report 2>&1)" || status=$?
 }
 
 repo="$(mktemp -d)"
@@ -55,5 +55,11 @@ run_hook "$outside"
 
 run_hook "$repo/missing.ts"
 [ "$status" -eq 0 ] || fail "missing file is skipped"
+
+# After an edit, the hook only fixes: it reports nothing and never blocks
+printf 'const quiet = value as Quiet\n' > "$repo/quiet.ts"
+status=0
+output="$(jq -n --arg file "$repo/quiet.ts" '{tool_name: "Edit", tool_input: {file_path: $file}}' | "$HOOK" 2>&1)" || status=$?
+[ "$status" -eq 0 ] && [ -z "$output" ] || fail "edit-time run should stay quiet (status $status): $output"
 
 echo "PASS check-code"

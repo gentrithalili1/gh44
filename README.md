@@ -66,7 +66,7 @@ flowchart LR
 
 Five steps: **Clarify → Plan → Execute → Review → Ship**. Size the task first:
 
-- **Small task** (a bug, a copy change, one clear area): go straight to **Execute**, then **Ship**.
+- **Small task** (a bug, a copy change, one clear area): go straight to **Execute** (`/gh44-implement <ticket>`), then **Ship**.
 - **Big task** (a feature, open questions, several areas): every step, in order. A step ends before the next one starts.
 
 ```mermaid
@@ -79,7 +79,7 @@ flowchart LR
 | --- | --- | --- | --- |
 | **1. Clarify** | `/gh44-clarify [ticket]` | Reads the Linear or Sentry ticket if you pass one, then interviews you in rounds of numbered questions, each with a recommended answer. Claude looks up facts itself and asks you only for decisions. | Nothing is left open and you confirm you are on the same page. |
 | **2. Plan** | `/gh44-plan [ticket]` | Turns the clarified conversation, or a ticket on its own, into test seams and tracer-bullet slices, each with what it delivers, the units it touches, acceptance criteria and the slices that must land first. No code yet. | You approve the plan. |
-| **3. Execute** | Let Claude build from the approved plan | Slice by slice, tests first where it makes sense (`gh44-tdd`), `gh44-debug` for hard bugs. Lint hooks fix or flag every edit, and `gh44-verifier` runs typecheck, lint and related tests before Claude says done. | The verifier passes. |
+| **3. Execute** | `/gh44-implement [ticket] [--worktree]` | Builds the approved plan slice by slice: a red → green test at the plan's seam (`gh44-tdd`), then typecheck and the slice's tests. Lint fixes quietly on every edit and reports at the end of the turn. Then `gh44-verifier` runs typecheck, lint and related tests, and `gh44-reviewer` reviews the change; clear fixes are applied, judgement calls come to you. Changes stay uncommitted. | The verifier passes and you get the report. |
 | **4. Review** | `/gh44-review-pr`, then `/code-review` and `/simplify` | A review in my style, then a bug hunt, then cleanups. | You have fixed what matters. |
 | **5. Ship** | `/gh44-create-pr` | Checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | The PR is open. |
 
@@ -90,12 +90,16 @@ flowchart LR
 ```text
 /gh44-clarify ABC-123   # optional: when the ticket is fuzzy
 /gh44-plan              # seams + slices → you approve
-                        # Claude builds from the approved plan
+/gh44-implement         # builds the plan, verifies, reviews itself
+/gh44-review-pr         # your review pass
+/gh44-create-pr         # commit, push, open the PR
 ```
+
+**Implement follows your rules without being told.** `rules/` (code, structure, workflow) is loaded in every session, the plan already places each unit by the structure rules, and the lint hooks and verifier check the result. When the plan turns out wrong, implement stops and asks instead of changing it.
 
 ### Shortcuts
 
-- **Worktree per ticket:** `/gh44-ticket <link>` creates `.worktrees/<ticket ID>` on its own branch from the latest `main` (see [Worktrees and your editor](#worktrees-and-your-editor)).
+- **Worktree per ticket:** `/gh44-implement ABC-123 --worktree` builds in `.worktrees/ABC-123` on its own branch from the latest `main`; `--worktree <name>` picks the name (see [Worktrees and your editor](#worktrees-and-your-editor)).
 - **Hand off a long session:** run `/gh44-handoff` and start a fresh session from the file it writes.
 - **Merge conflicts:** run `/gh44-resolve-conflicts <pr>`.
 
@@ -107,11 +111,11 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 
 | Step | Skill | How it starts | What it does |
 | --- | --- | --- | --- |
-| Start | `/gh44-ticket <Linear or Sentry link>` | Auto | Reads the ticket, creates a ready-to-run worktree named after the ticket ID, then plans (Linear) or debugs (Sentry). Read-only on Linear and Sentry. |
 | Clarify | `/gh44-clarify [ticket]` | You type | Proxy: reads the ticket if given, then runs Matt's `grilling` unchanged until nothing is open. |
 | Plan | `/gh44-plan [ticket]` | You type | Test seams and tracer-bullet slices with blocking edges, from the conversation or a ticket. Ends when you approve. |
+| Build | `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the approved plan, or a small ticket, slice by slice; verifies, reviews itself and reports. Never commits. |
 | Build | `/gh44-tdd` | Auto | Red-green-refactor loop, integration tests, mocking guidance. |
-| Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs and slowdowns. |
+| Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs, slowdowns and Sentry issues. |
 | Review | `/gh44-review-pr [pr]` | Auto | Reviews a PR, branch or local changes the way I review. Posts only what you pick. |
 | Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
 | Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR with the repo's template. |
@@ -158,7 +162,7 @@ Always loaded, in every repository. Kept short on purpose: the session-start hoo
 
 ## Lint checks
 
-My conventions as ESLint rules ([`lint/`](lint/)), run by hooks on every TypeScript edit. Fixable problems are fixed silently; the rest go back to Claude to fix. Inline `eslint-disable` comments are ignored.
+My conventions as ESLint rules ([`lint/`](lint/)), run by hooks. Every TypeScript edit is fixed quietly, so the red → green loop runs uninterrupted; what cannot be fixed is reported at the end of the turn, and Claude fixes it before it stops. Inline `eslint-disable` comments are ignored.
 
 **If the repository already configures an equivalent rule, mine turns off**, so the repo always wins.
 
@@ -181,16 +185,16 @@ Registered in `~/.claude/settings.json` by `install.sh`. All shell, no tokens.
 | Session start | `budget-check.sh` | Warns when core rules pass 160 lines or the inbox fills up. |
 | Every prompt | `capture-corrections.sh` | Catches short corrections (see [Learning loop](#learning-loop)). |
 | Every prompt | `mark-turn.sh` | Marks the start of a turn for the end-of-turn check. |
-| After a TS edit | `check-code.sh` | Runs ESLint on the changed lines; fixes or reports. |
-| End of turn | `check-changed.sh` | Re-checks every TS file changed in the turn, however it was edited. |
-| New worktree | `prepare-worktree.sh` | Puts a detached worktree on a branch named after its folder, from the remote's default branch. Copies the main checkout's gitignored `.env*` files and installs from the lockfile. A repo's git-excluded `.worktree-setup.sh` replaces these steps. Run by `/gh44-ticket` and by your editor's worktree hook. |
+| After a TS edit | `check-code.sh` | Runs ESLint on the file and fixes what it can. Reports nothing. |
+| End of turn | `check-changed.sh` | Reports what is left on the lines changed in every TS file touched this turn, however it was edited, and sends it back to Claude. |
+| New worktree | `prepare-worktree.sh` | Puts a detached worktree on a branch named after its folder, from the remote's default branch. Copies the main checkout's gitignored `.env*` files and installs from the lockfile. A repo's git-excluded `.worktree-setup.sh` replaces these steps. Run by `/gh44-implement --worktree` and by your editor's worktree hook. |
 
 ### Worktrees and your editor
 
-`/gh44-ticket` works in any setup:
+`/gh44-implement --worktree` works in any setup:
 
-- **Agent in a terminal:** run it from the main checkout. It creates `.worktrees/<ticket ID>`, prepares it and moves the session there.
-- **Agent inside an editor window:** a running session cannot move to another window, so create the worktree in the editor first, named after the ticket ID, then run `/gh44-ticket <link>` in that worktree's window. It prepares the worktree and creates the branch if the editor's hook did not.
+- **Agent in a terminal:** run it from the main checkout. It creates `.worktrees/<name>` (the ticket ID unless you pass a name), or reuses it when it exists, prepares it and moves the session there.
+- **Agent inside an editor window:** a running session cannot move to another window, so create the worktree in the editor first, named after the ticket ID, then run `/gh44-implement <ticket> --worktree` in that worktree's window. It prepares the worktree and creates the branch if the editor's hook did not.
 
 If the editor can run a command after it creates a worktree, point it at `<gh44>/hooks/prepare-worktree.sh <worktree> <main checkout>`, and set its worktree folder to `.worktrees`, so the worktree is ready before the agent starts.
 

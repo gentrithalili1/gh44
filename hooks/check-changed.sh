@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Stop hook: runs check-code.sh on every TS file changed during this turn, however it
-# was edited (Edit tool, shell, script). Blocks the stop once so Claude can react.
+# Stop hook: reports my ESLint rules (check-code.sh --report) on every TS file changed during
+# this turn, however it was edited (Edit tool, shell, script). Blocks the stop once so Claude
+# can fix them.
 # Staged files and bulk changes come from git operations (merge, checkout), not from
 # Claude, so only unstaged and untracked files count, and more than 30 skips the check.
 set -euo pipefail
@@ -24,7 +25,7 @@ done < <({ git -C "$root" diff --name-only; git -C "$root" ls-files --others --e
 
 report=""
 for file in "${files[@]}"; do
-  report+="$(jq -n --arg file "$file" '{tool_input: {file_path: $file}}' | "$BRAIN/hooks/check-code.sh" 2>&1 | grep -v '^gh44 checks failed' || true)"$'\n'
+  report+="$(jq -n --arg file "$file" '{tool_input: {file_path: $file}}' | "$BRAIN/hooks/check-code.sh" --report 2>&1 | grep -v '^gh44 checks failed' || true)"$'\n'
 done
 
 report="$(sed '/^$/d' <<< "$report")"

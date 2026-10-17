@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Makes a new linked worktree ready to run: copies the main checkout's gitignored .env* files
-# and installs dependencies from the lockfile. gh44-ticket and an editor's worktree-created hook call it.
+# and installs dependencies from the lockfile. /gh44-implement --worktree and an editor's worktree-created hook call it.
 # A repo replaces these steps with its own git-excluded .worktree-setup.sh in the main checkout.
 # Usage: prepare-worktree.sh <worktree> <main checkout>
 set -euo pipefail

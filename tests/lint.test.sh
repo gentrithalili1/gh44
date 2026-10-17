@@ -6,7 +6,7 @@ fail() { echo "FAIL: $1" >&2; exit 1; }
 
 run_hook() {
   status=0
-  output="$(jq -n --arg file "$1" '{tool_name: "Edit", tool_input: {file_path: $file}}' | "$HOOK" 2>&1)" || status=$?
+  output="$(jq -n --arg file "$1" '{tool_name: "Edit", tool_input: {file_path: $file}}' | "$HOOK" --report 2>&1)" || status=$?
 }
 new_repo() {
   repo="$(mktemp -d)"
