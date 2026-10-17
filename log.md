@@ -77,3 +77,4 @@ Append-only. One line per lesson: date | file | action | rule | why, source.
 - 2026-10-17 | README.md, install.sh | replaced | README shortened (273 → 186 lines), diagrams kept; fixed stale hook count, lint wording, skills list and inbox hint | "can we simplify the ReadME", Gentrit
 - 2026-10-17 | docs/ | removed | original agent-brain design spec and plan: outdated, unreferenced, kept in git history | "Go!", Gentrit approved
 - 2026-10-17 | skills/gh44-implement, skills/gh44-prototype, upstream-skills.txt, README.md | added | implement runs verifier and reviewer in parallel, one fix round; /gh44-prototype proxies Matt's prototype (installed unchanged), branch prototype/<name>, Linear read-only | Gentrit picked from options
+- 2026-10-17 | rules/communication.md | added | plain-prose lines from pstack's unslop: plain words, concrete and active, no chatbot phrases, no em dashes or decorative emojis in text others read | "add the lines", Gentrit approved
