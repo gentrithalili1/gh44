@@ -10,11 +10,11 @@ git clone git@github.com:gentrithalili1/gh44.git && gh44/install.sh
 
 > The repository's own `CLAUDE.md` / `AGENTS.md` always wins on code conventions. GH44 fills the gaps.
 
-<br>
+<br><br>
 
 ---
 
-<br>
+<br><br>
 
 ## How it works
 
@@ -41,11 +41,11 @@ flowchart LR
 
 Everything is linked, not copied: editing this repo changes every session at once.
 
-<br>
+<br><br>
 
 ---
 
-<br>
+<br><br>
 
 ## The workflow
 
@@ -76,11 +76,11 @@ flowchart LR
 - **Clarify, plan and implement run in one session**, so each builds on the last. Clarify decides _what_, plan decides _how_.
 - **Your rules apply without being asked**: they load in every session, the plan places files by `structure.md`, and lint and the verifier check the result.
 
-<br>
+<br><br>
 
 ---
 
-<br>
+<br><br>
 
 ## Skills
 
@@ -116,11 +116,11 @@ flowchart LR
 | `gh44-verifier` | implement, create-pr, code-review | `PASS`, or the typecheck, lint and test failures of the changed packages |
 | `gh44-reviewer` | implement, code-review | The review, read-only |
 
-<br>
+<br><br>
 
 ---
 
-<br>
+<br><br>
 
 ## Rules, lint and hooks
 
@@ -155,11 +155,11 @@ flowchart LR
 
 A repo's git-excluded `.worktree-setup.sh` replaces the default setup.
 
-<br>
+<br><br>
 
 ---
 
-<br>
+<br><br>
 
 ## Learning
 
@@ -173,11 +173,11 @@ GH44 gets better every time I correct it.
 
 Every change is recorded in [`log.md`](log.md).
 
-<br>
+<br><br>
 
 ---
 
-<br>
+<br><br>
 
 ## Install and uninstall
 
@@ -203,11 +203,11 @@ gh44/
 └── inbox.md             # captured corrections (gitignored)
 ```
 
-<br>
+<br><br>
 
 ---
 
-<br>
+<br><br>
 
 ## Credits
 
