@@ -1,6 +1,6 @@
 ---
-name: gh44-review-pr
-description: Review code the way Gentrit (gentrithalili1) reviews pull requests. Use when he runs /gh44-review-pr, or asks to review a PR, a branch or local changes "like me".
+name: gh44-code-review
+description: Review code the way Gentrit (gentrithalili1) reviews: a PR, a branch or local changes. Use when he runs /gh44-code-review, or asks to review code "like me".
 ---
 
 # gh44 review
@@ -10,7 +10,7 @@ Built from his real review comments (57 comments on 31 PRs). Review what a perso
 ## Input
 
 - A PR link or number: `gh pr diff <n>` and `gh pr view <n>`.
-- Nothing given: the current branch against its base, `git diff $(git merge-base origin/main HEAD)`.
+- Nothing given: the current branch against its base, `git diff $(git merge-base origin/main HEAD)`, plus untracked files (`git ls-files --others --exclude-standard`), each read in full as a new file.
 
 Read the changed files around each hunk before commenting. Post to GitHub only through the pending review below.
 

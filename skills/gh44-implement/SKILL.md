@@ -41,7 +41,7 @@ Run the `gh44-verifier` agent. Fix every failure the change caused and run it ag
 
 ## 4. Review
 
-Run the `gh44-reviewer` agent on the local changes, with the plan's acceptance criteria. Apply the comments that have one clear fix, then run `gh44-verifier` again. Keep the judgement calls for him.
+Run the `gh44-reviewer` agent on the local changes, with the plan's acceptance criteria. Apply the comments that have one clear fix, then run `gh44-verifier` again. Keep the judgement calls for him, numbered.
 
 ## 5. Report
 
@@ -49,7 +49,9 @@ Run the `gh44-reviewer` agent on the local changes, with the plan's acceptance c
 **Built:** <one line per slice>
 **Checks:** verifier PASS · <n> review fixes applied
 **Changed from the plan:** <each change and why, or "nothing">
-**For you:** <judgement calls from the review, or "nothing">
+**For you:** <numbered judgement calls from the review, or "nothing">
 
-Next: `/gh44-review-pr`, then `/gh44-create-pr`
+Next: `/gh44-create-pr`
 ```
+
+When he picks judgement calls ("apply 1 and 3"), apply them and run `gh44-verifier` again.

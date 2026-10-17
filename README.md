@@ -80,7 +80,7 @@ flowchart LR
 | **1. Clarify** | `/gh44-clarify [ticket]` | Reads the Linear or Sentry ticket if you pass one, then interviews you in rounds of numbered questions, each with a recommended answer. Claude looks up facts itself and asks you only for decisions. | Nothing is left open and you confirm you are on the same page. |
 | **2. Plan** | `/gh44-plan [ticket]` | Turns the clarified conversation, or a ticket on its own, into test seams and tracer-bullet slices, each with what it delivers, the units it touches, acceptance criteria and the slices that must land first. No code yet. | You approve the plan. |
 | **3. Execute** | `/gh44-implement [ticket] [--worktree]` | Builds the approved plan slice by slice: a red → green test at the plan's seam (Matt's `tdd`), then typecheck and the slice's tests. Lint fixes quietly on every edit and reports at the end of the turn. Then `gh44-verifier` runs typecheck, lint and related tests, and `gh44-reviewer` reviews the change; clear fixes are applied, judgement calls come to you. Changes stay uncommitted. | The verifier passes and you get the report. |
-| **4. Review** | `/gh44-review-pr`, then `/code-review` and `/simplify` | A review in my style, then a bug hunt, then cleanups. | You have fixed what matters. |
+| **4. Review** | Read implement's report | Implement already reviewed the change in my style (no PR needed: it reviews the local changes). Clear fixes are applied; you decide the numbered judgement calls ("apply 1 and 3"). Optional: `/code-review` for a bug hunt, `/simplify` for cleanups. | Every judgement call is decided. |
 | **5. Ship** | `/gh44-create-pr` | Checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | The PR is open. |
 
 **Clarify is a proxy.** The interview is Matt Pocock's [`grilling`](https://github.com/mattpocock/skills) skill, installed unchanged (see [Upstream skills](#upstream-skills)). `/gh44-clarify` only adds reading the ticket first, and is named after the step it runs.
@@ -91,7 +91,7 @@ flowchart LR
 /gh44-clarify ABC-123   # optional: when the ticket is fuzzy
 /gh44-plan              # seams + slices → you approve
 /gh44-implement         # builds the plan, verifies, reviews itself
-/gh44-review-pr         # your review pass
+                        # you decide the judgement calls in its report
 /gh44-create-pr         # commit, push, open the PR
 ```
 
@@ -115,7 +115,7 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | Plan | `/gh44-plan [ticket]` | You type | Test seams and tracer-bullet slices with blocking edges, from the conversation or a ticket. Ends when you approve. |
 | Build | `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the approved plan, or a small ticket, slice by slice; verifies, reviews itself and reports. Never commits. |
 | Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs, slowdowns and Sentry issues. |
-| Review | `/gh44-review-pr [pr]` | Auto | Reviews a PR, branch or local changes the way I review. Posts only what you pick. |
+| Review | `/gh44-code-review [pr]` | Auto | Reviews a PR, a branch or local changes (new files included) the way I review. On a PR, posts only what you pick. Implement runs the same review on its own changes. |
 | Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
 | Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR with the repo's template. |
 | Session | `/gh44-handoff [next focus]` | You type | Proxy: runs Matt's `handoff` unchanged, then prints the commands to continue in a fresh session. |
@@ -141,7 +141,7 @@ Linked into `~/.claude/agents`. Each runs in its own context and returns only it
 
 | Agent | Used by | Returns |
 | --- | --- | --- |
-| `gh44-reviewer` | `/gh44-review-pr`, before `/gh44-create-pr` | The review in my style. Read-only; posting stays in the main session. |
+| `gh44-reviewer` | `/gh44-code-review`, the end of `/gh44-implement` | The review in my style. Read-only; posting stays in the main session. |
 | `gh44-verifier` | "Verify before done", `/gh44-create-pr` | `PASS`, or the typecheck, lint and related-test failures for the changed packages. |
 
 ---

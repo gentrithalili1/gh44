@@ -9,7 +9,7 @@ Adapted from Matt Pocock's `pr` skill, whose summary visuals come from Dex Horth
 
 ## Steps
 
-1. **Check it is ready.** Run the `gh44-verifier` agent and report its result. If `/gh44-review-pr` has not run on this branch, offer it once before shipping.
+1. **Check it is ready.** Run the `gh44-verifier` agent and report its result. If neither `/gh44-implement` nor `/gh44-code-review` reviewed these changes, offer `/gh44-code-review` once before shipping.
 2. **Branch.** On the default branch, create one first. Follow the repo's branch naming; take the ticket ID from the conversation or the branch name.
 3. **Commit.** Stage only the files of this change. Follow the repo's commit style (`git log --oneline -10`).
 4. **Push** with `git push -u origin HEAD`.
