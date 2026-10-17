@@ -61,7 +61,7 @@ flowchart LR
 | ---------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1. Clarify**   | `/gh44-clarify [ticket]`                | Reads the ticket, then interviews you in rounds of numbered questions with a recommended answer each. Claude looks up the facts and asks you only for decisions.            |
 | **2. Plan**      | `/gh44-plan [ticket]`                   | Test seams and tracer-bullet slices: what each delivers, the units it touches, acceptance criteria, what must land first. Ends when you approve.                            |
-| **3. Implement** | `/gh44-implement [ticket] [--worktree]` | Each slice red → green (`tdd`), then typecheck and its tests. Then `gh44-verifier` and `gh44-reviewer` in parallel: clear fixes applied, judgement calls listed for you. Never commits. |
+| **3. Implement** | `/gh44-implement [ticket] [--worktree] [--here]` | `gh44-implementer` builds the plan in the background, each slice red → green (`tdd`) plus typecheck and tests, while you keep talking to Claude; changes you agree on are sent to it. Then `gh44-verifier` and `gh44-reviewer` in parallel: clear fixes applied, judgement calls listed for you. Never commits. `--here` builds in the session instead. |
 | **4. Decide**    | Read implement's report                 | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt.                                                                               |
 | **5. Ship**      | `/gh44-create-pr`                       | Verifies, commits, pushes, opens the PR. The body has a summary visual, before/after evidence and merge danger.                                                             |
 
@@ -69,6 +69,7 @@ flowchart LR
 - **Open UI or state question**: between clarify and plan, `/gh44-prototype` builds throwaway variants on a `prototype/<name>` branch to settle it.
 - **Clear ticket**: start at `/gh44-plan <ticket>`. It asks up to 4 questions itself and sends you to `/gh44-clarify` when there are more.
 - **Clarify, plan and implement run in one session**, so each builds on the last. Clarify decides _what_, plan decides _how_.
+- **Research runs in the background too**: ask Claude to search or find the latest on something, and `gh44-researcher` answers from primary sources with links while you keep talking.
 - **Your rules apply without being asked**: they load in every session, the plan places files by `structure.md`, and lint and the verifier check the result.
 
 <br>
@@ -87,7 +88,7 @@ In workflow order. _You type_ = only runs when you call it. _Auto_ = Claude also
 | `/gh44-clarify [ticket]`                       | You type | Reads the ticket, then runs Matt's `grilling` unchanged.                                                                                                                                                        |
 | `/gh44-plan [ticket]`                          | You type | Seams and slices from the conversation or a ticket.                                                                                                                                                             |
 | `/gh44-prototype [question]` | You type | Throwaway UI or state variants on a `prototype/<name>` branch, via Matt's `prototype`. |
-| `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the plan or a small ticket, verifies, reviews itself, reports.                                                                                                                                           |
+| `/gh44-implement [ticket] [--worktree [name]] [--here]` | You type | Hands the plan to the background implementer (or builds here with `--here`), then verifies, reviews and reports. |
 | `/gh44-debug`                                  | Auto     | Diagnosis loop for hard bugs, slowdowns and Sentry issues.                                                                                                                                                      |
 | `/gh44-code-review [pr]`                       | Auto     | Reviews a PR, branch or local changes on **Standards** (repo rules → my rules → my habits → smells) and **Spec** (the ticket's criteria). Someone else's PR: posts what you pick. Yours: applies what you pick. |
 | `/gh44-resolve-conflicts <pr>`                 | You type | Merges the base in, shows the resolutions, pushes after you approve.                                                                                                                                            |
@@ -123,6 +124,8 @@ Each runs in its own context and returns only a result:
 | --------------- | --------------------------------- | ------------------------------------------------------------------------ |
 | `gh44-verifier` | implement, create-pr, code-review | `PASS`, or the typecheck, lint and test failures of the changed packages |
 | `gh44-reviewer` | implement, code-review            | The review, read-only                                                    |
+| `gh44-implementer` | implement | Builds the approved plan in the background; reports done or blocked |
+| `gh44-researcher` | Any "search / find the latest on X" | A short cited report from primary sources. Read-only, skips the code rules |
 
 <br>
 <br>

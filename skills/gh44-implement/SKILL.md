@@ -1,7 +1,7 @@
 ---
 name: gh44-implement
 description: Build the approved plan, or a small ticket or task, slice by slice, then verify and review it.
-argument-hint: "[Linear ticket | Sentry link | task] [--worktree [name]]"
+argument-hint: "[Linear ticket | Sentry link | task] [--worktree [name]] [--here]"
 disable-model-invocation: true
 ---
 
@@ -21,19 +21,19 @@ Name: the name passed, else the ticket ID (`ABC-123` from a Linear link, `sentry
 
 Tell him the worktree path and branch in one line.
 
-## 2. Build, slice by slice
+## 2. Build
 
-Work the **frontier** of the plan: the next slice whose blockers have landed. A Sentry link without a plan is a bug: load `gh44-debug` first and build its fix as the slice.
+A Sentry link without a plan is a bug: load `gh44-debug` first; its fix becomes the slice.
 
-For each slice:
+**In the background (default):** dispatch the `gh44-implementer` agent with the approved plan word for word, every decision from this conversation the plan does not hold, and the ticket ID. Tell him it is running and that you are free to talk. While it runs:
 
-1. Load `tdd` and run the red → green loop at the plan's seam.
-2. Run typecheck and the slice's test file.
-3. Tick its acceptance criteria and tell him in one line.
+- Talk and plan with him; leave the code to the implementer.
+- A change he agrees to: summarize it, and once he approves, send it to the implementer with SendMessage. If it already finished, SendMessage resumes it with the change.
+- When it reports **blocked**, ask him, then send his answer the same way.
 
-The plan is the contract. When it turns out wrong (a seam does not exist, a slice cannot land green), stop and ask before changing it. A hard bug inside a slice: load `gh44-debug`.
+**With `--here`:** build in this session yourself, following the Build section of `~/.claude/agents/gh44-implementer.md`, and tell him each slice in one line as it lands. When the plan turns out wrong, stop and ask him.
 
-Done when every slice is green and every acceptance criterion is ticked.
+Done when the implementer reports done, or every slice is green here.
 
 ## 3. Verify and review
 
