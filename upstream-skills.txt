@@ -5,3 +5,4 @@ mattpocock/skills handoff
 mattpocock/skills tdd
 mattpocock/skills codebase-design
 mattpocock/skills pr
+mattpocock/skills writing-for-agents

@@ -120,7 +120,6 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR. The body comes from Matt's `pr`, or the repo's template when it has one. |
 | Session | `/gh44-handoff [next focus]` | You type | Proxy: runs Matt's `handoff` unchanged, then prints the commands to continue in a fresh session. |
 | Brain | `/gh44-learn` · `ingest` · `tidy` | Auto | Saves a correction as a rule, sorts the inbox, cleans up the rules. |
-| Brain | `/gh44-writing-for-agents` | Auto | How to write skills, rules and `CLAUDE.md` files, this repo included. |
 
 ### Upstream skills
 
@@ -133,6 +132,7 @@ Skills I use exactly as their author wrote them are installed, not copied into `
 | `tdd` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-implement` for every slice, and Claude by itself for test-first work |
 | `codebase-design` | [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, when the shape of an interface or seam is in question |
 | `pr` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-create-pr` for the body, and Claude by itself whenever it writes a PR description |
+| `writing-for-agents` | [mattpocock/skills](https://github.com/mattpocock/skills) | Claude by itself when writing skills, rules or a `CLAUDE.md`, this repo included |
 
 ---
 
