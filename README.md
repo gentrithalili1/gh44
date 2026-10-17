@@ -61,11 +61,12 @@ flowchart LR
 | ---------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1. Clarify**   | `/gh44-clarify [ticket]`                | Reads the ticket, then interviews you in rounds of numbered questions with a recommended answer each. Claude looks up the facts and asks you only for decisions.            |
 | **2. Plan**      | `/gh44-plan [ticket]`                   | Test seams and tracer-bullet slices: what each delivers, the units it touches, acceptance criteria, what must land first. Ends when you approve.                            |
-| **3. Implement** | `/gh44-implement [ticket] [--worktree]` | Each slice red → green (`tdd`), then typecheck and its tests. Then `gh44-verifier` and `gh44-reviewer`: clear fixes applied, judgement calls listed for you. Never commits. |
+| **3. Implement** | `/gh44-implement [ticket] [--worktree]` | Each slice red → green (`tdd`), then typecheck and its tests. Then `gh44-verifier` and `gh44-reviewer` in parallel: clear fixes applied, judgement calls listed for you. Never commits. |
 | **4. Decide**    | Read implement's report                 | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt.                                                                               |
 | **5. Ship**      | `/gh44-create-pr`                       | Verifies, commits, pushes, opens the PR. The body has a summary visual, before/after evidence and merge danger.                                                             |
 
 - **Small task** (a bug, one clear area): start at `/gh44-implement <ticket>`.
+- **Open UI or state question**: between clarify and plan, `/gh44-prototype` builds throwaway variants on a `prototype/<name>` branch to settle it.
 - **Clear ticket**: start at `/gh44-plan <ticket>`. It asks up to 4 questions itself and sends you to `/gh44-clarify` when there are more.
 - **Clarify, plan and implement run in one session**, so each builds on the last. Clarify decides _what_, plan decides _how_.
 - **Your rules apply without being asked**: they load in every session, the plan places files by `structure.md`, and lint and the verifier check the result.
@@ -85,6 +86,7 @@ In workflow order. _You type_ = only runs when you call it. _Auto_ = Claude also
 | ---------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/gh44-clarify [ticket]`                       | You type | Reads the ticket, then runs Matt's `grilling` unchanged.                                                                                                                                                        |
 | `/gh44-plan [ticket]`                          | You type | Seams and slices from the conversation or a ticket.                                                                                                                                                             |
+| `/gh44-prototype [question]` | You type | Throwaway UI or state variants on a `prototype/<name>` branch, via Matt's `prototype`. |
 | `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the plan or a small ticket, verifies, reviews itself, reports.                                                                                                                                           |
 | `/gh44-debug`                                  | Auto     | Diagnosis loop for hard bugs, slowdowns and Sentry issues.                                                                                                                                                      |
 | `/gh44-code-review [pr]`                       | Auto     | Reviews a PR, branch or local changes on **Standards** (repo rules → my rules → my habits → smells) and **Spec** (the ticket's criteria). Someone else's PR: posts what you pick. Yours: applies what you pick. |
@@ -109,6 +111,7 @@ Installed unchanged from [`upstream-skills.txt`](upstream-skills.txt). Update wi
 | `codebase-design`    | `tdd`, when an interface's shape is unclear                           |
 | `pr`                 | `/gh44-create-pr`, and Claude whenever it writes a PR body            |
 | `writing-for-agents` | Claude, when writing skills, rules or a `CLAUDE.md`                   |
+| `prototype` | `/gh44-prototype`, and Claude when you ask to try out a UI or a state model |
 
 <br>
 

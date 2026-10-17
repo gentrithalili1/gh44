@@ -35,15 +35,11 @@ The plan is the contract. When it turns out wrong (a seam does not exist, a slic
 
 Done when every slice is green and every acceptance criterion is ticked.
 
-## 3. Verify
+## 3. Verify and review
 
-Run the `gh44-verifier` agent. Fix every failure the change caused and run it again until it returns `PASS`.
+Run two agents in parallel: `gh44-verifier`, and `gh44-reviewer` on the local changes with the plan's acceptance criteria. Then, in one round, fix every failure the change caused and apply the review comments that have one clear fix. Run `gh44-verifier` again until it returns `PASS`. Keep the judgement calls for him, numbered.
 
-## 4. Review
-
-Run the `gh44-reviewer` agent on the local changes, with the plan's acceptance criteria. Apply the comments that have one clear fix, then run `gh44-verifier` again. Keep the judgement calls for him, numbered.
-
-## 5. Report
+## 4. Report
 
 ```md
 **Built:** <one line per slice>

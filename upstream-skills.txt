@@ -6,3 +6,4 @@ mattpocock/skills tdd
 mattpocock/skills codebase-design
 mattpocock/skills pr
 mattpocock/skills writing-for-agents
+mattpocock/skills prototype
