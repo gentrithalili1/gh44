@@ -1,6 +1,6 @@
 skills/gh44-debug, skills/gh44-plan
 (from to-spec and to-tickets), skills/gh44-implement (from implement) and the Standards/Spec axes and smell list in
-skills/gh44-code-review (from code-review) are adapted from https://github.com/mattpocock/skills under the MIT License:
+skills/gh44-code-review (from code-review) and the retro mode of skills/gh44-learn (from retro) are adapted from https://github.com/mattpocock/skills under the MIT License:
 
 MIT License
 

@@ -1,6 +1,6 @@
 ---
 name: gh44-learn
-description: Save how Gentrit works into the brain repo. Use when he corrects you, states a preference or a rule, says "learn this" or "remember this", or runs /gh44-learn, /gh44-learn ingest or /gh44-learn tidy.
+description: Save how Gentrit works into the brain repo. Use when he corrects you, states a preference or a rule, says "learn this" or "remember this", or runs /gh44-learn, /gh44-learn ingest, /gh44-learn tidy or /gh44-learn retro.
 ---
 
 # Learn
@@ -20,6 +20,15 @@ Skip the approval only when he stated the rule plainly or said "learn this" in t
 - `/gh44-learn [lesson]` (capture): the lesson is the argument, or the latest correction in this session. `hooks/capture-corrections.sh` also starts this mode by itself for short prompts that open with a correction keyword; after handling the lesson (learned or rejected), delete its line from `inbox.md`.
 - `/gh44-learn ingest`: process each item (lessons the capture hook flagged but that were not handled in their session, plus anything pasted by hand; drop the ones that are not lessons) below `<!-- items below -->` in `inbox.md`, then delete the processed items. Keep an item and report it when its link cannot be read. Read links with the right tool: Artifact `read` for claude.ai artifacts, WebFetch for other URLs.
 - `/gh44-learn tidy`: review `CLAUDE.md`, every `rules/*.md` and every `skills/*/SKILL.md`. Merge duplicates, resolve contradictions, remove stale rules. Rewrite each "never" rule as the behaviour to follow, keeping "never" only for a hard guardrail, paired with the positive target. If `CLAUDE.md` plus `rules/` is over 160 lines, move the most topic-specific rules into skills. List the rules that a script could check as hook candidates.
+- `/gh44-learn retro [session]`: look back over this session, or the one he names (search the session logs on this machine), for friction he never corrected. Find candidates in these categories:
+  - **Navigation**: a file or fact that took long to find → a pointer in the right `CLAUDE.md`/`AGENTS.md` or skill.
+  - **Missed check**: a mistake lint, types or a test could have caught → route 2. Read the repo's own check scripts and CI first: an existing check that is unwired or broken is the finding.
+  - **Missed review**: a mistake `gh44-code-review` should have flagged → a line in its checklist, or route 2 when it is mechanical.
+  - **Tool economy**: an expensive or repeated tool call → a cheaper command, script or hook.
+  - **Information access**: something Claude could not see (dev server logs, a service) → a way to reach it.
+  - **No-op**: a rule or skill line that changed nothing this session → remove it.
+
+  Route each through "Route each lesson" below. A gap in the team's repo (no CI lint, a missing pointer in its `AGENTS.md`) is a suggestion for the team: list it, never edit their files. Present all candidates most severe first, then ask as in Approval.
 
 ## Route each lesson (first match wins)
 

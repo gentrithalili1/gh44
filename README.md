@@ -210,6 +210,7 @@ GH44 gets better every time I correct it.
 2. **Learn.** Claude finishes the task, then writes the rule to the right file here, commits and pushes, and tells me in one line. If it's unsure, it shows me the rule first and waits.
 3. **Ingest.** `/gh44-learn ingest` sorts anything still left in the inbox, including notes and links I paste there myself.
 4. **Tidy.** `/gh44-learn tidy` merges duplicates, resolves contradictions, drops stale rules and moves topic-specific ones into skills when the core passes 160 lines.
+5. **Retro.** After a session that went sideways, `/gh44-learn retro` looks back for friction I never corrected (hard-to-find files, missed checks, expensive tool calls, missing information) and proposes fixes through the same routes and approval. Gaps in a team repo come back as suggestions, never edits.
 
 ---
 
