@@ -60,7 +60,7 @@ flowchart LR
 | **1. Clarify** | `/gh44-clarify [ticket]` | Reads the ticket, then interviews you in rounds of numbered questions with a recommended answer each. Claude looks up the facts and asks you only for decisions. |
 | **2. Plan** | `/gh44-plan [ticket]` | Test seams and tracer-bullet slices: what each delivers, the units it touches, acceptance criteria, what must land first. Ends when you approve. |
 | **3. Implement** | `/gh44-implement [ticket] [--worktree]` | Each slice red → green (`tdd`), then typecheck and its tests. Then `gh44-verifier` and `gh44-reviewer`: clear fixes applied, judgement calls listed for you. Never commits. |
-| **4. Decide** | Read implement's report | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt, `/simplify` for cleanups. |
+| **4. Decide** | Read implement's report | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt. |
 | **5. Ship** | `/gh44-create-pr` | Verifies, commits, pushes, opens the PR. The body has a summary visual, before/after evidence and merge danger. |
 
 - **Small task** (a bug, one clear area): start at `/gh44-implement <ticket>`.
