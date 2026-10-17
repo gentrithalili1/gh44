@@ -1,24 +1,43 @@
 ---
 name: gh44-code-review
-description: Review code the way Gentrit (gentrithalili1) reviews: a PR, a branch or local changes. Use when he runs /gh44-code-review, or asks to review code "like me".
+description: Review code the way Gentrit (gentrithalili1) reviews: a PR, a branch or local changes, against the repo's standards, his rules and the ticket. Use when he runs /gh44-code-review, or asks to review code "like me".
 ---
 
-# gh44 review
+# gh44 code review
 
-Built from his real review comments (57 comments on 31 PRs). Review what a person has to judge; the lint hooks already check casts, `any`, naming, effects, params, hook results, nested JSX ternaries, index keys and `&&` renders, so skip those.
+Two axes, reported separately so one cannot mask the other: **Standards** (does the code follow the rules that apply here?) and **Spec** (does it do what the ticket or plan asked?). The voice comes from his real review comments (57 comments on 31 PRs). Review what a person has to judge: anything tooling enforces (the repo's lint and types, and his lint hooks for casts, `any`, naming, effects, params, hook results, nested JSX ternaries, index keys and `&&` renders) is already covered, so skip it.
 
 ## Input
 
-- A PR link or number: `gh pr diff <n>` and `gh pr view <n>`.
+- A PR link or number: `gh pr diff <n>` and `gh pr view <n> --json title,body,author,headRefName,headRefOid`.
 - Nothing given: the current branch against its base, `git diff $(git merge-base origin/main HEAD)`, plus untracked files (`git ls-files --others --exclude-standard`), each read in full as a new file.
 
-Read the changed files around each hunk before commenting. Post to GitHub only through the pending review below.
+Read the changed files around each hunk before commenting.
 
 ## Run in a fresh context
 
-Unless you are the `gh44-reviewer` agent, dispatch it with the input and wait for its review. Show its output to him unchanged, then do the Pending review step yourself.
+Unless you are the `gh44-reviewer` agent, find the spec first: the approved plan's acceptance criteria in this session; else the ticket linked in the PR body or named in the branch (`ABC-123`), read-only from Linear. Dispatch the agent with the input and the spec's criteria, and wait for its review. Show its output to him unchanged, then do the Finish step yourself.
 
-## What to look for, most frequent first
+## Gather
+
+- **Standards sources:** every file in the repo that says how code is written: `CLAUDE.md` / `AGENTS.md` (root and in the changed folders), `CONTRIBUTING.md`, `CODING_STANDARDS.md`, `.cursor/rules/`, and docs folders about conventions.
+- **Spec:** the acceptance criteria passed in; without them, the Spec section says "no spec found".
+
+Done when you can list both before reading the diff.
+
+## Standards: what to look for
+
+Apply in this order of authority. A higher source wins: where the repo endorses something a lower one would flag, skip it.
+
+### 1. Repo standards
+
+Every place the diff breaks a documented repo rule. A documented rule can be Must fix.
+
+### 2. His rules, where the repo is silent
+
+His rules in `~/.claude/rules/code.md` and `~/.claude/rules/structure.md`: logic that could stand alone as a hook or util, long hook names, state lifted too high, boolean piles instead of a status union, non-exhaustive `switch`, boolean props instead of a `variant`, wrong element for the job (`div` with `onClick`, input without a label), magic values, swallowed errors, floating promises, and code left dead by the change.
+
+### 3. His taste, most frequent first
 
 1. **Comments that repeat the code.** JSDoc or inline comments that restate the code, narrate the ticket or explain history: ask to remove them.
 2. **Re-created code.** A type, util, constant or validator that already exists in the repo or a shared package: point to it and ask to reuse or export it. Two places that must stay in sync should share one constant.
@@ -29,9 +48,24 @@ Unless you are the `gh44-reviewer` agent, dispatch it with the input and wait fo
 7. **Behaviour.** If the change affects UI, say what to try locally and what could go wrong (stale error after submit, value overwritten on load).
 8. **Modern React.** Prefer current APIs, for example `useEffectEvent` over a ref that mirrors a callback.
 
-Also check his rules in `~/.claude/rules/code.md` and `~/.claude/rules/structure.md` when the lint hooks cannot catch them: logic that could stand alone as a hook or util, long hook names, state lifted too high, boolean piles instead of a status union, non-exhaustive `switch`, boolean props instead of a `variant`, wrong element for the job (`div` with `onClick`, input without a label), magic values, swallowed errors, floating promises and code left dead by the change.
+### 4. Smells
+
+Fowler's smells (_Refactoring_, ch. 3), always 🔵 Suggestion, named as a heuristic ("possible Data Clumps"):
+
+- **Mysterious Name**: a name that does not reveal what it does or holds → rename it.
+- **Duplicated Code**: the same logic shape in more than one hunk or file of the change → extract the shared shape.
+- **Data Clumps**: the same few props or params travelling together → one type.
+- **Primitive Obsession**: a string or number standing in for a domain concept → its own small type or union.
+- **Speculative Generality**: options, params or abstractions the ticket does not need → inline until a real need shows.
+- **Shotgun Surgery**: one logical change forcing scattered edits → gather what changes together.
+- **Divergent Change**: one file edited for several unrelated reasons → split it.
+- **Middle Man**: a component, hook or function that only passes through → call the real target.
 
 He does not comment on tests, formatting, import order, i18n or styling tokens. Skip them unless something is broken.
+
+## Spec: what to look for
+
+Against each acceptance criterion: (a) missing or partial, (b) implemented but wrong, (c) behaviour nobody asked for (scope creep). Quote the criterion for each finding. Severity: missing or wrong is Must fix, scope creep is Non blocking.
 
 ## How to write the comments
 
@@ -43,32 +77,48 @@ He does not comment on tests, formatting, import order, i18n or styling tokens. 
 
 ## Output
 
-A markdown numbered list, most severe first; he picks what to post by these numbers. Each item starts with its severity and short location, then the full clickable path, then the comment as a quote:
+Two sections, `### Standards` then `### Spec`, each a numbered list most severe first. Numbers run on across both sections, so he picks items by number. Each item starts with its severity and short location, then the full clickable path, then the comment as a quote, then its source:
 
 ```
+### Standards
+
 1. 🔴 Must fix · `useThing.ts:12`
    `src/hooks/useThing.ts:12`
    > this is doing an extra request every render, can we read `country` from the entity instead?
+   Source: taste · Extra requests
 
 2. 🟡 Non blocking · `File.tsx:42`
    `src/components/File.tsx:42`
-   > should we remove this comment? It is self-explanatory
+   > can we use the `useJobQuery` wrapper here?
+   Source: AGENTS.md › Data fetching
    Same here: `src/components/File.tsx:57`
 
-3. 🔵 Suggestion · `useCart.ts:30`
-   `src/hooks/useCart.ts:30`
-   > `total` is just `items.length`, we can handle this in a separate ticket!
+### Spec
+
+3. 🔴 Must fix · `JobForm.tsx:30`
+   `src/pages/Job/JobForm.tsx:30`
+   > the ticket says the salary is optional, but the form still requires it, should we drop the check?
+   Source: ABC-123 › "Salary is optional"
 ```
 
 - Severity leads the item (🔴 Must fix, 🟡 Non blocking, 🔵 Suggestion), so the quoted comment starts straight with the content.
+- The `Source:` line is for him; it never goes into a posted comment.
 - Repeats of an issue go on a `Same here:` line under the first item instead of a new item.
 - Code sketches go in a fenced block under the quote.
+- A section with nothing to report says so in one line.
 
-After a `---` line, end with a bold one-line verdict in his style: "LGTM 👍🏼", "clean job 🔥", or "a few non-blocking comments, otherwise LGTM!". If nothing needs a comment, say so.
+After a `---` line, end with a bold one-line verdict in his style: "LGTM 👍🏼", "clean job 🔥", or "a few non-blocking comments, otherwise LGTM!".
+
+## Finish
+
+Whose code it is decides the ending. Compare the PR author (`author.login`) with `gh api user --jq .login`.
+
+- **Someone else's PR:** the Pending review below. Never edit their code.
+- **His own PR, or local changes:** ask with the question tool which numbered items to apply (all clear fixes, some by number, or none). Apply the picked ones, then run the `gh44-verifier` agent. Done when it returns `PASS`.
 
 ## Pending review
 
-When the input was a PR, he approves what goes to GitHub: post only what he picks. Show him the full review first, then ask with the question tool, with the full review in each option's `preview` too, so he sees it while he picks.
+He approves what goes to GitHub: post only what he picks. Show him the full review first, then ask with the question tool, with the full review in each option's `preview` too, so he sees it while he picks.
 
 At least one comment:
 

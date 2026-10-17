@@ -115,7 +115,7 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | Plan | `/gh44-plan [ticket]` | You type | Test seams and tracer-bullet slices with blocking edges, from the conversation or a ticket. Ends when you approve. |
 | Build | `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the approved plan, or a small ticket, slice by slice; verifies, reviews itself and reports. Never commits. |
 | Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs, slowdowns and Sentry issues. |
-| Review | `/gh44-code-review [pr]` | Auto | Reviews a PR, a branch or local changes (new files included) the way I review. On a PR, posts only what you pick. Implement runs the same review on its own changes. |
+| Review | `/gh44-code-review [pr]` | Auto | Reviews a PR, a branch or local changes (new files included) on two axes: **Standards** (the repo's documented rules, then my rules where the repo is silent, then my review habits, then code smells as suggestions) and **Spec** (the ticket's or plan's acceptance criteria: missing, wrong or scope creep). Every finding cites its source. Someone else's PR: posts only what you pick as a pending review. My own PR or local changes: applies the items I pick, then verifies. Implement runs the same review on its own changes. |
 | Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
 | Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR with the repo's template. |
 | Session | `/gh44-handoff [next focus]` | You type | Proxy: runs Matt's `handoff` unchanged, then prints the commands to continue in a fresh session. |
