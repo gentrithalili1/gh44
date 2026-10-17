@@ -1,4 +1,6 @@
-# Skills installed as they are from other repositories; gh44 proxy skills call them.
+# Skills installed as they are from other repositories; gh44 skills and Claude call them by name.
 # One "<repository> <skill>" per line. install.sh installs them, uninstall.sh removes them.
 mattpocock/skills grilling
 mattpocock/skills handoff
+mattpocock/skills tdd
+mattpocock/skills codebase-design

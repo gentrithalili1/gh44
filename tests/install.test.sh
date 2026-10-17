@@ -16,7 +16,7 @@ echo '{"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"plugin.sh
 [ "$(readlink "$HOME/.claude/CLAUDE.md")" = "$BRAIN/CLAUDE.md" ] || fail "CLAUDE.md not linked"
 [ "$(readlink "$HOME/.claude/skills/gh44-learn")" = "$BRAIN/skills/gh44-learn" ] || fail "learn not linked"
 [ "$(readlink "$HOME/.claude/rules")" = "$BRAIN/rules" ] || fail "rules not linked"
-[ "$(readlink "$HOME/.claude/skills/gh44-tdd")" = "$BRAIN/skills/gh44-tdd" ] || fail "tdd not linked"
+[ "$(readlink "$HOME/.claude/skills/gh44-debug")" = "$BRAIN/skills/gh44-debug" ] || fail "debug not linked"
 [ "$(readlink "$HOME/.claude/agents/gh44-reviewer.md")" = "$BRAIN/agents/gh44-reviewer.md" ] || fail "reviewer agent not linked"
 jq -e --arg c "$BRAIN/hooks/budget-check.sh" \
   '[.hooks.SessionStart[].hooks[].command] == ["plugin.sh", $c]' "$HOME/.claude/settings.json" > /dev/null \
@@ -37,7 +37,7 @@ grep -qx -- "-y skills@1.7.2 add mattpocock/skills -g -a claude-code --copy -y -
 
 # Second run changes nothing
 "$BRAIN/install.sh" | grep -q "Up to date" || fail "second run was not a no-op"
-[ "$(wc -l < "$HOME/npx.log")" -eq 2 ] || fail "installed upstream skills again: $(cat "$HOME/npx.log")"
+[ "$(wc -l < "$HOME/npx.log")" -eq 4 ] || fail "installed upstream skills again: $(cat "$HOME/npx.log")"
 jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 0, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
 
 # A retired hook is dropped from settings
@@ -105,9 +105,9 @@ export HOME="$(mktemp -d)"
 copy="$(mktemp -d)/brain"
 mkdir -p "$copy" && cp -R "$BRAIN"/CLAUDE.md "$BRAIN"/rules "$BRAIN"/install.sh "$BRAIN"/hooks "$BRAIN"/skills "$BRAIN"/agents "$copy"/
 "$copy/install.sh" > /dev/null
-rm -rf "$copy/skills/gh44-tdd" "$copy/agents/gh44-verifier.md"
+rm -rf "$copy/skills/gh44-debug" "$copy/agents/gh44-verifier.md"
 "$copy/install.sh" > /dev/null
-[ ! -L "$HOME/.claude/skills/gh44-tdd" ] || fail "dangling skill link left behind"
+[ ! -L "$HOME/.claude/skills/gh44-debug" ] || fail "dangling skill link left behind"
 [ ! -L "$HOME/.claude/agents/gh44-verifier.md" ] || fail "dangling agent link left behind"
 ln -s /elsewhere/skill "$HOME/.claude/skills/foreign"
 "$copy/install.sh" > /dev/null

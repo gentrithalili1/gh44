@@ -79,7 +79,7 @@ flowchart LR
 | --- | --- | --- | --- |
 | **1. Clarify** | `/gh44-clarify [ticket]` | Reads the Linear or Sentry ticket if you pass one, then interviews you in rounds of numbered questions, each with a recommended answer. Claude looks up facts itself and asks you only for decisions. | Nothing is left open and you confirm you are on the same page. |
 | **2. Plan** | `/gh44-plan [ticket]` | Turns the clarified conversation, or a ticket on its own, into test seams and tracer-bullet slices, each with what it delivers, the units it touches, acceptance criteria and the slices that must land first. No code yet. | You approve the plan. |
-| **3. Execute** | `/gh44-implement [ticket] [--worktree]` | Builds the approved plan slice by slice: a red → green test at the plan's seam (`gh44-tdd`), then typecheck and the slice's tests. Lint fixes quietly on every edit and reports at the end of the turn. Then `gh44-verifier` runs typecheck, lint and related tests, and `gh44-reviewer` reviews the change; clear fixes are applied, judgement calls come to you. Changes stay uncommitted. | The verifier passes and you get the report. |
+| **3. Execute** | `/gh44-implement [ticket] [--worktree]` | Builds the approved plan slice by slice: a red → green test at the plan's seam (Matt's `tdd`), then typecheck and the slice's tests. Lint fixes quietly on every edit and reports at the end of the turn. Then `gh44-verifier` runs typecheck, lint and related tests, and `gh44-reviewer` reviews the change; clear fixes are applied, judgement calls come to you. Changes stay uncommitted. | The verifier passes and you get the report. |
 | **4. Review** | `/gh44-review-pr`, then `/code-review` and `/simplify` | A review in my style, then a bug hunt, then cleanups. | You have fixed what matters. |
 | **5. Ship** | `/gh44-create-pr` | Checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | The PR is open. |
 
@@ -114,7 +114,6 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | Clarify | `/gh44-clarify [ticket]` | You type | Proxy: reads the ticket if given, then runs Matt's `grilling` unchanged until nothing is open. |
 | Plan | `/gh44-plan [ticket]` | You type | Test seams and tracer-bullet slices with blocking edges, from the conversation or a ticket. Ends when you approve. |
 | Build | `/gh44-implement [ticket] [--worktree [name]]` | You type | Builds the approved plan, or a small ticket, slice by slice; verifies, reviews itself and reports. Never commits. |
-| Build | `/gh44-tdd` | Auto | Red-green-refactor loop, integration tests, mocking guidance. |
 | Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs, slowdowns and Sentry issues. |
 | Review | `/gh44-review-pr [pr]` | Auto | Reviews a PR, branch or local changes the way I review. Posts only what you pick. |
 | Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
@@ -125,12 +124,14 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 
 ### Upstream skills
 
-Skills I use exactly as their author wrote them are installed, not copied into `skills/`. [`upstream-skills.txt`](upstream-skills.txt) lists them, and a thin `gh44-*` proxy calls each one, so every command I type stays `/gh44-*`. Update them with `npx skills update -g`.
+Skills I use exactly as their author wrote them are installed, not copied into `skills/`. [`upstream-skills.txt`](upstream-skills.txt) lists them. The ones I type get a thin `gh44-*` proxy, so every command I type stays `/gh44-*`; the ones Claude loads by itself are called by name. Update them with `npx skills update -g`.
 
 | Skill | From | Called by |
 | --- | --- | --- |
 | `grilling` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-clarify` |
 | `handoff` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-handoff` |
+| `tdd` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-implement` for every slice, and Claude by itself for test-first work |
+| `codebase-design` | [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, when the shape of an interface or seam is in question |
 
 ---
 

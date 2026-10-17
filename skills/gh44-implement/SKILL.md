@@ -27,7 +27,7 @@ Work the **frontier** of the plan: the next slice whose blockers have landed. A 
 
 For each slice:
 
-1. Load `gh44-tdd` and run the red → green loop at the plan's seam.
+1. Load `tdd` and run the red → green loop at the plan's seam.
 2. Run typecheck and the slice's test file.
 3. Tick its acceptance criteria and tell him in one line.
 
