@@ -81,7 +81,7 @@ flowchart LR
 | **2. Plan** | `/gh44-plan [ticket]` | Turns the clarified conversation, or a ticket on its own, into test seams and tracer-bullet slices, each with what it delivers, the units it touches, acceptance criteria and the slices that must land first. No code yet. | You approve the plan. |
 | **3. Execute** | `/gh44-implement [ticket] [--worktree]` | Builds the approved plan slice by slice: a red → green test at the plan's seam (Matt's `tdd`), then typecheck and the slice's tests. Lint fixes quietly on every edit and reports at the end of the turn. Then `gh44-verifier` runs typecheck, lint and related tests, and `gh44-reviewer` reviews the change; clear fixes are applied, judgement calls come to you. Changes stay uncommitted. | The verifier passes and you get the report. |
 | **4. Review** | Read implement's report | Implement already reviewed the change in my style (no PR needed: it reviews the local changes). Clear fixes are applied; you decide the numbered judgement calls ("apply 1 and 3"). Optional: `/code-review` for a bug hunt, `/simplify` for cleanups. | Every judgement call is decided. |
-| **5. Ship** | `/gh44-create-pr` | Checks, commits, pushes and opens the PR with a summary visual, how to test and risk. | The PR is open. |
+| **5. Ship** | `/gh44-create-pr` | Checks, commits, pushes and opens the PR. Matt's `pr` writes the body: a summary visual, before/after evidence and merge danger (one-way or two-way door, blast radius). | The PR is open. |
 
 **Clarify is a proxy.** The interview is Matt Pocock's [`grilling`](https://github.com/mattpocock/skills) skill, installed unchanged (see [Upstream skills](#upstream-skills)). `/gh44-clarify` only adds reading the ticket first, and is named after the step it runs.
 
@@ -117,7 +117,7 @@ In workflow order. **Auto** skills load when the work matches, and you can also 
 | Build | `/gh44-debug` | Auto | Diagnosis loop for hard bugs, slowdowns and Sentry issues. |
 | Review | `/gh44-code-review [pr]` | Auto | Reviews a PR, a branch or local changes (new files included) on two axes: **Standards** (the repo's documented rules, then my rules where the repo is silent, then my review habits, then code smells as suggestions) and **Spec** (the ticket's or plan's acceptance criteria: missing, wrong or scope creep). Every finding cites its source. Someone else's PR: posts only what you pick as a pending review. My own PR or local changes: applies the items I pick, then verifies. Implement runs the same review on its own changes. |
 | Review | `/gh44-resolve-conflicts <pr>` | You type | Merges the base in a worktree, shows the resolutions, pushes after you approve. |
-| Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR with the repo's template. |
+| Ship | `/gh44-create-pr` | Auto | Checks, commits, pushes and opens the PR. The body comes from Matt's `pr`, or the repo's template when it has one. |
 | Session | `/gh44-handoff [next focus]` | You type | Proxy: runs Matt's `handoff` unchanged, then prints the commands to continue in a fresh session. |
 | Brain | `/gh44-learn` · `ingest` · `tidy` | Auto | Saves a correction as a rule, sorts the inbox, cleans up the rules. |
 | Brain | `/gh44-writing-for-agents` | Auto | How to write skills, rules and `CLAUDE.md` files, this repo included. |
@@ -132,6 +132,7 @@ Skills I use exactly as their author wrote them are installed, not copied into `
 | `handoff` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-handoff` |
 | `tdd` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-implement` for every slice, and Claude by itself for test-first work |
 | `codebase-design` | [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, when the shape of an interface or seam is in question |
+| `pr` | [mattpocock/skills](https://github.com/mattpocock/skills) | `/gh44-create-pr` for the body, and Claude by itself whenever it writes a PR description |
 
 ---
 

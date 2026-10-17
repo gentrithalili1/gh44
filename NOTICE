@@ -1,4 +1,4 @@
-skills/gh44-debug, skills/gh44-create-pr, skills/gh44-writing-for-agents, skills/gh44-plan
+skills/gh44-debug, skills/gh44-writing-for-agents, skills/gh44-plan
 (from to-spec and to-tickets), skills/gh44-implement (from implement) and the Standards/Spec axes and smell list in
 skills/gh44-code-review (from code-review) are adapted from https://github.com/mattpocock/skills under the MIT License:
 

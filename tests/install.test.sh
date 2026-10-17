@@ -37,7 +37,7 @@ grep -qx -- "-y skills@1.7.2 add mattpocock/skills -g -a claude-code --copy -y -
 
 # Second run changes nothing
 "$BRAIN/install.sh" | grep -q "Up to date" || fail "second run was not a no-op"
-[ "$(wc -l < "$HOME/npx.log")" -eq 4 ] || fail "installed upstream skills again: $(cat "$HOME/npx.log")"
+[ "$(wc -l < "$HOME/npx.log")" -eq "$(grep -cv '^#' "$BRAIN/upstream-skills.txt")" ] || fail "installed upstream skills again: $(cat "$HOME/npx.log")"
 jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 0, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
 
 # A retired hook is dropped from settings
