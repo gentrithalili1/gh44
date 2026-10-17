@@ -189,7 +189,7 @@ Registered in `~/.claude/settings.json` by `install.sh`. All shell, no tokens.
 | Every prompt | `mark-turn.sh` | Marks the start of a turn for the end-of-turn check. |
 | After a TS edit | `check-code.sh` | Runs ESLint on the file and fixes what it can. Reports nothing. |
 | End of turn | `check-changed.sh` | Reports what is left on the lines changed in every TS file touched this turn, however it was edited, and sends it back to Claude. |
-| New worktree | `prepare-worktree.sh` | Puts a detached worktree on a branch named after its folder, from the remote's default branch. Copies the main checkout's gitignored `.env*` files and installs from the lockfile. A repo's git-excluded `.worktree-setup.sh` replaces these steps. Run by `/gh44-implement --worktree` and by your editor's worktree hook. |
+| New worktree | `prepare-worktree.sh` | Puts a detached worktree on a branch named after its folder, from the remote's default branch. Copies the main checkout's gitignored `.env*` files and installs from the lockfile. A repo's git-excluded `.worktree-setup.sh` replaces these steps. Run by `/gh44-implement --worktree`, `/gh44-resolve-conflicts` and your editor's worktree hook. |
 
 ### Worktrees and your editor
 
