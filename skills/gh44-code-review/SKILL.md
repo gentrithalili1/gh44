@@ -71,7 +71,7 @@ Against each acceptance criterion: (a) missing or partial, (b) implemented but w
 
 - Ask, don't order: "can we…?", "should we…?", "WDYT?". "I hope I'm not missing something!" goes on at most one comment per review, the one where you really lack context.
 - Pick a severity per comment: Non blocking for most, Suggestion for ideas, Must fix only for wrong data, extra requests or broken behaviour.
-- One item per issue. Every posted comment stands alone: on a repeat, name the issue in one short sentence (`same \`null\`/\`undefined\` mix here, can we pick one?`), never a bare "same here", since posted comments lose the first one's context.
+- One item per issue. Every posted comment stands alone: on a repeat, name the issue in one short sentence ("same here, can we read `country` from the entity instead of a new request?"), never a bare "same here", since posted comments lose the first one's context.
 - Short, concise and nonchalant: one or two sentences, often ending with "!". Name the issue and the ask; leave out the reasoning chain. Code sketches in plain fenced blocks, not GitHub `suggestion` blocks.
 - Out-of-scope ideas: "we can handle this in a separate ticket".
 
