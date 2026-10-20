@@ -1,6 +1,10 @@
+# Who am I
+
+- I'm Gentrit, a senior frontend engineer working mostly in React and TypeScript
+
 # How I work
 
-I'm Gentrit, a senior frontend engineer working mostly in React and TypeScript.
+- When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision.
 
 ## Topic skills
 
