@@ -71,7 +71,7 @@ Against each acceptance criterion: (a) missing or partial, (b) implemented but w
 
 - Ask, don't order: "can we…?", "should we…?", "WDYT?". "I hope I'm not missing something!" goes on at most one comment per review, the one where you really lack context.
 - Pick a severity per comment: Non blocking for most, Suggestion for ideas, Must fix only for wrong data, extra requests or broken behaviour.
-- One comment per issue. On the next occurrence write only "same here".
+- One item per issue. Every posted comment stands alone: on a repeat, name the issue in one short sentence (`same \`null\`/\`undefined\` mix here, can we pick one?`), never a bare "same here", since posted comments lose the first one's context.
 - Short, concise and nonchalant: one or two sentences, often ending with "!". Name the issue and the ask; leave out the reasoning chain. Code sketches in plain fenced blocks, not GitHub `suggestion` blocks.
 - Out-of-scope ideas: "we can handle this in a separate ticket".
 
@@ -91,7 +91,7 @@ Two sections, `### Standards` then `### Spec`, each a numbered list most severe 
    `src/components/File.tsx:42`
    > can we use the `useJobQuery` wrapper here?
    Source: AGENTS.md › Data fetching
-   Same here: `src/components/File.tsx:57`
+   Also at: `src/components/File.tsx:57`
 
 ### Spec
 
@@ -103,7 +103,7 @@ Two sections, `### Standards` then `### Spec`, each a numbered list most severe 
 
 - Severity leads the item (🔴 Must fix, 🟡 Non blocking, 🔵 Suggestion), so the quoted comment starts straight with the content.
 - The `Source:` line is for him; it never goes into a posted comment.
-- Repeats of an issue go on a `Same here:` line under the first item instead of a new item.
+- Repeats of an issue go on an `Also at:` line under the first item instead of a new item.
 - Code sketches go in a fenced block under the quote.
 - A section with nothing to report says so in one line.
 
@@ -146,7 +146,7 @@ gh api repos/{owner}/{repo}/pulls/{n}/reviews --method POST --input review.json
 }
 ```
 
-- One inline comment per item, on its exact line; each `Same here:` location gets its own comment with body "same here".
+- One inline comment per item, on its exact line; each `Also at:` location gets its own short comment that names the issue and the ask on its own.
 - Body: severity label in bold without the emoji (`**Non blocking:**`), then the quote text and any code sketch, unchanged.
 - Use `start_line` + `line` for a comment on a range, `"side": "LEFT"` for a deleted line.
 - Inline comments only land on lines inside the diff. Put any item outside it in the review `body` as `path:line` plus the comment.
