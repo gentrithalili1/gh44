@@ -9,6 +9,8 @@ disable-model-invocation: true
 
 Build what the approved `/gh44-plan` in this session describes. With no plan, build the ticket or task passed as the argument; when that is clearly more than one slice, suggest `/gh44-plan` first and wait.
 
+With no plan, first write 2-4 acceptance criteria from the ticket or task, and ask its open questions with the question tool (up to 4; more: suggest `/gh44-clarify` and wait). Show the criteria in one block and build once he confirms; they go to the implementer and are the spec the reviewer checks in step 3.
+
 Read-only on Linear and Sentry. Leave every change uncommitted: `/gh44-create-pr` commits and pushes.
 
 ## 1. Worktree (only with `--worktree`)

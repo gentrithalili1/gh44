@@ -55,6 +55,7 @@ flowchart LR
 /gh44-implement         # builds, tests, verifies, reviews itself
                         # you decide the numbered judgement calls
 /gh44-create-pr         # commit, push, open the PR
+/gh44-address-review    # triage review comments + CI, you say "ship"
 ```
 
 | Step             | You run                                 | What happens                                                                                                                                                                |
@@ -64,8 +65,9 @@ flowchart LR
 | **3. Implement** | `/gh44-implement [ticket] [--worktree] [--here]` | `gh44-implementer` builds the plan in the background, each slice red → green (`tdd`) plus typecheck and tests, while you keep talking to Claude; changes you agree on are sent to it. Then `gh44-verifier` and `gh44-reviewer` in parallel: clear fixes applied, judgement calls listed for you. Never commits. `--here` builds in the session instead. |
 | **4. Decide**    | Read implement's report                 | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt.                                                                               |
 | **5. Ship**      | `/gh44-create-pr`                       | Verifies, commits, pushes, opens the PR. The body has a summary visual, before/after evidence and merge danger.                                                             |
+| **6. Address**   | `/gh44-address-review [pr]`             | Triages unresolved threads, comments and failing CI into Fix / Push back / Question. Applies what you pick, verifies, leaves it uncommitted. On "ship": commits, pushes, replies go into a pending review. |
 
-- **Small task** (a bug, one clear area): start at `/gh44-implement <ticket>`.
+- **Small task** (a bug, one clear area): start at `/gh44-implement <ticket>`. It writes 2-4 acceptance criteria and asks open questions before building.
 - **Open UI or state question**: between clarify and plan, `/gh44-prototype` builds throwaway variants on a `prototype/<name>` branch to settle it.
 - **Clear ticket**: start at `/gh44-plan <ticket>`. It asks up to 4 questions itself and sends you to `/gh44-clarify` when there are more.
 - **Clarify, plan and implement run in one session**, so each builds on the last. Clarify decides _what_, plan decides _how_.
@@ -93,6 +95,7 @@ In workflow order. _You type_ = only runs when you call it. _Auto_ = Claude also
 | `/gh44-code-review [pr]`                       | Auto     | Reviews a PR, branch or local changes on **Standards** (repo rules → my rules → my habits → smells) and **Spec** (the ticket's criteria). Someone else's PR: posts what you pick. Yours: applies what you pick. |
 | `/gh44-resolve-conflicts <pr>`                 | You type | Merges the base in, shows the resolutions, pushes after you approve.                                                                                                                                            |
 | `/gh44-create-pr`                              | Auto     | Verifies, commits, pushes, opens the PR; Matt's `pr` writes the body.                                                                                                                                           |
+| `/gh44-address-review [pr]`                    | You type | Works through review comments and failing CI on your PR; pushes on "ship", replies left pending.                                                                                                                 |
 | `/gh44-handoff [next focus]`                   | You type | Runs Matt's `handoff`, then prints the commands to continue in a fresh session.                                                                                                                                 |
 | `/gh44-learn` · `ingest` · `tidy` · `retro`    | Auto     | Turns corrections into rules (see [Learning](#learning)).                                                                                                                                                       |
 
