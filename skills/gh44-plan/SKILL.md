@@ -27,29 +27,46 @@ Done when every acceptance criterion is testable at a named seam.
 
 Break the work into **tracer bullets**: each slice cuts a narrow, complete path through every layer it needs (data hook, component, test) and is verifiable on its own. Prefactoring comes first: make the change easy, then make the easy change. A wide refactor (one mechanical change across many call sites) is the exception: expand, migrate in batches, then contract.
 
-Give each slice its **blocking edges**: the slices that must land before it.
+Order the slices so every slice lands after the slices it depends on.
 
 When the work is a single slice, say the task is small and skip to `/gh44-implement`.
 
-## 4. Present
+More than 6 slices: the ticket is too big for one session. Group the slices into sub-tickets, each shippable on its own, and present the split below instead of the plan. Once he has created them, plan only the first one.
 
 ```md
-**Seams:** <seam>: <why it is the right place to test>
+**Too big for one session:** <n> tasks. Suggested split:
 
-**1. <slice title>** · blocked by: none
-Delivers: <behaviour the user sees, or a test proves>
-Touches: <units created or modified>
+**A. <ticket title>** · tasks <1-4>
+<ticket description: what it delivers, from the user's side>
 
 - [ ] <acceptance criterion>
 
-**2. <slice title>** · blocked by: 1
+**B. <ticket title>** · tasks <5-8> · after A
 ...
 
-**Out of scope:** <what this plan deliberately leaves out>
+**Next:** create these in Linear. We plan and build A here. After its `/gh44-create-pr`, run `/gh44-handoff B`, then start B in a fresh session with `/gh44-plan <B ticket>`.
 ```
 
-Then ask: is the granularity right, are the blocking edges right, should any slice be merged or split?
+## 4. Present
+
+A task is one slice, shown in plain words.
+
+```md
+**Goal:** <what the ticket fixes or adds, one line>
+**Approach:** <the main decisions, 1-3 lines>
+**Tested at:** <the seam in plain words, e.g. render CartPage with MSW>
+
+**Tasks** (one slice each, built in order)
+
+1. <task>: <what it delivers> · <units touched>
+   - [ ] <acceptance criterion>
+2. <task>: ...
+
+**Out of scope:** <what this plan leaves out>
+```
+
+Then ask: change the approach, the test spot, or any task?
 
 ## 5. Approve
 
-Revise until he approves. The approved plan stays in this session as the brief for `/gh44-implement`, which works the **frontier** (slices whose blockers have landed) in order. For a fresh session, `/gh44-handoff` carries it.
+Revise until he approves; approving also confirms the seam for `tdd`. The approved plan stays in this session as the brief for `/gh44-implement`, which builds the tasks in order. For a fresh session, `/gh44-handoff` carries it.

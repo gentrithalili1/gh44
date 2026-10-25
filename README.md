@@ -51,7 +51,7 @@ flowchart LR
 
 ```text
 /gh44-clarify ABC-123   # optional: interview until nothing is open
-/gh44-plan              # seams + slices → you approve
+/gh44-plan              # goal, approach, tasks → you approve
 /gh44-implement         # builds, tests, verifies, reviews itself
                         # you decide the numbered judgement calls
 /gh44-create-pr         # commit, push, open the PR
@@ -61,7 +61,7 @@ flowchart LR
 | Step             | You run                                 | What happens                                                                                                                                                                |
 | ---------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1. Clarify**   | `/gh44-clarify [ticket]`                | Reads the ticket, then interviews you in rounds of numbered questions with a recommended answer each. Claude looks up the facts and asks you only for decisions.            |
-| **2. Plan**      | `/gh44-plan [ticket]`                   | Test seams and tracer-bullet slices: what each delivers, the units it touches, acceptance criteria, what must land first. Ends when you approve.                            |
+| **2. Plan**      | `/gh44-plan [ticket]`                   | Goal, approach, where it is tested, and the tasks in build order: what each delivers, the units it touches, acceptance criteria. Over 6 tasks: suggests sub-tickets to create and how to continue. Ends when you approve.                            |
 | **3. Implement** | `/gh44-implement [ticket] [--worktree] [--here]` | `gh44-implementer` builds the plan in the background, each slice red → green (`tdd`) plus typecheck and tests, while you keep talking to Claude; changes you agree on are sent to it. Then `gh44-verifier` and `gh44-reviewer` in parallel: clear fixes applied, judgement calls listed for you. Never commits. `--here` builds in the session instead. |
 | **4. Decide**    | Read implement's report                 | Pick the judgement calls to apply ("apply 1 and 3"). Optional: `/code-review` for a bug hunt.                                                                               |
 | **5. Ship**      | `/gh44-create-pr`                       | Verifies, commits, pushes, opens the PR. The body has a summary visual, before/after evidence and merge danger.                                                             |
@@ -88,7 +88,7 @@ In workflow order. _You type_ = only runs when you call it. _Auto_ = Claude also
 | Skill                                          | Starts   | What it does                                                                                                                                                                                                    |
 | ---------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/gh44-clarify [ticket]`                       | You type | Reads the ticket, then runs Matt's `grilling` unchanged.                                                                                                                                                        |
-| `/gh44-plan [ticket]`                          | You type | Seams and slices from the conversation or a ticket.                                                                                                                                                             |
+| `/gh44-plan [ticket]`                          | You type | Goal, approach and tasks from the conversation or a ticket; suggests a split when it is too big.                                                                                                                |
 | `/gh44-prototype [question]` | You type | Throwaway UI or state variants on a `prototype/<name>` branch, via Matt's `prototype`. |
 | `/gh44-implement [ticket] [--worktree [name]] [--here]` | You type | Hands the plan to the background implementer (or builds here with `--here`), then verifies, reviews and reports. |
 | `/gh44-debug`                                  | Auto     | Diagnosis loop for hard bugs, slowdowns and Sentry issues.                                                                                                                                                      |
