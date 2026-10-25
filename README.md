@@ -69,7 +69,7 @@ flowchart LR
 
 - **Small task** (a bug, one clear area): start at `/gh44-implement <ticket>`. It writes 2-4 acceptance criteria and asks open questions before building.
 - **Open UI or state question**: between clarify and plan, `/gh44-prototype` builds throwaway variants on a `prototype/<name>` branch to settle it.
-- **Clear ticket**: start at `/gh44-plan <ticket>`. It asks up to 4 questions itself and sends you to `/gh44-clarify` when there are more.
+- **Clear ticket**: start at `/gh44-plan <ticket>`. It asks its open questions itself, in numbered rounds like `grilling`.
 - **Clarify, plan and implement run in one session**, so each builds on the last. Clarify decides _what_, plan decides _how_.
 - **Research runs in the background too**: ask Claude to search or find the latest on something, and `gh44-researcher` answers from primary sources with links while you keep talking.
 - **Your rules apply without being asked**: they load in every session, the plan places files by `structure.md`, and lint and the verifier check the result.

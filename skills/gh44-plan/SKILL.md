@@ -13,7 +13,7 @@ Synthesize what is already settled: the conversation, the ticket and the code. C
 
 If a ticket is passed and not yet in context, read it (read-only on Linear and Sentry). Explore the code the change touches.
 
-Count the open questions the ticket and conversation leave. Up to 4: ask them with the question tool, then go on. More than 4: stop and suggest `/gh44-clarify <ticket>`.
+Ask the open questions the ticket and conversation leave in rounds, the `grilling` way: numbered, each with your recommended answer, worded so "yes" accepts it. No question tool. Repeat until none is left.
 
 Done when you can name every unit (component, hook, page) the change creates or modifies, placed by the structure rules.
 
