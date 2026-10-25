@@ -428,6 +428,69 @@ const noLeakedRender = {
   },
 };
 
+const noEnum = {
+  meta: {
+    type: "suggestion",
+    docs: { description: "Use a string-literal union or an `as const` object, not `enum`." },
+    messages: {
+      noEnum: "Replace enum `{{name}}` with a string-literal union or an `as const` object.",
+    },
+    schema: [],
+  },
+  create(context) {
+    return {
+      TSEnumDeclaration(node) {
+        context.report({ node, messageId: "noEnum", data: { name: node.id.name } });
+      },
+    };
+  },
+};
+
+// Module augmentation (`declare global`, `declare module`) needs interfaces to merge.
+const isAugmentation = (node) => {
+  for (let parent = node.parent; parent; parent = parent.parent) {
+    if (parent.type === "TSModuleDeclaration") return true;
+  }
+  return false;
+};
+
+const propsOnlyInterface = {
+  meta: {
+    type: "suggestion",
+    fixable: "code",
+    docs: { description: "Use `type` for every shape; `interface` only for component props." },
+    messages: {
+      useType: "Write `{{name}}` as a `type`; `interface` is only for props (`*Props`).",
+    },
+    schema: [],
+  },
+  create(context) {
+    const sourceCode = context.sourceCode;
+    return {
+      TSInterfaceDeclaration(node) {
+        const name = node.id.name;
+        if (name.endsWith("Props") || isAugmentation(node)) return;
+        if (context.filename.endsWith(".d.ts")) return;
+        const hasExtends = (node.extends ?? []).length > 0;
+        context.report({
+          node: node.id,
+          messageId: "useType",
+          data: { name },
+          fix: hasExtends
+            ? undefined
+            : (fixer) => {
+                const typeParams = node.typeParameters ? sourceCode.getText(node.typeParameters) : "";
+                return fixer.replaceTextRange(
+                  [node.range[0], node.body.range[0]],
+                  `type ${name}${typeParams} = `,
+                );
+              },
+        });
+      },
+    };
+  },
+};
+
 export default {
   meta: { name: "gh44" },
   rules: {
@@ -445,5 +508,7 @@ export default {
     "no-jsx-nested-ternary": noJsxNestedTernary,
     "no-index-key": noIndexKey,
     "no-leaked-render": noLeakedRender,
+    "no-enum": noEnum,
+    "props-only-interface": propsOnlyInterface,
   },
 };

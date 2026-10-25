@@ -151,11 +151,12 @@ Each runs in its own context and returns only a result. The long ones run in the
 
 | Area              | Rules                                                                           |
 | ----------------- | ------------------------------------------------------------------------------- |
-| Types             | No `any`, no `as` assertions, no lint-disable comments                          |
+| Types             | No `any`, no `as` assertions, no `enum`, `interface` only for props (else auto-fixed to `type`), no lint-disable comments |
 | Naming            | `is*`/`has*`/`should*` booleans, `handle*` handlers, `<Component>Props`         |
-| Functions & hooks | Params object for 2+ parameters, no hook destructuring, no `useEffect`          |
+| Functions & hooks | Params object for 2+ parameters, no hook destructuring, no `useEffect`, rules of hooks, no empty `catch`, no `console` except `error`/`warn` |
 | JSX               | Function components, no nested ternaries, no index `key`, no leaky `&&`         |
 | Structure         | Sorted imports, re-export-only `index` files, no generic folders, pure `utils/` |
+| Tests             | `userEvent` over `fireEvent`, `screen` queries, no `container` or DOM node access |
 
 <br>
 

@@ -140,4 +140,25 @@ expect_rule "$(w Leaked.tsx 'export function Leaked({ items }: LeakedProps) { re
 expect_rule "$(w LeakedCount.tsx 'export function LeakedCount({ count }: LeakedCountProps) { return <ul>{count && <li />}</ul> }')" brain/no-leaked-render
 expect_clean "$(w LeakedOk.tsx 'export function LeakedOk({ items, isOpen, user }: LeakedOkProps) { return <ul title={user && user.name}>{isOpen && <li />}{items.length > 0 && <li />}{!!user && <li />}{user?.isAdmin && isOpen && <li />}{Boolean(user) && <li />}{IS_FF_X_ENABLED && <li />}{items.length ? <li /> : null}</ul> }')"
 
+# Types: no enum; interface only for props, the rest auto-fixed to type
+expect_rule "$(w status.ts 'export enum Status { Idle = "idle" }')" brain/no-enum
+expect_clean "$(w shape.ts 'export interface User<T> { id: T }')"
+grep -q '^export type User<T> = { id: T }' "$repo/shape.ts" || fail "interface not fixed to type: $(cat "$repo/shape.ts")"
+expect_rule "$(w extends.ts 'export interface Admin extends User { role: string }')" brain/props-only-interface
+expect_clean "$(w PropsOk.tsx 'interface PropsOkProps { title: string }
+declare global { interface Window { app: string } }
+export function PropsOk({ title }: PropsOkProps) { return title }')"
+grep -q 'interface PropsOkProps' "$repo/PropsOk.tsx" || fail "props interface was rewritten"
+
+# Hooks, console, empty catch
+expect_rule "$(w Hooks.tsx 'export function Hooks({ isOpen }: HooksProps) { if (isOpen) { useCart() } return null }')" react-hooks/rules-of-hooks
+expect_rule "$(w log.ts 'export const run = () => console.log("x")')" no-console
+expect_clean "$(w logOk.ts 'export const run = () => { console.error("x"); console.warn("y") }')"
+expect_rule "$(w catch.ts 'export const run = () => { try { run() } catch {} }')" no-empty
+
+# Tests: userEvent and screen queries, no DOM access
+expect_rule "$(w Card.test.tsx 'it("clicks", () => { fireEvent.click(screen.getByRole("button")) })')" testing-library/prefer-user-event
+expect_rule "$(w Node.test.tsx 'it("reads", () => { const { container } = render(<Card />); container.querySelector("a") })')" testing-library/no-container
+expect_clean "$(w Ok.test.tsx 'it("clicks", async () => { render(<Card />); await userEvent.click(screen.getByRole("button")); expect(screen.getByText("Done")).toBeVisible() })')"
+
 echo "PASS lint"

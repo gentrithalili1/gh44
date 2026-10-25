@@ -2,6 +2,8 @@
 // Fixable rules are fixed silently; the rest are sent back to Claude.
 // A rule the repository already configures is turned off, so the repository wins.
 import perfectionist from "eslint-plugin-perfectionist";
+import reactHooks from "eslint-plugin-react-hooks";
+import testingLibrary from "eslint-plugin-testing-library";
 import tseslint from "typescript-eslint";
 
 import brain from "./rules/index.js";
@@ -25,6 +27,19 @@ const myRules = {
   "brain/no-use-effect": "error",
   "brain/index-reexport-only": "error",
   "brain/no-generic-folders": "error",
+  "brain/no-enum": "error",
+  "brain/props-only-interface": "error",
+  "react-hooks/rules-of-hooks": "error",
+  "no-console": ["error", { allow: ["error", "warn"] }],
+  "no-empty": ["error", { allowEmptyCatch: false }],
+};
+
+// Rules for test files only.
+const myTestRules = {
+  "testing-library/prefer-user-event": "error",
+  "testing-library/prefer-screen-queries": "error",
+  "testing-library/no-container": "error",
+  "testing-library/no-node-access": "error",
 };
 
 // Rules for React component files only.
@@ -58,9 +73,16 @@ export const equivalents = {
     "react/jsx-no-leaked-render",
     "@eslint-react/no-leaked-conditional-rendering",
   ],
+  "brain/props-only-interface": ["@typescript-eslint/consistent-type-definitions"],
 };
 
-const plugins = { "@typescript-eslint": tseslint.plugin, brain, perfectionist };
+const plugins = {
+  "@typescript-eslint": tseslint.plugin,
+  brain,
+  perfectionist,
+  "react-hooks": reactHooks,
+  "testing-library": testingLibrary,
+};
 
 export default [
   {
@@ -73,6 +95,10 @@ export default [
   {
     files: ["**/*.tsx"],
     rules: myComponentRules,
+  },
+  {
+    files: ["**/*.{test,spec}.{ts,tsx}"],
+    rules: myTestRules,
   },
   {
     files: ["**/utils/**/*.{ts,tsx}"],
