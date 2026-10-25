@@ -169,6 +169,7 @@ Each runs in its own context and returns only a result. The long ones run in the
 | Every prompt    | `capture-corrections.sh`, `mark-turn.sh` | Saves short corrections to the inbox; marks the turn start                                                               |
 | After a TS edit | `check-code.sh`                          | Fixes what ESLint can, quietly                                                                                           |
 | End of turn     | `check-changed.sh`                       | Reports what is left in the TS files changed this turn                                                                   |
+| Implementer done| `report-changed.sh`                      | `gh44-implementer` runs it before reporting: what is left in the changed lines of uncommitted TS files                   |
 | New worktree    | `prepare-worktree.sh`                    | Branch from `main`, copies `.env*` files, installs deps. Used by `--worktree`, `/gh44-resolve-conflicts` and your editor |
 
 <br>

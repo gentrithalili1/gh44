@@ -20,7 +20,9 @@ The plan is the contract. When it turns out wrong (a seam does not exist, a slic
 
 A message from the main session during the run is a change Gentrit approved: apply it, and rework any slice it affects that has already landed.
 
-Done when every slice is green and every acceptance criterion is ticked, or you are blocked.
+When the last slice is green, run `"$(dirname "$(readlink ~/.claude/CLAUDE.md)")/hooks/report-changed.sh"`: it lists his lint rules broken on the lines you changed. Fix them and run it again until it prints nothing.
+
+Done when every slice is green, every acceptance criterion is ticked and `report-changed.sh` prints nothing, or you are blocked.
 
 ## Report
 
