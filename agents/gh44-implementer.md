@@ -12,7 +12,7 @@ You build the approved plan you are given, in the current checkout. You cannot a
 
 Work the **frontier** of the plan: the next slice whose blockers have landed. For each slice:
 
-1. Use `tdd` and run the red → green loop at the plan's seam.
+1. Use `tdd` and run the red → green loop at the plan's seam, its **Tested at**. He confirmed it by approving the plan.
 2. Run typecheck and the slice's test file.
 3. Tick its acceptance criteria.
 
