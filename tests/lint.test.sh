@@ -64,7 +64,7 @@ echo "$output" | grep -qi "definition for rule" && fail "unknown rule directive 
 new_repo
 printf 'import { Component } from "react"\nexport class Card extends Component {}\n' > "$repo/Class.tsx"
 run_hook "$repo/Class.tsx"
-echo "$output" | grep -q "brain/no-class-component" || fail "class component not reported: $output"
+echo "$output" | grep -q "@eslint-react/no-class-component" || fail "class component not reported: $output"
 
 printf 'interface ButtonProps { title: string }\nexport function Card(props: ButtonProps) { return null }\n' > "$repo/Card.tsx"
 run_hook "$repo/Card.tsx"
@@ -132,8 +132,8 @@ expect_rule "$(w Ternary.tsx 'export function Ternary({ status }: TernaryProps) 
 expect_rule "$(w TernaryReturn.tsx 'export function TernaryReturn({ isA, isB }: TernaryReturnProps) { return isA ? <A /> : isB ? <B /> : null }')" brain/no-jsx-nested-ternary
 expect_clean "$(w TernaryOk.tsx 'export function TernaryOk({ isA }: TernaryOkProps) { const size = isA ? 1 : isA === false ? 2 : 3; return <div>{isA ? <A size={size} /> : null}</div> }')"
 
-expect_rule "$(w IndexKey.tsx 'export function IndexKey({ items }: IndexKeyProps) { return items.map((item, index) => <li key={index}>{item.name}</li>) }')" brain/no-index-key
-expect_rule "$(w IndexKeyTemplate.tsx 'export function IndexKeyTemplate({ items }: IndexKeyTemplateProps) { return items.map((item, i) => <li key={`row-${i}`}>{item.name}</li>) }')" brain/no-index-key
+expect_rule "$(w IndexKey.tsx 'export function IndexKey({ items }: IndexKeyProps) { return items.map((item, index) => <li key={index}>{item.name}</li>) }')" @eslint-react/no-array-index-key
+expect_rule "$(w IndexKeyTemplate.tsx 'export function IndexKeyTemplate({ items }: IndexKeyTemplateProps) { return items.map((item, i) => <li key={`row-${i}`}>{item.name}</li>) }')" @eslint-react/no-array-index-key
 expect_clean "$(w IndexKeyOk.tsx 'export function IndexKeyOk({ items }: IndexKeyOkProps) { return items.map((item, index) => <li key={item.id}>{index}</li>) }')"
 
 expect_rule "$(w Leaked.tsx 'export function Leaked({ items }: LeakedProps) { return <ul>{items.length && <li />}</ul> }')" brain/no-leaked-render
@@ -151,7 +151,7 @@ export function PropsOk({ title }: PropsOkProps) { return title }')"
 grep -q 'interface PropsOkProps' "$repo/PropsOk.tsx" || fail "props interface was rewritten"
 
 # Hooks, console, empty catch
-expect_rule "$(w Hooks.tsx 'export function Hooks({ isOpen }: HooksProps) { if (isOpen) { useCart() } return null }')" react-hooks/rules-of-hooks
+expect_rule "$(w Hooks.tsx 'export function Hooks({ isOpen }: HooksProps) { if (isOpen) { useCart() } return null }')" @eslint-react/rules-of-hooks
 expect_rule "$(w log.ts 'export const run = () => console.log("x")')" no-console
 expect_clean "$(w logOk.ts 'export const run = () => { console.error("x"); console.warn("y") }')"
 expect_rule "$(w catch.ts 'export const run = () => { try { run() } catch {} }')" no-empty
@@ -160,5 +160,19 @@ expect_rule "$(w catch.ts 'export const run = () => { try { run() } catch {} }')
 expect_rule "$(w Card.test.tsx 'it("clicks", () => { fireEvent.click(screen.getByRole("button")) })')" testing-library/prefer-user-event
 expect_rule "$(w Node.test.tsx 'it("reads", () => { const { container } = render(<Card />); container.querySelector("a") })')" testing-library/no-container
 expect_clean "$(w Ok.test.tsx 'it("clicks", async () => { render(<Card />); await userEvent.click(screen.getByRole("button")); expect(screen.getByText("Done")).toBeVisible() })')"
+
+# @eslint-react: nested components, keys, naming, JSX typos, unsafe links
+expect_rule "$(w Nested.tsx 'export function Nested() { function Row() { return <li /> } return <ul><Row /></ul> }')" @eslint-react/no-nested-component-definitions
+expect_rule "$(w MissingKey.tsx 'export function MissingKey({ items }: MissingKeyProps) { return items.map((item) => <li>{item.name}</li>) }')" @eslint-react/no-missing-key
+expect_rule "$(w RefName.tsx 'import { useRef } from "react"
+export function RefName() { const input = useRef(null); return <input ref={input} /> }')" @eslint-react/naming-convention-ref-name
+expect_rule "$(w UseState.tsx 'import { useState } from "react"
+export function UseState() { const [count, update] = useState(0); return <button onClick={() => update(count + 1)} /> }')" @eslint-react/use-state
+expect_rule "$(w usePrefix.ts 'export const useTotal = (items: number[]) => items.length')" @eslint-react/no-unnecessary-use-prefix
+expect_rule "$(w Blank.tsx 'export function Blank() { return <a href="https://x.io" target="_blank">x</a> }')" @eslint-react/dom-no-unsafe-target-blank
+expect_clean "$(w Fragment.tsx 'export function Fragment() { return <><Card /></> }')"
+grep -q '<>' "$repo/Fragment.tsx" && fail "useless fragment not fixed: $(cat "$repo/Fragment.tsx")"
+expect_clean "$(w ReactOk.tsx 'import { useRef, useState } from "react"
+export function ReactOk({ items }: ReactOkProps) { const inputRef = useRef(null); const [count, setCount] = useState(0); return <ul ref={inputRef} onClick={() => setCount(count + 1)}>{items.map((item) => <li key={item.id}>{item.name}</li>)}</ul> }')"
 
 echo "PASS lint"

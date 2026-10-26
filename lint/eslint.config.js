@@ -1,8 +1,8 @@
 // My personal ESLint rules. hooks/check-code.sh runs them on every file Claude edits.
 // Fixable rules are fixed silently; the rest are sent back to Claude.
 // A rule the repository already configures is turned off, so the repository wins.
+import eslintReact from "@eslint-react/eslint-plugin";
 import perfectionist from "eslint-plugin-perfectionist";
-import reactHooks from "eslint-plugin-react-hooks";
 import testingLibrary from "eslint-plugin-testing-library";
 import tseslint from "typescript-eslint";
 
@@ -29,7 +29,12 @@ const myRules = {
   "brain/no-generic-folders": "error",
   "brain/no-enum": "error",
   "brain/props-only-interface": "error",
-  "react-hooks/rules-of-hooks": "error",
+  "@eslint-react/rules-of-hooks": "error",
+  "@eslint-react/no-unnecessary-use-prefix": "error",
+  "@eslint-react/use-state": "error",
+  "@eslint-react/naming-convention-ref-name": "error",
+  "@eslint-react/naming-convention-id-name": "error",
+  "@eslint-react/naming-convention-context-name": "error",
   "no-console": ["error", { allow: ["error", "warn"] }],
   "no-empty": ["error", { allowEmptyCatch: false }],
 };
@@ -44,11 +49,24 @@ const myTestRules = {
 
 // Rules for React component files only.
 const myComponentRules = {
-  "brain/no-class-component": "error",
+  "@eslint-react/no-class-component": "error",
   "brain/component-props-name": "error",
   "brain/handler-names": "error",
   "brain/no-jsx-nested-ternary": "error",
-  "brain/no-index-key": "error",
+  "@eslint-react/no-array-index-key": "error",
+  "@eslint-react/no-missing-key": "error",
+  "@eslint-react/no-duplicate-key": "error",
+  "@eslint-react/jsx-no-key-after-spread": "error",
+  "@eslint-react/no-nested-component-definitions": "error",
+  "@eslint-react/purity": "error",
+  "@eslint-react/set-state-in-render": "error",
+  "@eslint-react/jsx-no-useless-fragment": "error",
+  "@eslint-react/jsx-no-comment-textnodes": "error",
+  "@eslint-react/jsx-no-leaked-dollar": "error",
+  "@eslint-react/jsx-no-leaked-semicolon": "error",
+  "@eslint-react/dom-no-script-url": "error",
+  "@eslint-react/dom-no-unsafe-target-blank": "error",
+  "@eslint-react/dom-no-void-elements-with-children": "error",
   "brain/no-leaked-render": "error",
 };
 
@@ -61,14 +79,25 @@ export const equivalents = {
     "import/order",
     "simple-import-sort/imports",
   ],
-  "brain/no-class-component": [
+  "@eslint-react/no-class-component": [
     "react/prefer-stateless-function",
     "react/prefer-function-component",
-    "react-x/no-class-component",
-    "@eslint-react/no-class-component",
   ],
+  "@eslint-react/rules-of-hooks": ["react-hooks/rules-of-hooks"],
+  "@eslint-react/purity": ["react-hooks/purity"],
+  "@eslint-react/set-state-in-render": ["react-hooks/set-state-in-render"],
+  "@eslint-react/no-nested-component-definitions": [
+    "react/no-unstable-nested-components",
+    "react-hooks/static-components",
+  ],
+  "@eslint-react/no-missing-key": ["react/jsx-key"],
+  "@eslint-react/jsx-no-useless-fragment": ["react/jsx-no-useless-fragment"],
+  "@eslint-react/jsx-no-comment-textnodes": ["react/jsx-no-comment-textnodes"],
+  "@eslint-react/dom-no-script-url": ["react/jsx-no-script-url"],
+  "@eslint-react/dom-no-unsafe-target-blank": ["react/jsx-no-target-blank"],
+  "@eslint-react/dom-no-void-elements-with-children": ["react/void-dom-elements-no-children"],
   "brain/no-jsx-nested-ternary": ["no-nested-ternary", "unicorn/no-nested-ternary"],
-  "brain/no-index-key": ["react/no-array-index-key", "@eslint-react/no-array-index-key"],
+  "@eslint-react/no-array-index-key": ["react/no-array-index-key"],
   "brain/no-leaked-render": [
     "react/jsx-no-leaked-render",
     "@eslint-react/no-leaked-conditional-rendering",
@@ -76,11 +105,23 @@ export const equivalents = {
   "brain/props-only-interface": ["@typescript-eslint/consistent-type-definitions"],
 };
 
+// Older @eslint-react versions name the same rules `react-x/no-missing-key`,
+// `@eslint-react/dom/no-script-url` or `react-dom/no-script-url`.
+for (const rule of Object.keys({ ...myRules, ...myComponentRules })) {
+  if (!rule.startsWith("@eslint-react/")) continue;
+  const name = rule.slice("@eslint-react/".length);
+  const [, group, rest] = name.match(/^(dom|web-api|naming-convention|jsx)-(.+)$/) ?? [];
+  const aliases = [`react-x/${name}`];
+  if (group) aliases.push(`@eslint-react/${group}/${rest}`, `react-${group}/${rest}`);
+  if (group === "jsx") aliases.push(`@eslint-react/${rest}`, `react-x/${rest}`);
+  equivalents[rule] = [...(equivalents[rule] ?? []), ...aliases];
+}
+
 const plugins = {
   "@typescript-eslint": tseslint.plugin,
   brain,
   perfectionist,
-  "react-hooks": reactHooks,
+  "@eslint-react": eslintReact,
   "testing-library": testingLibrary,
 };
 

@@ -147,14 +147,15 @@ Each runs in its own context and returns only a result. The long ones run in the
 
 ### Lint
 
-[`lint/`](lint/) turns my conventions into ESLint rules. Every TS edit is fixed quietly, so the red → green loop runs uninterrupted; what is left is reported at the end of the turn and Claude fixes it. **A rule the repo already configures turns mine off.**
+[`lint/`](lint/) turns my conventions into ESLint rules: `typescript-eslint`, `@eslint-react` and `testing-library` rules first, custom `brain/` rules only where no plugin fits. Every TS edit is fixed quietly, so the red → green loop runs uninterrupted; what is left is reported at the end of the turn and Claude fixes it. **A rule the repo already configures turns mine off.**
 
 | Area              | Rules                                                                           |
 | ----------------- | ------------------------------------------------------------------------------- |
 | Types             | No `any`, no `as` assertions, no `enum`, `interface` only for props (else auto-fixed to `type`), no lint-disable comments |
-| Naming            | `is*`/`has*`/`should*` booleans, `handle*` handlers, `<Component>Props`         |
+| Naming            | `is*`/`has*`/`should*` booleans, `handle*` handlers, `<Component>Props`, `[x, setX]` state, `*Ref`/`*Id`/`*Context` names, `use*` only for hooks |
 | Functions & hooks | Params object for 2+ parameters, no hook destructuring, no `useEffect`, rules of hooks, no empty `catch`, no `console` except `error`/`warn` |
-| JSX               | Function components, no nested ternaries, no index `key`, no leaky `&&`         |
+| JSX               | Function components, no components defined inside components, no nested ternaries, keys present, unique and not the index, no leaky `&&`, no useless fragments, no stray `$`/`;`/`//` text, pure render, no `setState` during render |
+| Security          | No `javascript:` URLs, `target="_blank"` gets `rel="noreferrer"` (auto-fixed) |
 | Structure         | Sorted imports, re-export-only `index` files, no generic folders, pure `utils/` |
 | Tests             | `userEvent` over `fireEvent`, `screen` queries, no `container` or DOM node access |
 

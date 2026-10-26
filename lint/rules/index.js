@@ -53,38 +53,6 @@ const componentPropsName = {
   },
 };
 
-const noClassComponent = {
-  meta: {
-    type: "suggestion",
-    docs: { description: "Write components as functions, not classes." },
-    messages: { useFunction: "Write `{{component}}` as a function component." },
-    schema: [],
-  },
-  create(context) {
-    const isReactBase = (superClass) => {
-      if (superClass?.type === "Identifier") {
-        return /^(Pure)?Component$/.test(superClass.name);
-      }
-      return (
-        superClass?.type === "MemberExpression" &&
-        superClass.object.name === "React" &&
-        /^(Pure)?Component$/.test(superClass.property.name)
-      );
-    };
-    const check = (node) => {
-      if (!isReactBase(node.superClass)) {
-        return;
-      }
-      context.report({
-        node,
-        messageId: "useFunction",
-        data: { component: node.id?.name ?? "this class" },
-      });
-    };
-    return { ClassDeclaration: check, ClassExpression: check };
-  },
-};
-
 const noLintDisable = {
   meta: {
     type: "problem",
@@ -343,53 +311,6 @@ const noJsxNestedTernary = {
   },
 };
 
-const iteratorMethods = new Set(["map", "flatMap", "forEach"]);
-
-const isIndexParam = (name, ancestors) =>
-  ancestors.some(
-    (fn) =>
-      (fn.type === "ArrowFunctionExpression" || fn.type === "FunctionExpression") &&
-      fn.params[1]?.type === "Identifier" &&
-      fn.params[1].name === name &&
-      fn.parent?.type === "CallExpression" &&
-      fn.parent.callee.type === "MemberExpression" &&
-      iteratorMethods.has(fn.parent.callee.property.name),
-  );
-
-const keyIdentifiers = (node) => {
-  if (!node) return [];
-  if (node.type === "Identifier") return [node.name];
-  if (node.type === "TemplateLiteral") return node.expressions.flatMap(keyIdentifiers);
-  if (node.type === "BinaryExpression") return [...keyIdentifiers(node.left), ...keyIdentifiers(node.right)];
-  if (node.type === "CallExpression") {
-    return node.callee.type === "MemberExpression"
-      ? keyIdentifiers(node.callee.object)
-      : node.arguments.flatMap(keyIdentifiers);
-  }
-  return [];
-};
-
-const noIndexKey = {
-  meta: {
-    type: "problem",
-    docs: { description: "Never use an array index as `key`." },
-    messages: { indexKey: "Do not use the index `{{name}}` as `key`; use a stable id from the item." },
-    schema: [],
-  },
-  create(context) {
-    return {
-      JSXAttribute(node) {
-        if (node.name.name !== "key" || node.value?.type !== "JSXExpressionContainer") return;
-        const ancestors = context.sourceCode.getAncestors(node);
-        const name = keyIdentifiers(node.value.expression).find((identifier) =>
-          isIndexParam(identifier, ancestors),
-        );
-        if (name) context.report({ node, messageId: "indexKey", data: { name } });
-      },
-    };
-  },
-};
-
 const isBooleanName = (node) =>
   (node?.type === "Identifier" && (booleanPrefix.test(node.name) || /^(IS|HAS|SHOULD|CAN)_/.test(node.name))) ||
   (node?.type === "MemberExpression" && isBooleanName(node.property)) ||
@@ -495,7 +416,6 @@ export default {
   meta: { name: "gh44" },
   rules: {
     "component-props-name": componentPropsName,
-    "no-class-component": noClassComponent,
     "no-lint-disable": noLintDisable,
     "pure-utils": pureUtils,
     "handler-names": handlerNames,
@@ -506,7 +426,6 @@ export default {
     "index-reexport-only": indexReexportOnly,
     "no-generic-folders": noGenericFolders,
     "no-jsx-nested-ternary": noJsxNestedTernary,
-    "no-index-key": noIndexKey,
     "no-leaked-render": noLeakedRender,
     "no-enum": noEnum,
     "props-only-interface": propsOnlyInterface,
