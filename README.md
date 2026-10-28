@@ -1,14 +1,14 @@
-# GH44
+# gh44-brain
 
 **Gentrit's personal agent brain for Claude Code.**
 
 Clone it once and every Claude Code session, in any repository, works the way I do: same rules, same workflow, same code conventions. Lint hooks check the code for free, and it learns from my corrections.
 
 ```bash
-git clone git@github.com:gentrithalili1/gh44.git && gh44/install.sh
+git clone git@github.com:gentrithalili1/gh44-brain.git && gh44-brain/install.sh
 ```
 
-> The repository's own `CLAUDE.md` / `AGENTS.md` always wins on code conventions. GH44 fills the gaps.
+> The repository's own `CLAUDE.md` / `AGENTS.md` always wins on code conventions. gh44-brain fills the gaps.
 
 <br>
 <br>
@@ -24,7 +24,7 @@ flowchart LR
     U --> S
     H --> S
     S -->|my correction| N[inbox.md]
-    N -->|/gh44-learn| R[new rule in GH44]
+    N -->|/gh44-learn| R[new rule in gh44-brain]
     R -->|commit + push| C
 ```
 
@@ -190,7 +190,7 @@ A repo's git-excluded `.worktree-setup.sh` replaces the default setup.
 
 ## Learning
 
-GH44 gets better every time I correct it.
+gh44-brain gets better every time I correct it.
 
 1. **Capture.** A short prompt starting with _don't, never, always, stop, prefer_ or _not like this_ is saved to `inbox.md`.
 2. **Learn.** Claude writes the rule to the right place here, commits and pushes. When unsure, it asks first.
@@ -215,7 +215,7 @@ gh44/uninstall.sh --remove-repo  # also delete the repo
 
 `install.sh` installs `jq` and the lint packages, links `CLAUDE.md`, `rules/`, skills and agents into `~/.claude`, installs the skills in `upstream-skills.txt`, and registers the 5 hooks. It stops before changing anything when a real file is in the way, and backs up `settings.json`.
 
-`uninstall.sh` removes only what GH44 added. `--remove-repo` refuses when something would be lost: uncommitted changes, unpushed commits or inbox items.
+`uninstall.sh` removes only what gh44-brain added. `--remove-repo` refuses when something would be lost: uncommitted changes, unpushed commits or inbox items.
 
 ```text
 gh44/

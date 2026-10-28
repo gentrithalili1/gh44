@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs GH44: links it into ~/.claude and registers its hooks. Safe to run again.
+# Installs gh44-brain: links it into ~/.claude and registers its hooks. Safe to run again.
 set -euo pipefail
 
 BRAIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,7 +20,7 @@ ok() { printf '%s✓%s %s\n' "$green" "$reset" "$1"; }
 failed() { printf '%s✗%s %s\n' "$red" "$reset" "$1"; }
 changed() { [ "$1" -gt 0 ] && printf ' (%s changed)' "$1" || true; }
 
-printf '\n%sGH44%s %s· Gentrit'"'"'s personal agent brain%s\n\n' "$bold" "$reset" "$dim" "$reset"
+printf '\n%sgh44-brain%s %s· Gentrit'"'"'s personal agent brain%s\n\n' "$bold" "$reset" "$dim" "$reset"
 
 step 1 Tools
 missing=()

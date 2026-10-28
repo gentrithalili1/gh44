@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Uninstalls GH44: removes its links, hooks and upstream skills from ~/.claude. With --remove-repo, also deletes
+# Uninstalls gh44-brain: removes its links, hooks and upstream skills from ~/.claude. With --remove-repo, also deletes
 # this repository, but only when nothing would be lost. Safe to run again.
 set -euo pipefail
 
@@ -31,7 +31,7 @@ step() { printf '%s[%s/%s]%s %-8s ' "$dim" "$1" "$STEPS" "$reset" "$2"; }
 ok() { printf '%s✓%s %s\n' "$green" "$reset" "$1"; }
 failed() { printf '%s✗%s %s\n' "$red" "$reset" "$1"; }
 
-printf '\n%sGH44%s %s· uninstall%s\n\n' "$bold" "$reset" "$dim" "$reset"
+printf '\n%sgh44-brain%s %s· uninstall%s\n\n' "$bold" "$reset" "$dim" "$reset"
 
 # Check the repository before touching anything, so a refusal never leaves a half uninstall.
 if [ "$remove_repo" = true ]; then
