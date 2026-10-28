@@ -18,7 +18,7 @@ git clone git@github.com:gentrithalili1/gh44-brain.git && gh44-brain/install.sh
 ```mermaid
 flowchart LR
     I[install.sh] -->|links| C["~/.claude<br/>CLAUDE.md · rules · skills · agents"]
-    I -->|installs| U[Matt's skills<br/>upstream-skills.txt]
+    I -->|installs| U[Matt's and design skills<br/>upstream-skills.txt]
     I -->|registers| H[hooks]
     C --> S((Claude Code session<br/>in any repo))
     U --> S
@@ -119,6 +119,20 @@ Installed unchanged from [`upstream-skills.txt`](upstream-skills.txt). Update wi
 
 <br>
 
+### Design
+
+From [Emil Kowalski](https://github.com/emilkowalski/skills) and [Anthropic](https://github.com/anthropics/skills). Marked `manual` in [`upstream-skills.txt`](upstream-skills.txt): they run only when you type them, never on their own. `install.sh` re-applies this after `npx skills update -g`.
+
+| Skill                 | What it does                                                                  |
+| --------------------- | ----------------------------------------------------------------------------- |
+| `/frontend-design`    | Visual direction: typography, palette, layout, no templated defaults          |
+| `/apple-design`       | Apple-style feel: springs, gestures, interruptibility, materials, typography  |
+| `/animate`            | Builds an animation: curve, duration, properties, interruption, exit          |
+| `/review-animations`  | Strict review of motion code                                                  |
+| `/break-ui`           | Stress-tests a component with worst-case data                                 |
+
+<br>
+
 ### Agents
 
 Each runs in its own context and returns only a result. The long ones run in the background, so you keep talking to Claude while they work.
@@ -209,7 +223,7 @@ Every change is recorded in [`log.md`](log.md).
 
 ```bash
 gh44/install.sh                  # safe to run again
-gh44/uninstall.sh                # remove links, hooks and Matt's skills, keep the repo
+gh44/uninstall.sh                # remove links, hooks and upstream skills, keep the repo
 gh44/uninstall.sh --remove-repo  # also delete the repo
 ```
 
@@ -221,7 +235,7 @@ gh44/uninstall.sh --remove-repo  # also delete the repo
 gh44/
 ├── CLAUDE.md            # linked to ~/.claude/CLAUDE.md
 ├── rules/  skills/  agents/  hooks/  lint/  tests/
-├── upstream-skills.txt  # Matt's skills, installed unchanged
+├── upstream-skills.txt  # Matt's and design skills, installed from their repos
 ├── install.sh  uninstall.sh
 ├── log.md               # every rule learned
 └── inbox.md             # captured corrections (gitignored)

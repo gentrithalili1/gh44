@@ -110,10 +110,12 @@ ok "CLAUDE.md, rules, $skill_count skills, $((${#targets[@]} - 2 - skill_count))
 step 4 Upstream
 upstream_total=0
 missing_upstream=()
+manual_upstream=()
 if [ -f "$UPSTREAM" ]; then
-  while read -r repo skill; do
+  while read -r repo skill mode; do
     case "$repo" in "" | "#"*) continue ;; esac
     upstream_total=$((upstream_total + 1))
+    [ "$mode" = manual ] && manual_upstream+=("$skill")
     [ -e "$CLAUDE_DIR/skills/$skill" ] || missing_upstream+=("$repo $skill")
   done < "$UPSTREAM"
 fi
@@ -140,6 +142,17 @@ else
     ok "$upstream_total skills$(changed "$installed")"
   fi
 fi
+# Manual skills only run when typed; set again every run, since `npx skills update` restores the original.
+for skill in ${manual_upstream[@]+"${manual_upstream[@]}"}; do
+  file="$CLAUDE_DIR/skills/$skill/SKILL.md"
+  [ -f "$file" ] && [ "$(head -n 1 "$file")" = "---" ] || continue
+  grep -qx 'disable-model-invocation: true' "$file" && continue
+  awk 'NR == 1 { print; print "disable-model-invocation: true"; front = 1; next }
+    front && /^---$/ { front = 0 }
+    front && /^disable-model-invocation:/ { next }
+    { print }' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+  changes=$((changes + 1))
+done
 
 step 5 Hooks
 # inbox.md is gitignored, so a fresh clone needs one for capture-corrections to write to.

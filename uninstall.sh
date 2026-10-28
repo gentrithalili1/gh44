@@ -93,7 +93,7 @@ step 3 Upstream
 # Only skills the lock file records as installed from that repository, so a copy from elsewhere stays.
 dropped=0
 if [ -f "$UPSTREAM" ] && [ -f "$SKILL_LOCK" ]; then
-  while read -r repo skill; do
+  while read -r repo skill _; do
     case "$repo" in "" | "#"*) continue ;; esac
     jq -e --arg skill "$skill" --arg repo "$repo" '.skills[$skill].source == $repo' "$SKILL_LOCK" > /dev/null || continue
     rm -rf "${CLAUDE_DIR:?}/skills/$skill"

@@ -1,5 +1,6 @@
 # Skills installed as they are from other repositories; gh44 skills and Claude call them by name.
-# One "<repository> <skill>" per line. install.sh installs them, uninstall.sh removes them.
+# One "<repository> <skill> [manual]" per line. install.sh installs them, uninstall.sh removes them.
+# manual: runs only when typed as /<skill>, never picked by Claude on its own.
 mattpocock/skills grilling
 mattpocock/skills handoff
 mattpocock/skills tdd
@@ -7,3 +8,8 @@ mattpocock/skills codebase-design
 mattpocock/skills pr
 mattpocock/skills writing-for-agents
 mattpocock/skills prototype
+emilkowalski/skills animate manual
+emilkowalski/skills review-animations manual
+emilkowalski/skills break-ui manual
+emilkowalski/skills apple-design manual
+anthropics/skills frontend-design manual

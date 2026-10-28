@@ -34,11 +34,19 @@ jq -e --arg m "$BRAIN/hooks/mark-turn.sh" --arg s "$BRAIN/hooks/check-changed.sh
 grep -qx -- "-y skills@1.7.2 add mattpocock/skills -g -a claude-code --copy -y -s grilling" "$HOME/npx.log" || fail "grilling not installed: $(cat "$HOME/npx.log")"
 [ -f "$HOME/.claude/skills/grilling/SKILL.md" ] && [ ! -L "$HOME/.claude/skills/grilling" ] || fail "grilling not copied"
 [ -f "$HOME/.claude/skills/handoff/SKILL.md" ] || fail "handoff not copied"
+grep -qx 'disable-model-invocation: true' "$HOME/.claude/skills/animate/SKILL.md" || fail "manual skill can still auto-run: $(cat "$HOME/.claude/skills/animate/SKILL.md")"
+grep -q 'disable-model-invocation' "$HOME/.claude/skills/grilling/SKILL.md" && fail "auto skill made manual"
 
 # Second run changes nothing
 "$BRAIN/install.sh" | grep -q "Up to date" || fail "second run was not a no-op"
 [ "$(wc -l < "$HOME/npx.log")" -eq "$(grep -cv '^#' "$BRAIN/upstream-skills.txt")" ] || fail "installed upstream skills again: $(cat "$HOME/npx.log")"
 jq -e '[.hooks.SessionStart, .hooks.UserPromptSubmit, .hooks.PreToolUse, .hooks.PostToolUse, .hooks.Stop | length] == [2, 2, 0, 1, 1]' "$HOME/.claude/settings.json" > /dev/null || fail "hook duplicated"
+
+# A manual skill that an update made auto again is made manual again
+printf -- '---\nname: animate\ndisable-model-invocation: false\n---\nbody\n' > "$HOME/.claude/skills/animate/SKILL.md"
+"$BRAIN/install.sh" > /dev/null
+[ "$(cat "$HOME/.claude/skills/animate/SKILL.md")" = "$(printf -- '---\ndisable-model-invocation: true\nname: animate\n---\nbody')" ] \
+  || fail "manual flag not restored: $(cat "$HOME/.claude/skills/animate/SKILL.md")"
 
 # A retired hook is dropped from settings
 jq --arg c "$BRAIN/hooks/load-structure.sh" '.hooks.PreToolUse = [{matcher: "Edit", hooks: [{type: "command", command: $c}]}]' "$HOME/.claude/settings.json" > "$HOME/s.json" && mv "$HOME/s.json" "$HOME/.claude/settings.json"
